@@ -30,6 +30,10 @@
         </dependency>
     </dependencies>
 
+    <modules>
+        <module>library-management</module>
+    </modules>
+
     <build>
         <plugins>
             <plugin>
