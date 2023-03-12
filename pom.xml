@@ -32,6 +32,7 @@
 
     <modules>
         <module>library-management</module>
+        <module>payment-gate</module>
     </modules>
 
     <build>
