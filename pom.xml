@@ -33,6 +33,7 @@
     <modules>
         <module>library-management</module>
         <module>payment-gate</module>
+        <module>model</module>
     </modules>
 
     <build>
