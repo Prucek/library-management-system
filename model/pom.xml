@@ -4,12 +4,15 @@
     <parent>
         <groupId>cz.muni.fi.pa165.seminar3</groupId>
         <artifactId>library-management-system</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>1.0-SNAPSHOT</version>
     </parent>
+
     <artifactId>model</artifactId>
     <name>model</name>
     <description>model</description>
+
     <properties>
-        <java.version>17</java.version>
+        <spring-boot.repackage.skip>true</spring-boot.repackage.skip>
     </properties>
+
 </project>
