@@ -10,6 +10,8 @@
         <module>library-management</module>
         <module>payment-gate</module>
         <module>model</module>
+        <module>reporting</module>
+        <module>self-service-kiosk</module>
     </modules>
 
     <packaging>pom</packaging>
