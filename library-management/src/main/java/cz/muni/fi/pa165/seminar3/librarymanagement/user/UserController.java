@@ -1,5 +1,6 @@
 package cz.muni.fi.pa165.seminar3.librarymanagement.user;
 
+import cz.muni.fi.pa165.seminar3.librarymanagement.common.ErrorMessage;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.common.Result;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.user.UserCreateDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.user.UserDto;
@@ -28,7 +29,12 @@ public class UserController {
 
     @GetMapping("/{id}")
     public UserDto find(@PathVariable String id) {
-        return mapper.toDto(service.find(id));
+        User user = service.find(id);
+        if (user != null){
+            return mapper.toDto(user);
+        } else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "user with id=" + id + " not found");
+        }
     }
 
     @PostMapping
@@ -37,7 +43,7 @@ public class UserController {
     }
 
     @GetMapping
-    public Result<UserDto> findAll(@RequestParam int page) {
+    public Result<UserDto> findAll(Pageable page) {
         return mapper.toResult(service.findAll(page));
     }
 }
