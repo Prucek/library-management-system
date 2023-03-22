@@ -5,16 +5,31 @@
     <parent>
         <groupId>cz.muni.fi.pa165.seminar3</groupId>
         <artifactId>library-management-system</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <version>1.0-SNAPSHOT</version>
     </parent>
+
     <artifactId>payment-gate</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+
     <name>payment-gate</name>
     <description>payment-gate</description>
-    <properties>
-        <java.version>17</java.version>
-    </properties>
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webflux</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+    </dependencies>
 
     <build>
         <plugins>
