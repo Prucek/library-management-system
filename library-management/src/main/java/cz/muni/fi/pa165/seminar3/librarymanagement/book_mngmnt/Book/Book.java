@@ -1,8 +1,11 @@
 package cz.muni.fi.pa165.seminar3.librarymanagement.book_mngmnt.Book;
 
+import cz.muni.fi.pa165.seminar3.librarymanagement.book_mngmnt.Author.Author;
 import cz.muni.fi.pa165.seminar3.librarymanagement.common.DomainObject;
-import jakarta.persistence.Entity;
+import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -10,9 +13,15 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+//@Table(name = "domain_book")
 public class Book extends DomainObject {
 
     private String title;
-    private String author;
 
+//    TODO: Array
+//    @ElementCollection
+//    @CollectionTable(name = "book_authors", joinColumns = @JoinColumn(name = "book_id"), foreignKey = @ForeignKey(name = "book_authors_book_fk"))
+//    @Singular private List<Author> authors;
+
+    private Author author;
 }
