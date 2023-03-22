@@ -4,6 +4,8 @@ import cz.muni.fi.pa165.seminar3.librarymanagement.borrowing.Borrowing;
 import cz.muni.fi.pa165.seminar3.librarymanagement.borrowing.BorrowingService;
 import cz.muni.fi.pa165.seminar3.librarymanagement.reservation.Reservation;
 import cz.muni.fi.pa165.seminar3.librarymanagement.reservation.ReservationService;
+import cz.muni.fi.pa165.seminar3.librarymanagement.book_mngmnt.Book.Book;
+import cz.muni.fi.pa165.seminar3.librarymanagement.book_mngmnt.Book.BookService;
 import cz.muni.fi.pa165.seminar3.librarymanagement.user.Address;
 import cz.muni.fi.pa165.seminar3.librarymanagement.user.User;
 import cz.muni.fi.pa165.seminar3.librarymanagement.user.UserService;
@@ -25,6 +27,8 @@ public class DataInitializer implements ApplicationRunner {
     private final ReservationService reservationService;
 
     private final BorrowingService borrowingService;
+
+    private final BookService bookService;
 
     public DataInitializer(UserService userService, ReservationService reservationService, BorrowingService borrowingService) {
         this.userService = userService;
@@ -64,5 +68,12 @@ public class DataInitializer implements ApplicationRunner {
                 .build();
 
         reservationService.create(reservation);
+        
+        Book book = Book.builder()
+                .title("Sloni žerou medvědy")
+                .author("John Wick")
+                .build();
+
+        bookService.create(book);
     }
 }
