@@ -5,6 +5,7 @@ import cz.muni.fi.pa165.seminar3.librarymanagement.borrowing.BorrowingService;
 import cz.muni.fi.pa165.seminar3.librarymanagement.reservation.Reservation;
 import cz.muni.fi.pa165.seminar3.librarymanagement.reservation.ReservationService;
 import cz.muni.fi.pa165.seminar3.librarymanagement.book_mngmnt.Author.Author;
+import cz.muni.fi.pa165.seminar3.librarymanagement.book_mngmnt.Author.AuthorService;
 import cz.muni.fi.pa165.seminar3.librarymanagement.book_mngmnt.Book.Book;
 import cz.muni.fi.pa165.seminar3.librarymanagement.book_mngmnt.Book.BookService;
 import cz.muni.fi.pa165.seminar3.librarymanagement.user.Address;
@@ -31,13 +32,15 @@ public class DataInitializer implements ApplicationRunner {
 
     private final BookService bookService;
 
-    public DataInitializer(UserService userService, ReservationService reservationService, BorrowingService borrowingService, BookService bookService) {
+    private final AuthorService authorService;
+
+    public DataInitializer(UserService userService, ReservationService reservationService, BorrowingService borrowingService, BookService bookService, AuthorService authorService) {
         this.userService = userService;
         this.reservationService = reservationService;
         this.borrowingService = borrowingService;
         this.bookService = bookService;
+        this.authorService = authorService;
     }
-
     @Override
     public void run(ApplicationArguments args) {
         User user = User.builder()
@@ -70,10 +73,16 @@ public class DataInitializer implements ApplicationRunner {
                 .build();
 
         reservationService.create(reservation);
+        Author author = Author.builder()
+                .name("John")
+                .surname("Wick")
+                .build();
+
+        authorService.create(author);
 
         Book book = Book.builder()
                 .title("Sloni žerou medvědy")
-                .author(Author.builder().name("John").surname("Wick").build())
+                .author(author)
                 .build();
 
         bookService.create(book);

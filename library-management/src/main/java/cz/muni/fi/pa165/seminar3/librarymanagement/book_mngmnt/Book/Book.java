@@ -2,8 +2,12 @@ package cz.muni.fi.pa165.seminar3.librarymanagement.book_mngmnt.Book;
 
 import cz.muni.fi.pa165.seminar3.librarymanagement.book_mngmnt.Author.Author;
 import cz.muni.fi.pa165.seminar3.librarymanagement.common.DomainObject;
-import jakarta.persistence.*;
-import lombok.*;
+import jakarta.persistence.Entity;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.List;
 
