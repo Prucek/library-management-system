@@ -3,7 +3,12 @@ package cz.muni.fi.pa165.seminar3.librarymanagement.book_mngmnt.Book;
 import cz.muni.fi.pa165.seminar3.librarymanagement.book_mngmnt.Author.Author;
 import cz.muni.fi.pa165.seminar3.librarymanagement.common.DomainObject;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.JoinColumn;
 import lombok.AllArgsConstructor;
+import lombok.Singular;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,14 +23,15 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 //@Table(name = "domain_book")
-public class Book extends DomainObject {
+public class Book extends DomainObject{
 
     private String title;
-
-//    TODO: Array
-//    @ElementCollection
-//    @CollectionTable(name = "book_authors", joinColumns = @JoinColumn(name = "book_id"), foreignKey = @ForeignKey(name = "book_authors_book_fk"))
-//    @Singular private List<Author> authors;
-
-    private Author author;
+    @Singular
+    @ManyToMany()
+//    @JoinTable(
+//            name = "written_by",
+//            joinColumns = @JoinColumn(name = "book_id"),
+//            inverseJoinColumns = @JoinColumn(name = "author_id")
+//    )
+    private List<Author> authors;
 }
