@@ -3,6 +3,7 @@ package cz.muni.fi.pa165.seminar3.librarymanagement.borrowing;
 import cz.muni.fi.pa165.seminar3.librarymanagement.common.ErrorMessage;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.borrowing.BorrowingDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.common.Result;
+import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.reservation.ReservationDto;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.info.Contact;
@@ -95,6 +96,50 @@ public class BorrowingController {
     @PostMapping
     public BorrowingDto create(@RequestBody BorrowingDto borrowing) {
         return mapper.toDto(service.create(mapper.fromDto(borrowing)));
+    }
+
+    /**
+     * REST method for updating borrowing.
+     * @param id Specifies borrowing to be updated
+     * @return Updated borrowing as a response for calling REST update method
+     */
+    @Operation(
+            summary = "Update existing borrowing",
+            description = """
+                    Provides update of existing borrowing".
+                    Returns updated borrowing" as its response.
+                    """,
+            responses = {
+                    @ApiResponse(responseCode = "201", ref = "#/components/responses/SingleReservationResponse"),
+                    @ApiResponse(responseCode = "400", description = "input data were not correct",
+                            content = @Content(schema = @Schema(implementation = ErrorMessage.class))
+                    ),
+            }
+    )
+    @PutMapping("/{id}")
+    public BorrowingDto update(@PathVariable String id) {
+        return mapper.toDto(service.create(service.find(id)));
+    }
+
+    /**
+     * REST method for deleting borrowing.
+     * @param id Specifies borrowing to be deleted
+     */
+    @Operation(
+            summary = "Delete existing borrowing",
+            description = """
+                    Enables deleting of existing borrowing.
+                    """,
+            responses = {
+                    @ApiResponse(responseCode = "201", ref = "#/components/responses/SingleReservationResponse"),
+                    @ApiResponse(responseCode = "400", description = "input data were not correct",
+                            content = @Content(schema = @Schema(implementation = ErrorMessage.class))
+                    ),
+            }
+    )
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable String id) {
+        service.delete(service.find(id));
     }
 
     /**

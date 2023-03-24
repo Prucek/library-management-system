@@ -98,6 +98,50 @@ public class ReservationController {
     }
 
     /**
+     * REST method for updating reservation.
+     * @param id Specifies reservation to be updated
+     * @return Updated reservation as a response for calling REST update method
+     */
+    @Operation(
+            summary = "Update existing reservation",
+            description = """
+                    Provides update of existing reservation.
+                    Returns updated reservation as its response.
+                    """,
+            responses = {
+                    @ApiResponse(responseCode = "201", ref = "#/components/responses/SingleReservationResponse"),
+                    @ApiResponse(responseCode = "400", description = "input data were not correct",
+                            content = @Content(schema = @Schema(implementation = ErrorMessage.class))
+                    ),
+            }
+    )
+    @PutMapping("/{id}")
+    public ReservationDto update(@PathVariable String id) {
+        return mapper.toDto(service.create(service.find(id)));
+    }
+
+    /**
+    * REST method for deleting reservation.
+    * @param id Specifies reservation to be deleted
+     */
+    @Operation(
+            summary = "Delete existing reservation",
+            description = """
+                    Enables deleting of existing reservation.
+                    """,
+            responses = {
+                    @ApiResponse(responseCode = "201", ref = "#/components/responses/SingleReservationResponse"),
+                    @ApiResponse(responseCode = "400", description = "input data were not correct",
+                            content = @Content(schema = @Schema(implementation = ErrorMessage.class))
+                    ),
+            }
+    )
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable String id) {
+        service.delete(service.find(id));
+    }
+
+    /**
      * REST method returning all reservations.
      * @param pageable Represents Page object of reservation which will be used for return value
      * @return Result object with all reservations
