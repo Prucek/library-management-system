@@ -8,7 +8,7 @@ import lombok.Setter;
 import java.util.List;
 /**
  * DTO for a book. Data Transfer Object that is stable for API,
- * independent of internal User class.
+ * independent of internal Book class.
  */
 @Getter
 @Setter

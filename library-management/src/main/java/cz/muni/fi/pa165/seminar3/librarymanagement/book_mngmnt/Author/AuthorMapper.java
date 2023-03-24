@@ -5,6 +5,9 @@ import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.book_mngmnt.Author.
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.book_mngmnt.Author.AuthorDto;
 import org.mapstruct.Mapper;
 
+/**
+ * Mapper mapping Author DTOs to Author
+ */
 @Mapper
 public interface AuthorMapper extends DomainMapper<Author, AuthorDto> {
     Author fromCreateDto(AuthorCreateDto dto);

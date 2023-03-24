@@ -14,6 +14,9 @@ import lombok.Setter;
 
 import java.util.List;
 
+/**
+ * Author entity class storing attributes for every author
+ */
 @Getter
 @Setter
 @Builder

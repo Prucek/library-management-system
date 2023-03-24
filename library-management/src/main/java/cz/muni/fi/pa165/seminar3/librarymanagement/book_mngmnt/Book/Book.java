@@ -16,6 +16,9 @@ import lombok.Setter;
 
 import java.util.List;
 
+/**
+ * Book entity class storing attributes for every book
+ */
 @Getter
 @Setter
 @Entity

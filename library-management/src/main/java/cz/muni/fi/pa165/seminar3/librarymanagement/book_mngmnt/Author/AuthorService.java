@@ -7,6 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * Author service providing access to Author repository
+ */
 @Service
 public class AuthorService extends DomainService<Author> {
 
