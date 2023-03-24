@@ -17,6 +17,11 @@ public abstract class DomainService<T extends DomainObject> {
         return getRepository().save(entity);
     }
 
+    @Transactional
+    public void delete(T entity) {
+        getRepository().deleteById(entity.getId());
+    }
+
     @Transactional(readOnly = true)
     public Page<T> findAll(Pageable pageable) {
         return getRepository().findAll(pageable);
