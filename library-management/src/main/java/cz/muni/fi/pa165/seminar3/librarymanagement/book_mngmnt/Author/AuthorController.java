@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -30,6 +32,11 @@ public class AuthorController {
         return mapper.toDto(service.find(id));
     }
 
+    @GetMapping
+    public Result<AuthorDto> findAll(@RequestParam(defaultValue = "0") int page){
+        return mapper.toResult(service.findAll(page));
+    }
+
     @PostMapping(
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
@@ -37,8 +44,13 @@ public class AuthorController {
         return mapper.toDto(service.create(mapper.fromCreateDto(dto)));
     }
 
-    @GetMapping
-    public Result<AuthorDto> findAll(@RequestParam(defaultValue = "0") int page){
-        return mapper.toResult(service.findAll(page));
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable String id){
+        service.delete(service.find(id));
+    }
+
+    @PutMapping("/{id}")
+    public AuthorDto update(@PathVariable String id) {
+        return mapper.toDto(service.create(service.find(id)));
     }
 }
