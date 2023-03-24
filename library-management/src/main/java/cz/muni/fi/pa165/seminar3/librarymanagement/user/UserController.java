@@ -77,12 +77,13 @@ public class UserController {
     )
     @GetMapping("/{id}")
     public UserDto find(@PathVariable String id) {
-        User user = service.find(id);
-        if (user != null){
-            return mapper.toDto(user);
-        } else {
+        User user;
+        try {
+            user = service.find(id);
+        } catch (EntityNotFoundException e){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "user with id=" + id + " not found");
         }
+        return mapper.toDto(user);
     }
 
     /**
