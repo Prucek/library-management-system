@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.UUID;
 
 
 @Component
@@ -34,6 +35,7 @@ public class DataInitializer implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) {
         User user = User.builder()
+                .id(UUID.randomUUID().toString())
                 .email("test@email.com")
                 .firstName("John")
                 .lastName("Doe")
@@ -46,15 +48,19 @@ public class DataInitializer implements ApplicationRunner {
         userService.create(user);
 
         Borrowing borrowing = Borrowing.builder()
+                .id(UUID.randomUUID().toString())
                 .from(LocalDateTime.now())
                 .to(LocalDateTime.now().plus(5, ChronoUnit.DAYS))
+                .user(user)
                 .build();
 
         borrowingService.create(borrowing);
 
         Reservation reservation = Reservation.builder()
+                .id(UUID.randomUUID().toString())
                 .from(LocalDateTime.now())
                 .to(LocalDateTime.now().plus(10, ChronoUnit.DAYS))
+                .user(user)
                 .build();
 
         reservationService.create(reservation);
