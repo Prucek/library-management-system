@@ -4,6 +4,7 @@ import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.book_mngmnt.Author.
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.book_mngmnt.Author.AuthorDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.common.Result;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -29,7 +30,9 @@ public class AuthorController {
         return mapper.toDto(service.find(id));
     }
 
-    @PostMapping
+    @PostMapping(
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
     public AuthorDto create(@RequestBody AuthorCreateDto dto){
         return mapper.toDto(service.create(mapper.fromCreateDto(dto)));
     }
