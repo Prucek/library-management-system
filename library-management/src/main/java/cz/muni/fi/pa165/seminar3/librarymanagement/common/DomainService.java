@@ -32,4 +32,3 @@ public abstract class DomainService<T extends DomainObject> {
         return getRepository().findAll(PageRequest.of(page, DEFAULT_PAGE_SIZE));
     }
 }
-

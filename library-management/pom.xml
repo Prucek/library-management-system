@@ -7,9 +7,7 @@
         <artifactId>library-management-system</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
-
     <artifactId>library-management</artifactId>
-
     <name>library-management</name>
     <description>library-management</description>
 
@@ -21,13 +19,18 @@
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
 
         <dependency>
             <groupId>org.mapstruct</groupId>
             <artifactId>mapstruct</artifactId>
-            <version>1.5.3.Final</version>
         </dependency>
 
         <dependency>
@@ -42,14 +45,8 @@
         </dependency>
 
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>io.swagger.core.v3</groupId>
             <artifactId>swagger-annotations</artifactId>
-            <version>2.2.8</version>
         </dependency>
     </dependencies>
 

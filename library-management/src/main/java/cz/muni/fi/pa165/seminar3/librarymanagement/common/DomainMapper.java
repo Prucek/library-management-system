@@ -24,4 +24,3 @@ public interface DomainMapper<T extends DomainObject, S extends DomainObjectDto>
     })
     Result<S> toResult(Page<T> source);
 }
-

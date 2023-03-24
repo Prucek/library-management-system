@@ -17,5 +17,6 @@ public record ErrorMessage(
         String error,
         @Schema(description = "reason for error", example = "entity not found")
         String message,
-        @Schema(description = "URL path", example = "/borrowings/1")
-        String path){}
+        @Schema(description = "URL path", example = "/users/1")
+        String path) {
+}
