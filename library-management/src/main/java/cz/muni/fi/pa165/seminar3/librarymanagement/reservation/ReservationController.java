@@ -10,10 +10,12 @@ import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 /**
  * Spring REST Controller for reservation service.
@@ -62,9 +64,14 @@ public class ReservationController {
             }
     )
     @GetMapping("/{id}")
-    public ResponseEntity<ReservationDto> find(@PathVariable String id) {
-
-        return ResponseEntity.ok(mapper.toDto(service.find(id)));
+    public ReservationDto find(@PathVariable String id) {
+        Reservation reservation;
+        try {
+            reservation = service.find(id);
+        } catch (EntityNotFoundException e){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "reservation with id=" + id + " not found");
+        }
+        return mapper.toDto(reservation);
     }
 
     /**
