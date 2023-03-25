@@ -20,7 +20,7 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @Entity
 public class BookInstance extends DomainObject {
-    private String ISBN;
+    private Integer pages;
 //    Note: Asi nepotrebne jelikoz instance jsou navazany primo v jednotlivych knihach
 //    @ManyToOne()
 //    private Book bookReference;

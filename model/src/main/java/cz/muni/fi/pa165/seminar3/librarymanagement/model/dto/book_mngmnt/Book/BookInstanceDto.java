@@ -11,7 +11,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class BookInstanceDto extends DomainObjectDto {
-    String ISBN;
+    Integer pages;
     //    Note: Asi nepotrebne jelikoz instance jsou navazany primo v jednotlivych knihach
 //    private BookDto bookReference;
 }
