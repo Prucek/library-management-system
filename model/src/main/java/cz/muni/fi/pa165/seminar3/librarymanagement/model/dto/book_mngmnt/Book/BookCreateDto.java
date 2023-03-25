@@ -16,4 +16,5 @@ import java.util.List;
 public class BookCreateDto extends DomainObjectDto {
     private String title;
     private List<AuthorDto> authors;
+    private List<BookInstanceDto> instances;
 }

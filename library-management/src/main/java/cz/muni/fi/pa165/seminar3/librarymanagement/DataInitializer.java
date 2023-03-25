@@ -1,5 +1,6 @@
 package cz.muni.fi.pa165.seminar3.librarymanagement;
 
+import cz.muni.fi.pa165.seminar3.librarymanagement.book_mngmnt.BookInstance.BookInstance;
 import cz.muni.fi.pa165.seminar3.librarymanagement.borrowing.Borrowing;
 import cz.muni.fi.pa165.seminar3.librarymanagement.borrowing.BorrowingService;
 import cz.muni.fi.pa165.seminar3.librarymanagement.reservation.Reservation;
@@ -91,6 +92,8 @@ public class DataInitializer implements ApplicationRunner {
                 .title("Sloni žerou medvědy")
                 .author(author)
                 .author(author2)
+                .instance(BookInstance.builder().ISBN("111-222-333").build())
+                .instance(BookInstance.builder().ISBN("888-999-245").build())
                 .build();
 
         bookService.create(book);

@@ -1,12 +1,15 @@
 package cz.muni.fi.pa165.seminar3.librarymanagement.book_mngmnt.Book;
 
 import cz.muni.fi.pa165.seminar3.librarymanagement.book_mngmnt.Author.Author;
+import cz.muni.fi.pa165.seminar3.librarymanagement.book_mngmnt.BookInstance.BookInstance;
 import cz.muni.fi.pa165.seminar3.librarymanagement.common.DomainObject;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.CascadeType;
 import lombok.AllArgsConstructor;
 import lombok.Singular;
 import lombok.Builder;
@@ -37,4 +40,8 @@ public class Book extends DomainObject{
 //            inverseJoinColumns = @JoinColumn(name = "author_id")
 //    )
     private List<Author> authors;
+
+    @Singular
+    @OneToMany(cascade= CascadeType.ALL)
+    private List<BookInstance> instances;
 }
