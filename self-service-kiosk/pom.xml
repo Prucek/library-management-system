@@ -28,6 +28,14 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>cz.muni.fi.pa165.seminar3</groupId>
+            <artifactId>model</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>cz.muni.fi.pa165.seminar3</groupId>
+            <artifactId>library-management</artifactId>
+        </dependency>
 
     </dependencies>
 
