@@ -1,7 +1,6 @@
 package cz.muni.fi.pa165.seminar3.librarymanagement.book_mngmnt.Author;
 
 import cz.muni.fi.pa165.seminar3.librarymanagement.common.ErrorMessage;
-import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.book_mngmnt.Author.AuthorCreateDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.book_mngmnt.Author.AuthorDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.common.Result;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
@@ -105,8 +104,8 @@ public class AuthorController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public AuthorDto create(@RequestBody AuthorCreateDto dto){
-        return mapper.toDto(service.create(mapper.fromCreateDto(dto)));
+    public AuthorDto create(@RequestBody AuthorDto dto){
+        return mapper.toDto(service.create(mapper.fromDto(dto)));
     }
 
     /**

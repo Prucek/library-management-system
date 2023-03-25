@@ -5,7 +5,6 @@ import cz.muni.fi.pa165.seminar3.librarymanagement.book_mngmnt.Author.Author;
 import cz.muni.fi.pa165.seminar3.librarymanagement.book_mngmnt.Author.AuthorService;
 import cz.muni.fi.pa165.seminar3.librarymanagement.common.ErrorMessage;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.book_mngmnt.Author.AuthorDto;
-import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.book_mngmnt.Book.BookCreateDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.book_mngmnt.Book.BookDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.common.Result;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
@@ -119,7 +118,7 @@ public class BookController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     @ResponseStatus(HttpStatus.CREATED)
-    public BookDto create(@RequestBody BookCreateDto dto){
+    public BookDto create(@RequestBody BookDto dto){
         List<Author> authors = new ArrayList<>();
         for ( AuthorDto authorDto : dto.getAuthors()) {
             Optional<Author> x = authorService.getRepository().findById(authorDto.getId());
@@ -127,7 +126,7 @@ public class BookController {
 //            Todo: find by name
         }
         dto.setAuthors(new ArrayList<>());
-        Book newBook = mapper.fromCreateDto(dto);
+        Book newBook = mapper.fromDto(dto);
         newBook.setAuthors(authors);
         return mapper.toDto(service.create(newBook));
     }
