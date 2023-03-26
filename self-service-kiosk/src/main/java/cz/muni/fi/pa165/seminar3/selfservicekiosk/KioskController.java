@@ -1,8 +1,5 @@
 package cz.muni.fi.pa165.seminar3.selfservicekiosk;
 
-import cz.muni.fi.pa165.seminar3.librarymanagement.book_mngmnt.Author.AuthorService;
-import cz.muni.fi.pa165.seminar3.librarymanagement.book_mngmnt.Book.BookService;
-import cz.muni.fi.pa165.seminar3.librarymanagement.book_mngmnt.BookInstance.BookInstance;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.book_mngmnt.Book.BookInstanceDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.borrowing.BorrowingDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.kiosk.KioskBorrowDto;
@@ -19,9 +16,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Objects;
+import java.util.UUID;
 
 /**
  * REST API for actions around kiosk.
@@ -37,15 +37,9 @@ import java.time.temporal.ChronoUnit;
 @RequestMapping("/kiosk")
 public class KioskController {
 
-//    For later
-//    private final AuthorService authroService;
-//    private final BookService bookService;
-//
-//    public KioskController(AuthorService authroService, BookService bookService) {
-//        this.authroService = authroService;
-//        this.bookService = bookService;
-//    }
-
+//    Example dummy data for testing:
+    String exampleBookInstanceId = "123";
+    String exampleUserId = "456";
 
     /**
      * User can borrow a book at kiosk
@@ -54,18 +48,24 @@ public class KioskController {
             summary = "Borrow a book at kiosk",
             description = "New borrowing is made based on incoming BookInstanceId and USerId data",
             responses = {
-                    @ApiResponse(responseCode = "202", ref = "#/components/responses/KioskBorrowResponse")
-//                    Todo: response
-//                    @ApiResponse(responseCode = "400", description = "input data were not correct"),
+                    @ApiResponse(responseCode = "202", ref = "#/components/responses/KioskBorrowResponse"),
+                    @ApiResponse(responseCode = "404", description = "input data were not correct")
             }
     )
     @PostMapping("/borrow")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public BorrowingDto borrow(@RequestBody KioskBorrowDto dto){
-        BorrowingDto newBorrowing = new BorrowingDto();
+        if(!Objects.equals(dto.getBookInstanceId(), exampleBookInstanceId)){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Book instance with id: " + dto.getBookInstanceId() + "not found");
+        }
+        if (!Objects.equals(dto.getUserId(), exampleUserId)){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User with id: " + dto.getUserId() + "not found");
+        }
 //      Todo:  Find book instance by its id
 //      Todo:  Find user by its id
 
+        BorrowingDto newBorrowing = new BorrowingDto();
+        newBorrowing.setId(UUID.randomUUID().toString());
         newBorrowing.setBookInstance(new BookInstanceDto());
         newBorrowing.setUser(new UserDto());
         newBorrowing.setFrom(LocalDateTime.now());
@@ -80,17 +80,20 @@ public class KioskController {
             summary = "Return a book at kiosk",
             description = "Returning is made based on incoming BookInstanceId data",
             responses = {
-                    @ApiResponse(responseCode = "202", ref = "#/components/responses/KioskReturnResponse")
-//                    Todo: response
-//                    @ApiResponse(responseCode = "400", description = "input data were not correct"),
+                    @ApiResponse(responseCode = "202", ref = "#/components/responses/KioskReturnResponse"),
+                    @ApiResponse(responseCode = "404", description = "input data were not correct")
             }
     )
     @PostMapping("/return")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public BorrowingDto return_book(@RequestBody KioskReturnDto dto){
-        BorrowingDto newBorrowing = new BorrowingDto();
+        if(!Objects.equals(dto.getBookInstanceId(), exampleBookInstanceId)){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Book instance with id: " + dto.getBookInstanceId() + "not found");
+        }
 //      Todo:  Find book instance by its id
 
+        BorrowingDto newBorrowing = new BorrowingDto();
+        newBorrowing.setId(UUID.randomUUID().toString());
         newBorrowing.setBookInstance(new BookInstanceDto());
         newBorrowing.setUser(new UserDto());
         newBorrowing.setFrom(LocalDateTime.now());
