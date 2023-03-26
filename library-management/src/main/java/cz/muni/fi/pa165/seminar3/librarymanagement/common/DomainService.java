@@ -1,5 +1,6 @@
 package cz.muni.fi.pa165.seminar3.librarymanagement.common;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -18,8 +19,19 @@ public abstract class DomainService<T extends DomainObject> {
     }
 
     @Transactional
+    public T update(T entity) {
+        return getRepository().save(entity);
+    }
+
+    @Transactional
     public void delete(T entity) {
         getRepository().deleteById(entity.getId());
+    }
+
+    @Transactional(readOnly = true)
+    public T find(String id) {
+        return getRepository().findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(String.format("ID %s not found", id)));
     }
 
     @Transactional(readOnly = true)

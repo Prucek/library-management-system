@@ -5,10 +5,10 @@ import cz.muni.fi.pa165.seminar3.librarymanagement.common.DomainObject;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToMany;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 import java.util.List;
 
@@ -17,7 +17,7 @@ import java.util.List;
  */
 @Getter
 @Setter
-@Builder
+@SuperBuilder
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
@@ -26,7 +26,7 @@ import java.util.List;
 public class Author extends DomainObject {
     private String name;
     private String surname;
-//    @ManyToMany(mappedBy = "written_by")
+    //    @ManyToMany(mappedBy = "written_by")
     @ManyToMany()
     private List<Book> publications;
 }

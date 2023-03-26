@@ -1,8 +1,8 @@
-package cz.muni.fi.pa165.seminar3.paymentgate.payment;
+package cz.muni.fi.pa165.seminar3.paymentgate.transaction;
 
-import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.payment.CardDto;
-import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.payment.PaymentDto;
-import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.payment.PaymentStatus;
+import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.paymentgate.CardDto;
+import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.paymentgate.TransactionDto;
+import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.paymentgate.TransactionStatus;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.http.HttpStatus;
 import io.swagger.v3.oas.annotations.Operation;
@@ -13,11 +13,11 @@ import java.util.Objects;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/payment")
-public class PaymentController {
+@RequestMapping("/transactions")
+public class TransactionController {
 
     // singleton
-    private PaymentDto paymentDto = null;
+    private TransactionDto transactionDto = null;
 
     /**
      * Method creating payment => adding ID
@@ -31,8 +31,8 @@ public class PaymentController {
     )
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public PaymentDto create(@RequestBody PaymentDto dto) {
-        paymentDto = dto;
+    public TransactionDto create(@RequestBody TransactionDto dto) {
+        transactionDto = dto;
         dto.setId(UUID.randomUUID().toString());
         dto.setCallbackURL("/payment/" + dto.getId());
         return dto;
@@ -49,9 +49,9 @@ public class PaymentController {
             }
     )
     @GetMapping("/{id}")
-    public PaymentDto find(@PathVariable String id) {
-        if (Objects.equals(paymentDto.getId(), id)){
-            return paymentDto;
+    public TransactionDto find(@PathVariable String id) {
+        if (Objects.equals(transactionDto.getId(), id)){
+            return transactionDto;
         } else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "payment with id=" + id + " not found");
         }
@@ -68,16 +68,16 @@ public class PaymentController {
             }
     )
     @PostMapping("/{id}")
-    public PaymentDto pay(@PathVariable String id, @RequestBody CardDto cardDto) {
-        if (!Objects.equals(paymentDto.getId(), id)) {
+    public TransactionDto pay(@PathVariable String id, @RequestBody CardDto cardDto) {
+        if (!Objects.equals(transactionDto.getId(), id)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "payment with id=" + id + " not found");
         }
 
         if (cardDto.getCardNumber() != null && cardDto.getExpiration() != null && cardDto.getCvv2() != null){
-            paymentDto.setStatus(PaymentStatus.APPROVED);
+            transactionDto.setStatus(TransactionStatus.APPROVED);
         } else {
-            paymentDto.setStatus(PaymentStatus.DECLINED);
+            transactionDto.setStatus(TransactionStatus.DECLINED);
         }
-        return paymentDto;
+        return transactionDto;
     }
 }

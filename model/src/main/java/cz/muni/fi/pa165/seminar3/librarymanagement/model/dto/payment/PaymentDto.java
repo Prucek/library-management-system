@@ -1,28 +1,30 @@
 package cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.payment;
 
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.common.DomainObjectDto;
+import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.fine.FineDto;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
-/**
- * DTO for a payment. Data Transfer Object that is stable for API.
- */
+import java.util.List;
+
 @Getter
 @Setter
+@SuperBuilder
+@NoArgsConstructor
+@AllArgsConstructor
 public class PaymentDto extends DomainObjectDto {
-    private double amount;
-    private PaymentStatus status = PaymentStatus.WAITING;
-    private String callbackURL;
 
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == this)
-            return true;
-        if (!(obj instanceof PaymentDto))
-            return false;
-        PaymentDto paymentDto = (PaymentDto) obj;
-        return paymentDto.getAmount() == this.getAmount()
-                && paymentDto.getStatus() == this.getStatus()
-                && paymentDto.getCallbackURL() == this.getCallbackURL();
-    }
+    @NotBlank
+    private String transactionId;
+
+    @NotNull
+    private PaymentStatus status;
+
+    @NotNull
+    private List<FineDto> paidFines;
 }
