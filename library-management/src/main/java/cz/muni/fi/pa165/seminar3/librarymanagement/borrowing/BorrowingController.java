@@ -3,7 +3,6 @@ package cz.muni.fi.pa165.seminar3.librarymanagement.borrowing;
 import cz.muni.fi.pa165.seminar3.librarymanagement.common.ErrorMessage;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.borrowing.BorrowingDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.common.Result;
-import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.reservation.ReservationDto;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.info.Contact;
