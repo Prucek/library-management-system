@@ -1,4 +1,4 @@
-package cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.book_mngmnt.Author;
+package cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.author;
 
 
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.common.DomainObjectDto;

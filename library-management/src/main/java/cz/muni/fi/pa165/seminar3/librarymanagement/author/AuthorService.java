@@ -1,4 +1,4 @@
-package cz.muni.fi.pa165.seminar3.librarymanagement.book_mngmnt.Author;
+package cz.muni.fi.pa165.seminar3.librarymanagement.author;
 
 import cz.muni.fi.pa165.seminar3.librarymanagement.common.DomainService;
 import jakarta.persistence.EntityNotFoundException;

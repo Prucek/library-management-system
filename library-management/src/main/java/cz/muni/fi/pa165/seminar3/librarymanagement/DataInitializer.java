@@ -1,14 +1,14 @@
 package cz.muni.fi.pa165.seminar3.librarymanagement;
 
-import cz.muni.fi.pa165.seminar3.librarymanagement.book_mngmnt.BookInstance.BookInstance;
+import cz.muni.fi.pa165.seminar3.librarymanagement.book.BookInstance;
 import cz.muni.fi.pa165.seminar3.librarymanagement.borrowing.Borrowing;
 import cz.muni.fi.pa165.seminar3.librarymanagement.borrowing.BorrowingService;
 import cz.muni.fi.pa165.seminar3.librarymanagement.reservation.Reservation;
 import cz.muni.fi.pa165.seminar3.librarymanagement.reservation.ReservationService;
-import cz.muni.fi.pa165.seminar3.librarymanagement.book_mngmnt.Author.Author;
-import cz.muni.fi.pa165.seminar3.librarymanagement.book_mngmnt.Author.AuthorService;
-import cz.muni.fi.pa165.seminar3.librarymanagement.book_mngmnt.Book.Book;
-import cz.muni.fi.pa165.seminar3.librarymanagement.book_mngmnt.Book.BookService;
+import cz.muni.fi.pa165.seminar3.librarymanagement.author.Author;
+import cz.muni.fi.pa165.seminar3.librarymanagement.author.AuthorService;
+import cz.muni.fi.pa165.seminar3.librarymanagement.book.Book;
+import cz.muni.fi.pa165.seminar3.librarymanagement.book.BookService;
 import cz.muni.fi.pa165.seminar3.librarymanagement.user.Address;
 import cz.muni.fi.pa165.seminar3.librarymanagement.user.User;
 import cz.muni.fi.pa165.seminar3.librarymanagement.user.UserService;
@@ -92,8 +92,8 @@ public class DataInitializer implements ApplicationRunner {
                 .title("Sloni žerou medvědy")
                 .author(author)
                 .author(author2)
-                .instance(BookInstance.builder().pages(198).build())
-                .instance(BookInstance.builder().pages(203).build())
+                .instance(BookInstance.builder().build())
+                .instance(BookInstance.builder().build())
                 .build();
 
         bookService.create(book);

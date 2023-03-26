@@ -1,7 +1,7 @@
-package cz.muni.fi.pa165.seminar3.librarymanagement.book_mngmnt.Author;
+package cz.muni.fi.pa165.seminar3.librarymanagement.author;
 
 import cz.muni.fi.pa165.seminar3.librarymanagement.common.ErrorMessage;
-import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.book_mngmnt.Author.AuthorDto;
+import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.author.AuthorDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.common.Result;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;

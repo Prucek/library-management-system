@@ -1,11 +1,12 @@
-package cz.muni.fi.pa165.seminar3.librarymanagement.book_mngmnt.Book;
+package cz.muni.fi.pa165.seminar3.librarymanagement.book;
 
 
-import cz.muni.fi.pa165.seminar3.librarymanagement.book_mngmnt.Author.Author;
-import cz.muni.fi.pa165.seminar3.librarymanagement.book_mngmnt.Author.AuthorService;
+import cz.muni.fi.pa165.seminar3.librarymanagement.author.Author;
+import cz.muni.fi.pa165.seminar3.librarymanagement.author.AuthorService;
 import cz.muni.fi.pa165.seminar3.librarymanagement.common.ErrorMessage;
-import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.book_mngmnt.Author.AuthorDto;
-import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.book_mngmnt.Book.BookDto;
+import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.author.AuthorDto;
+import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.book.BookDto;
+import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.book.BookInstanceDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.common.Result;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
@@ -53,11 +54,17 @@ public class BookController {
     private final AuthorService authorService;
     private final BookMapper mapper;
 
+    private final BookInstanceMapper instanceMapper;
+
     @Autowired
-    public BookController(BookService service, BookMapper mapper, AuthorService authorService) {
+    public BookController(BookService service,
+                          BookMapper mapper,
+                          AuthorService authorService,
+                          BookInstanceMapper instanceMapper) {
         this.service = service;
         this.mapper = mapper;
         this.authorService = authorService;
+        this.instanceMapper = instanceMapper;
     }
 
     /**
@@ -73,11 +80,11 @@ public class BookController {
             }
     )
     @GetMapping("/{id}")
-    public BookDto find(@PathVariable String id){
+    public BookDto find(@PathVariable String id) {
         Book book;
         try {
             book = service.find(id);
-        }catch (EntityNotFoundException e){
+        } catch (EntityNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "book with id=" + id + " not found");
         }
         return mapper.toDto(book);
@@ -92,7 +99,7 @@ public class BookController {
                     Returns all books with authors as JSON
                     """)
     @GetMapping
-    public Result<BookDto> findAll(@RequestParam(defaultValue = "0") int page){
+    public Result<BookDto> findAll(@RequestParam(defaultValue = "0") int page) {
         return mapper.toResult(service.findAll(page));
     }
 
@@ -118,9 +125,9 @@ public class BookController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     @ResponseStatus(HttpStatus.CREATED)
-    public BookDto create(@RequestBody BookDto dto){
+    public BookDto create(@RequestBody BookDto dto) {
         List<Author> authors = new ArrayList<>();
-        for ( AuthorDto authorDto : dto.getAuthors()) {
+        for (AuthorDto authorDto : dto.getAuthors()) {
             Optional<Author> x = authorService.getRepository().findById(authorDto.getId());
             x.ifPresent(authors::add);
 //            Todo: find by name
@@ -138,7 +145,7 @@ public class BookController {
             summary = "Delete book by its ID"
     )
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable String id){
+    public void delete(@PathVariable String id) {
         service.delete(service.find(id));
     }
 
@@ -151,5 +158,30 @@ public class BookController {
     @PutMapping("/{id}")
     public BookDto update(@PathVariable String id) {
         return mapper.toDto(service.create(service.find(id)));
+    }
+
+    @Operation(summary = "Add book instance")
+    @ApiResponse(responseCode = "200", description = "Book instance added", useReturnTypeSchema = true)
+    @ApiResponse(responseCode = "404", description = "Book not found", useReturnTypeSchema = true)
+    @PostMapping("/{bookId}/instances")
+    public BookInstanceDto addInstance(@PathVariable String bookId) {
+        try {
+            return instanceMapper.toDto(service.addInstance(bookId));
+        } catch (EntityNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.toString());
+        }
+    }
+
+    @Operation(summary = "Remove book instance")
+    @ApiResponse(responseCode = "200", description = "Book instance added", useReturnTypeSchema = true)
+    @ApiResponse(responseCode = "404", description = "Book or book instance not found", useReturnTypeSchema = true)
+    @DeleteMapping("/{bookId}/instances/{id}")
+    public void addInstance(@PathVariable String bookId,
+                            @PathVariable String id) {
+        try {
+            service.removeInstance(service.getInstance(id));
+        } catch (EntityNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.toString());
+        }
     }
 }

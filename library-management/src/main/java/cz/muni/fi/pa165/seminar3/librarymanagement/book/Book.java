@@ -1,14 +1,10 @@
-package cz.muni.fi.pa165.seminar3.librarymanagement.book_mngmnt.Book;
+package cz.muni.fi.pa165.seminar3.librarymanagement.book;
 
-import cz.muni.fi.pa165.seminar3.librarymanagement.book_mngmnt.Author.Author;
-import cz.muni.fi.pa165.seminar3.librarymanagement.book_mngmnt.BookInstance.BookInstance;
+import cz.muni.fi.pa165.seminar3.librarymanagement.author.Author;
 import cz.muni.fi.pa165.seminar3.librarymanagement.common.DomainObject;
 import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.JoinColumn;
 import jakarta.persistence.CascadeType;
 import lombok.AllArgsConstructor;
 import lombok.Singular;

@@ -1,6 +1,6 @@
-package cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.book_mngmnt.Book;
+package cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.book;
 
-import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.book_mngmnt.Author.AuthorDto;
+import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.author.AuthorDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.common.DomainObjectDto;
 import lombok.Getter;
 import lombok.Setter;

@@ -1,7 +1,7 @@
-package cz.muni.fi.pa165.seminar3.librarymanagement.book_mngmnt.Author;
+package cz.muni.fi.pa165.seminar3.librarymanagement.author;
 
 import cz.muni.fi.pa165.seminar3.librarymanagement.common.DomainMapper;
-import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.book_mngmnt.Author.AuthorDto;
+import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.author.AuthorDto;
 import org.mapstruct.Mapper;
 
 /**

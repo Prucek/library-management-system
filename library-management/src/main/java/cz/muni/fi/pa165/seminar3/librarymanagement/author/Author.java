@@ -1,11 +1,9 @@
-package cz.muni.fi.pa165.seminar3.librarymanagement.book_mngmnt.Author;
+package cz.muni.fi.pa165.seminar3.librarymanagement.author;
 
-import cz.muni.fi.pa165.seminar3.librarymanagement.book_mngmnt.Book.Book;
+import cz.muni.fi.pa165.seminar3.librarymanagement.book.Book;
 import cz.muni.fi.pa165.seminar3.librarymanagement.common.DomainObject;
-import jakarta.persistence.Embeddable;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToMany;
-import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

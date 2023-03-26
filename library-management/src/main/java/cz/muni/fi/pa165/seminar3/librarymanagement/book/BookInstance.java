@@ -1,9 +1,6 @@
-package cz.muni.fi.pa165.seminar3.librarymanagement.book_mngmnt.BookInstance;
+package cz.muni.fi.pa165.seminar3.librarymanagement.book;
 
-import cz.muni.fi.pa165.seminar3.librarymanagement.book_mngmnt.Book.Book;
 import cz.muni.fi.pa165.seminar3.librarymanagement.common.DomainObject;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Embeddable;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
@@ -20,8 +17,7 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @Entity
 public class BookInstance extends DomainObject {
-    private Integer pages;
-//    Note: Asi nepotrebne jelikoz instance jsou navazany primo v jednotlivych knihach
-//    @ManyToOne()
-//    private Book bookReference;
+
+    @ManyToOne()
+    private Book book;
 }
