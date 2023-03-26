@@ -128,8 +128,11 @@ public class BookController {
     public BookDto create(@RequestBody BookDto dto) {
         List<Author> authors = new ArrayList<>();
         for (AuthorDto authorDto : dto.getAuthors()) {
-            Optional<Author> x = authorService.getRepository().findById(authorDto.getId());
-            x.ifPresent(authors::add);
+            Author x;
+            try {
+                x = authorService.find(authorDto.getId());
+            } catch (EntityNotFoundException e){continue;}
+            authors.add(x);
 //            Todo: find by name
         }
         dto.setAuthors(new ArrayList<>());
