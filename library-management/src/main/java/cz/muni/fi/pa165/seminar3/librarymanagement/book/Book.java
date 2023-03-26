@@ -2,16 +2,12 @@ package cz.muni.fi.pa165.seminar3.librarymanagement.book;
 
 import cz.muni.fi.pa165.seminar3.librarymanagement.author.Author;
 import cz.muni.fi.pa165.seminar3.librarymanagement.common.DomainObject;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.CascadeType;
-import lombok.AllArgsConstructor;
-import lombok.Singular;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.util.List;
 
@@ -21,11 +17,11 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
-@Builder
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
 //@Table(name = "domain_book")
-public class Book extends DomainObject{
+public class Book extends DomainObject {
 
     private String title;
     @Singular
@@ -38,6 +34,6 @@ public class Book extends DomainObject{
     private List<Author> authors;
 
     @Singular
-    @OneToMany(cascade= CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL)
     private List<BookInstance> instances;
 }

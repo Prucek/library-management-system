@@ -1,6 +1,8 @@
 package cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.kiosk;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Objects;
@@ -10,6 +12,8 @@ import java.util.Objects;
  */
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class KioskBorrowDto {
     private String userId;
     private String bookInstanceId;

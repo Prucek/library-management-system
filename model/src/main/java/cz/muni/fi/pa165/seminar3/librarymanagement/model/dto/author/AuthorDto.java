@@ -2,8 +2,11 @@ package cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.author;
 
 
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.common.DomainObjectDto;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 import java.util.Objects;
 
@@ -13,6 +16,9 @@ import java.util.Objects;
  */
 @Getter
 @Setter
+@SuperBuilder
+@NoArgsConstructor
+@AllArgsConstructor
 public class AuthorDto extends DomainObjectDto {
     private String name;
     private String surname;
