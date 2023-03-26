@@ -1,6 +1,8 @@
 package cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.borrowing;
 
+import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.book_mngmnt.Book.BookInstanceDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.common.DomainObjectDto;
+import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.user.UserDto;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -18,9 +20,9 @@ public class BorrowingDto extends DomainObjectDto {
 
     private LocalDateTime to;
 
-//      private BookInstanceDto bookInstance;
-//
-//      private UserDto user;
+    private BookInstanceDto bookInstance;
+
+    private UserDto user;
 //
 //      private FineDto fine
 }
