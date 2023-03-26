@@ -24,6 +24,13 @@ books without having an account.
 - Marek Miček
 - Peter Rúček
 
+## Executable Modules
+
+- library-management
+- payment-gate
+- reporting
+- self-service-kiosk
+
 ## Use Case Diagram
 
 ![Use Case Diagram](./UseCaseDiagram.png)
