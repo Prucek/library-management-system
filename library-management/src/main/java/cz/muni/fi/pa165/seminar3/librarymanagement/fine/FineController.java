@@ -73,7 +73,7 @@ public class FineController {
     @ApiResponse(responseCode = "400", description = "Invalid paging",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
     @GetMapping
-    public Result<FineDto> findAll(@RequestParam(defaultValue = "") Pageable pageable) {
+    public Result<FineDto> findAll(Pageable pageable) {
         return fineMapper.toResult(fineService.findAll(pageable));
     }
 
