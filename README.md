@@ -27,3 +27,7 @@ books without having an account.
 ## Use Case Diagram
 
 ![Use Case Diagram](./UseCaseDiagram.png)
+
+## DTO Class Diagram
+
+![DTO Class Diagram](./DtoClassDiagram.png)
