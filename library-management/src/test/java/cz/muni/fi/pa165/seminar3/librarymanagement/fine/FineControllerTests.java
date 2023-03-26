@@ -23,8 +23,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-
-//@SpringBootTest
 @WebMvcTest(controllers = {FineController.class, FineMapper.class})
 public class FineControllerTests {
     @Autowired

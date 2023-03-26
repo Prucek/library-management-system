@@ -67,8 +67,7 @@ public class PaymentController {
     @ApiResponse(responseCode = "404", description = "Payment not found",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
     @PostMapping(path = "{id}")
-    public PaymentDto paymentGateCallback(@PathVariable String id,
-                                          @RequestParam String transactionId) {
+    public PaymentDto paymentGateCallback(@PathVariable String id) {
         try {
             Payment payment = paymentService.find(id);
             // contact payment gate and check if the transaction is accepted
@@ -85,7 +84,7 @@ public class PaymentController {
     @ApiResponse(responseCode = "400", description = "Invalid paging",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
     @GetMapping
-    public Result<PaymentDto> findAll(@RequestParam(defaultValue = "") Pageable pageable) {
+    public Result<PaymentDto> findAll(Pageable pageable) {
         return paymentMapper.toResult(paymentService.findAll(pageable));
     }
 
