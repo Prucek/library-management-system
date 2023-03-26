@@ -1,9 +1,14 @@
 package cz.muni.fi.pa165.seminar3.librarymanagement;
 
+import cz.muni.fi.pa165.seminar3.librarymanagement.book.BookInstance;
 import cz.muni.fi.pa165.seminar3.librarymanagement.borrowing.Borrowing;
 import cz.muni.fi.pa165.seminar3.librarymanagement.borrowing.BorrowingService;
 import cz.muni.fi.pa165.seminar3.librarymanagement.reservation.Reservation;
 import cz.muni.fi.pa165.seminar3.librarymanagement.reservation.ReservationService;
+import cz.muni.fi.pa165.seminar3.librarymanagement.author.Author;
+import cz.muni.fi.pa165.seminar3.librarymanagement.author.AuthorService;
+import cz.muni.fi.pa165.seminar3.librarymanagement.book.Book;
+import cz.muni.fi.pa165.seminar3.librarymanagement.book.BookService;
 import cz.muni.fi.pa165.seminar3.librarymanagement.user.Address;
 import cz.muni.fi.pa165.seminar3.librarymanagement.user.User;
 import cz.muni.fi.pa165.seminar3.librarymanagement.user.UserService;
@@ -26,12 +31,17 @@ public class DataInitializer implements ApplicationRunner {
 
     private final BorrowingService borrowingService;
 
-    public DataInitializer(UserService userService, ReservationService reservationService, BorrowingService borrowingService) {
+    private final BookService bookService;
+
+    private final AuthorService authorService;
+
+    public DataInitializer(UserService userService, ReservationService reservationService, BorrowingService borrowingService, BookService bookService, AuthorService authorService) {
         this.userService = userService;
         this.reservationService = reservationService;
         this.borrowingService = borrowingService;
+        this.bookService = bookService;
+        this.authorService = authorService;
     }
-
     @Override
     public void run(ApplicationArguments args) {
         User user = User.builder()
@@ -64,5 +74,28 @@ public class DataInitializer implements ApplicationRunner {
                 .build();
 
         reservationService.create(reservation);
+        Author author = Author.builder()
+                .name("John")
+                .surname("Wick")
+                .build();
+
+        authorService.create(author);
+
+        Author author2 = Author.builder()
+                .name("Stephan")
+                .surname("Hawking")
+                .build();
+
+        authorService.create(author2);
+
+        Book book = Book.builder()
+                .title("Sloni žerou medvědy")
+                .author(author)
+                .author(author2)
+                .instance(BookInstance.builder().build())
+                .instance(BookInstance.builder().build())
+                .build();
+
+        bookService.create(book);
     }
 }
