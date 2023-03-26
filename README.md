@@ -23,3 +23,7 @@ books without having an account.
 - Marek Fiala
 - Marek Miček
 - Peter Rúček
+
+## Use Case Diagram
+
+![Use Case Diagram](./UseCaseDiagram.png)
