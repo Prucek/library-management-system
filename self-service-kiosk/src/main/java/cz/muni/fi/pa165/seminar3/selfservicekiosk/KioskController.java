@@ -1,6 +1,6 @@
 package cz.muni.fi.pa165.seminar3.selfservicekiosk;
 
-import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.book_mngmnt.Book.BookInstanceDto;
+import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.book.BookInstanceDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.borrowing.BorrowingDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.kiosk.KioskBorrowDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.kiosk.KioskReturnDto;
@@ -56,10 +56,10 @@ public class KioskController {
     @ResponseStatus(HttpStatus.ACCEPTED)
     public BorrowingDto borrow(@RequestBody KioskBorrowDto dto){
         if(!Objects.equals(dto.getBookInstanceId(), exampleBookInstanceId)){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Book instance with id: " + dto.getBookInstanceId() + "not found");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Book instance with id:" + dto.getBookInstanceId() + " not found");
         }
         if (!Objects.equals(dto.getUserId(), exampleUserId)){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User with id: " + dto.getUserId() + "not found");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User with id:" + dto.getUserId() + " not found");
         }
 //      Todo:  Find book instance by its id
 //      Todo:  Find user by its id
@@ -86,9 +86,9 @@ public class KioskController {
     )
     @PostMapping("/return")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public BorrowingDto return_book(@RequestBody KioskReturnDto dto){
+    public BorrowingDto returnBook(@RequestBody KioskReturnDto dto){
         if(!Objects.equals(dto.getBookInstanceId(), exampleBookInstanceId)){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Book instance with id: " + dto.getBookInstanceId() + "not found");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Book instance with id:" + dto.getBookInstanceId() + " not found");
         }
 //      Todo:  Find book instance by its id
 
