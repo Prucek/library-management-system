@@ -1,5 +1,6 @@
 package cz.muni.fi.pa165.seminar3.librarymanagement.borrowing;
 
+import cz.muni.fi.pa165.seminar3.librarymanagement.book.BookInstance;
 import cz.muni.fi.pa165.seminar3.librarymanagement.common.DomainObject;
 import cz.muni.fi.pa165.seminar3.librarymanagement.user.User;
 import jakarta.persistence.Column;
@@ -38,6 +39,6 @@ public class Borrowing extends DomainObject implements Serializable {
     @ManyToOne
     private User user;
 
-//    @ManyToOne
-//    private BookInstance bookInstance;
+    @ManyToOne
+    private BookInstance bookInstance;
 }

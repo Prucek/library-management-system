@@ -1,0 +1,66 @@
+@startuml
+
+'skinparam Linetype ortho
+
+
+' Actors
+
+:Librarian:
+:Member:
+:Anonymous:
+:User:
+
+User <|-d- Member
+User <|-d- Anonymous
+Member -[hidden]l-> Anonymous
+
+
+' UseCases
+
+(Add Book) <-r- Librarian
+(Update Book) <-r- Librarian
+(Delete Book) <-r- Librarian
+(Add Book Instance) <-r- Librarian
+(Delete Book Instance) <-r- Librarian
+
+(Issue Fine) <-r- Librarian
+(Update Fine) <-r- Librarian
+(Delete Fine) <-r- Librarian
+
+(Manage All Users) <-r- Librarian
+(Generate Reports) <-r- Librarian
+
+
+(Login) <-r- Librarian
+(Login) <-l- Member
+(Manage Own Account) <-l- Member
+(Create Account) <-l- Anonymous
+
+(Browse Books) <-l- User
+(Reserve Book) <-l- Member
+(Borrow Book) <-l- Member
+(Return Book) <-l- Member
+(Pay Fine) <-l- Member
+
+
+(Add Book) -[hidden]d-> (Update Book)
+(Update Book) -[hidden]d-> (Delete Book)
+(Delete Book) -[hidden]d-> (Add Book Instance)
+(Add Book Instance) -[hidden]d-> (Delete Book Instance)
+(Delete Book Instance) -[hidden]d-> (Issue Fine)
+(Issue Fine) -[hidden]d-> (Update Fine)
+(Update Fine) -[hidden]d-> (Delete Fine)
+(Delete Fine) -[hidden]d-> (Manage All Users)
+(Manage All Users) -[hidden]d-> (Generate Reports)
+
+(Browse Books) -[hidden]d-> (Create Account)
+(Create Account) -[hidden]d-> (Login)
+(Login) -[hidden]d-> (Reserve Book)
+(Reserve Book) -[hidden]d-> (Borrow Book)
+(Borrow Book) -[hidden]d-> (Return Book)
+(Return Book) -[hidden]d-> (Pay Fine)
+
+(Add Book) -[hidden]l-> (Login)
+
+
+@enduml

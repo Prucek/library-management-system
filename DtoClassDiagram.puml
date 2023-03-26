@@ -1,0 +1,101 @@
+@startuml
+
+class DomainObjectDto {
+    id : String
+    createdAt : Date
+    updatedAt : Date
+}
+
+
+class BookDto {
+    title : String
+    year : Integer
+    borrowPrice : Double
+    finePerDay : Double
+    maxBorrowDays : Integer
+}
+BookDto -r-|> DomainObjectDto
+
+class AuthorDto {
+    name : String
+    surname : String
+}
+AuthorDto -r-|> DomainObjectDto
+
+BookDto "0..*" -u- "0..*" AuthorDto
+
+class BookInstanceDto {
+}
+BookInstanceDto -r-|> DomainObjectDto
+
+BookDto "1..1" -d- "0..*" BookInstanceDto
+
+class BorrowingDto {
+    from : Date
+    to : Date
+}
+BorrowingDto -r-|> DomainObjectDto
+
+BorrowingDto "0..*" -d- "1..1" BookInstanceDto
+BorrowingDto "0..*" -- "1..1" UserDto
+BorrowingDto "1..1" -- "0..1" FineDto
+
+'BorrowingDto -[hidden]-> ReservationDto
+
+class ReservationDto {
+    from : Date
+    to : Date
+}
+ReservationDto -r-|> DomainObjectDto
+
+ReservationDto "0..*" -u- "1..1" BookDto
+ReservationDto "0..*" -u- "1..1" UserDto
+
+class UserDto {
+    username : String
+    password : String
+    email : String
+    firstName : String
+    lastName : String
+}
+UserDto -l-|> DomainObjectDto
+
+UserDto "1..1" -u- "1..1" AddressDto
+UserDto "0..*" -r- "1..1" UserType
+
+enum UserType {
+    CLIENT
+    LIBRARIAN
+}
+
+class AddressDto {
+    country : String
+    city : String
+    zip : String
+    street : String
+    houseNumber : String
+}
+
+class FineDto {
+    amount : Double
+
+}
+FineDto -l-|> DomainObjectDto
+
+FineDto "0..*" -u- "1..1" UserDto
+FineDto "1..*" -d- "0..1" PaymentDto
+
+class PaymentDto {
+    transactionId : String
+}
+PaymentDto -l-|> DomainObjectDto
+
+PaymentDto "0..*" -r- "1..1" PaymentStatus
+
+enum PaymentStatus {
+    CREATED
+    PAID
+    CANCELED
+}
+
+@enduml

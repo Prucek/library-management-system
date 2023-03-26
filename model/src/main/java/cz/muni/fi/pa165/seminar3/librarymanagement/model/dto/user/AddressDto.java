@@ -1,6 +1,8 @@
 package cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.user;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
@@ -11,6 +13,8 @@ import lombok.experimental.SuperBuilder;
 @Getter
 @Setter
 @SuperBuilder
+@NoArgsConstructor
+@AllArgsConstructor
 public class AddressDto {
 
     private String country;
