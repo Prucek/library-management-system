@@ -23,12 +23,12 @@ public class ReportService {
      * @param userId Specifies user for whom the report is generated
      * @return ReportDto object with number of fines and total paid fines of specific user
      */
-    public ReportDto generateFinanceReport(String userId) {
+    public FinanceReportDto generateFinanceReport(String userId) {
         // TODO implement logic for for getting real values, when fine dto and service will be created
         // TODO uncomment when all four major services can communicate among them
         // So far use mock values
 
-        ReportDto report = new ReportDto();
+        FinanceReportDto report = new FinanceReportDto();
 //        UserDto user = client.get()
 //                .uri(uriBuilder -> uriBuilder.pathSegment("users", userId).build())
 //                .retrieve()
@@ -47,11 +47,11 @@ public class ReportService {
      * Generate report with number of users in system.
      * @return ReportDto object with set number of users in system
      */
-    public ReportDto generateUserReport() {
+    public UserReportDto generateUserReport() {
         // TODO uncomment when all four major services can communicate among them
         // So far use mock values
 
-        ReportDto report = new ReportDto();
+        UserReportDto report = new UserReportDto();
 
 //        List<UserDto> users = new ArrayList<>();
 //        Result<UserDto> usersPage;
@@ -78,6 +78,8 @@ public class ReportService {
         report.setGeneratedAt(Instant.now());
         // report.setUsersCount(users.size());
         report.setUsersCount(10);
+        report.setLibrarianCount(2);
+        report.setNewUserCount(1);
 
         return report;
     }
@@ -87,11 +89,11 @@ public class ReportService {
      * @param userId Specifies user for whom the report is generated
      * @return ReportDto object with number of borrowed and returned books of specific user
      */
-    public ReportDto generateBookReport(String userId) {
+    public BookReportDto generateBookReport(String userId) {
         // TODO uncomment when all four major services can communicate among them
         // So far use mock values
 
-        ReportDto report = new ReportDto();
+        BookReportDto report = new BookReportDto();
 
 //        UserDto user = client.get()
 //                .uri(uriBuilder -> uriBuilder.pathSegment("users", userId).build())

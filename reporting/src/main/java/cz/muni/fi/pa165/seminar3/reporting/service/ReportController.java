@@ -50,7 +50,7 @@ public class ReportController {
             }
     )
     @GetMapping("/finances/{userId}")
-    public ReportDto generateFinanceReport(@PathVariable String userId) { return service.generateFinanceReport(userId); }
+    public FinanceReportDto generateFinanceReport(@PathVariable String userId) { return service.generateFinanceReport(userId); }
 
     /**
      * REST method for getting user report.
@@ -69,7 +69,7 @@ public class ReportController {
             }
     )
     @GetMapping("/users")
-    public ReportDto generateUserReport() { return service.generateUserReport(); }
+    public UserReportDto generateUserReport() { return service.generateUserReport(); }
 
     /**
      * REST method for getting book report of specific user.
@@ -90,7 +90,7 @@ public class ReportController {
             }
     )
     @GetMapping("/books/{userId}")
-    public ReportDto generateBookReport(@PathVariable String userId) {
+    public BookReportDto generateBookReport(@PathVariable String userId) {
         return service.generateBookReport(userId);
     }
 }

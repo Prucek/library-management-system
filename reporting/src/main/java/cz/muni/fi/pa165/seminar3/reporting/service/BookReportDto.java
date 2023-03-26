@@ -4,16 +4,17 @@ import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.user.UserDto;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.Instant;
-
 
 /**
- * @brief Represents common properties in report DTO
- * @author Marek Miček
+ * @brief Represents DTO for book report
  */
 @Getter
 @Setter
-public class ReportDto {
+public class BookReportDto extends ReportDto{
 
-    private Instant generatedAt;
+    private UserDto user;
+
+    private int borrowedBooksCount;
+
+    private int returnedBooksCount;
 }
