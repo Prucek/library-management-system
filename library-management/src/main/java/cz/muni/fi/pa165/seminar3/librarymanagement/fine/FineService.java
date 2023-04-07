@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
- * Represents Fine Service
+ * Class representing fine service.
  *
  * @author Juraj Marcin
  */
@@ -16,9 +16,13 @@ public class FineService extends DomainService<Fine> {
     @Getter
     private final FineRepository repository;
 
+    /**
+     * Creates a new fine service instance.
+     *
+     * @param repository fine repository instance
+     */
     @Autowired
     public FineService(FineRepository repository) {
         this.repository = repository;
     }
-
 }

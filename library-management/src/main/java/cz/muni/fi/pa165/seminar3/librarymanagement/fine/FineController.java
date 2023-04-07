@@ -1,13 +1,9 @@
 package cz.muni.fi.pa165.seminar3.librarymanagement.fine;
 
-import cz.muni.fi.pa165.seminar3.librarymanagement.borrowing.Borrowing;
-import cz.muni.fi.pa165.seminar3.librarymanagement.borrowing.BorrowingService;
 import cz.muni.fi.pa165.seminar3.librarymanagement.common.ErrorMessage;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.common.Result;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.fine.FineCreateDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.fine.FineDto;
-import cz.muni.fi.pa165.seminar3.librarymanagement.user.User;
-import cz.muni.fi.pa165.seminar3.librarymanagement.user.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -18,8 +14,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.UUID;
-
 /**
  * Fines REST controller
  *
@@ -29,20 +23,16 @@ import java.util.UUID;
 @RequestMapping(path = "/fines")
 public class FineController {
 
-    private final FineService fineService;
+    private final FineFacade fineFacade;
 
-    private final FineMapper fineMapper;
-    private final UserService userService;
-    private final BorrowingService borrowingService;
 
-    public FineController(FineService fineService,
-                          FineMapper fineMapper,
-                          UserService userService,
-                          BorrowingService borrowingService) {
-        this.fineService = fineService;
-        this.fineMapper = fineMapper;
-        this.userService = userService;
-        this.borrowingService = borrowingService;
+    /**
+     * Creates a FineController instance
+     *
+     * @param fineFacade FineFacade instance
+     */
+    public FineController(FineFacade fineFacade) {
+        this.fineFacade = fineFacade;
     }
 
     @Operation(summary = "Create a new fine")
@@ -54,15 +44,7 @@ public class FineController {
     @PostMapping
     public FineDto create(@RequestBody FineCreateDto fineCreateDto) {
         try {
-            User issuer = userService.find(fineCreateDto.getIssuerId());
-            Borrowing outstandingBorrowing = borrowingService.find(fineCreateDto.getOutstandingBorrowingId());
-            Fine fine = Fine.builder()
-                    .id(UUID.randomUUID().toString())
-                    .amount(fineCreateDto.getAmount())
-                    .outstandingBorrowing(outstandingBorrowing)
-                    .issuer(issuer)
-                    .build();
-            return fineMapper.toDto(fineService.create(fine));
+            return fineFacade.create(fineCreateDto);
         } catch (EntityNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.toString());
         }
@@ -74,7 +56,7 @@ public class FineController {
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
     @GetMapping
     public Result<FineDto> findAll(Pageable pageable) {
-        return fineMapper.toResult(fineService.findAll(pageable));
+        return fineFacade.findAll(pageable);
     }
 
     @Operation(summary = "Find fine with id")
@@ -84,7 +66,7 @@ public class FineController {
     @GetMapping(path = "{id}")
     public FineDto find(@PathVariable String id) {
         try {
-            return fineMapper.toDto(fineService.find(id));
+            return fineFacade.find(id);
         } catch (EntityNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("Fine %s not found", id));
         }
@@ -100,13 +82,7 @@ public class FineController {
     public FineDto update(@PathVariable String id,
                           @RequestBody FineCreateDto fineCreateDto) {
         try {
-            Fine fine = fineService.find(id);
-            User issuer = userService.find(fineCreateDto.getIssuerId());
-            Borrowing outstandingBorrowing = borrowingService.find(fineCreateDto.getOutstandingBorrowingId());
-            fine.setAmount(fineCreateDto.getAmount());
-            fine.setIssuer(issuer);
-            fine.setOutstandingBorrowing(outstandingBorrowing);
-            return fineMapper.toDto(fineService.update(fine));
+            return fineFacade.updateFine(id, fineCreateDto);
         } catch (EntityNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.toString());
         }
@@ -119,8 +95,7 @@ public class FineController {
     @DeleteMapping(path = "{id}")
     public void delete(@PathVariable String id) {
         try {
-            Fine fine = fineService.find(id);
-            fineService.delete(fine);
+            fineFacade.deleteFine(id);
         } catch (EntityNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.toString());
         }
