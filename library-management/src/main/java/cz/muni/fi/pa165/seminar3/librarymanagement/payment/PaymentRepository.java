@@ -4,7 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 /**
- * Class representing Payment JPA repository
+ * Class representing Payment JPA repository.
  *
  * @author Juraj Marcin
  */
