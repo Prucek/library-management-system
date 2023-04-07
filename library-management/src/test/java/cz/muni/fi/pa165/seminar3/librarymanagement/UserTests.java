@@ -3,6 +3,7 @@ package cz.muni.fi.pa165.seminar3.librarymanagement;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.user.AddressDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.user.UserCreateDto;
+import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.user.UserType;
 import cz.muni.fi.pa165.seminar3.librarymanagement.user.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

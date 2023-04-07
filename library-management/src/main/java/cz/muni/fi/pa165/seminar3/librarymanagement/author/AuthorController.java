@@ -15,6 +15,7 @@ import io.swagger.v3.oas.annotations.servers.Server;
 import io.swagger.v3.oas.annotations.servers.ServerVariable;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -83,8 +84,8 @@ public class AuthorController {
                     Returns all authors as JSON
                     """)
     @GetMapping
-    public Result<AuthorDto> findAll(@RequestParam(defaultValue = "0") int page){
-        return mapper.toResult(service.findAll(page));
+    public Result<AuthorDto> findAll(Pageable pageable){
+        return mapper.toResult(service.findAll(pageable));
     }
 
     /**

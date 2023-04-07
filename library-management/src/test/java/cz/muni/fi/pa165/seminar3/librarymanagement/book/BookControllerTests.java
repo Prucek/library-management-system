@@ -118,6 +118,7 @@ public class BookControllerTests {
         bookDto.setInstances(bookInstanceDtoList);
 
         Book book = new Book();
+        book.setId(UUID.randomUUID().toString());
         book.setTitle("Kniha");
         book.setAuthors(authorsList);
         book.setInstances(bookInstanceList);

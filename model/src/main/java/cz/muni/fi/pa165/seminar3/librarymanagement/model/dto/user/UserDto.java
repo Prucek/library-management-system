@@ -1,13 +1,12 @@
 package cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.user;
 
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.common.DomainObjectDto;
+import java.util.Objects;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
-
-import java.util.Objects;
 
 /**
  * DTO for a user. Data Transfer Object that is stable for API,
@@ -29,6 +28,8 @@ public class UserDto extends DomainObjectDto {
     private String lastName;
 
     private AddressDto address;
+
+    private UserType userType;
 
     @Override
     public boolean equals(Object o) {

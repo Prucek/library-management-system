@@ -1,6 +1,7 @@
 package cz.muni.fi.pa165.seminar3.librarymanagement.payment;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.javafaker.Faker;
 import cz.muni.fi.pa165.seminar3.librarymanagement.fine.FineService;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.payment.PaymentCreateDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.payment.PaymentStatus;
@@ -38,10 +39,12 @@ public class PaymentControllerTests {
     @Autowired
     private ObjectMapper objectMapper;
 
+    private final Faker faker = new Faker();
+
     @Test
     public void createSuccessful() throws
             Exception {
-        Payment payment = fakePayment();
+        Payment payment = fakePayment(faker);
         // mock services
         given(fineService.find(payment.getPaidFines().get(0).getId())).willReturn(payment.getPaidFines().get(0));
         given(paymentService.create(any())).willReturn(payment);
@@ -73,7 +76,7 @@ public class PaymentControllerTests {
     @Test
     public void paymentGateCallbackSuccessful() throws
             Exception {
-        Payment payment = fakePayment();
+        Payment payment = fakePayment(faker);
         payment.setStatus(PaymentStatus.CREATED);
         // mock services
         given(paymentService.find(payment.getId())).willReturn(payment);
@@ -101,7 +104,7 @@ public class PaymentControllerTests {
     @Test
     public void findAll() throws
             Exception {
-        List<Payment> payments = List.of(fakePayment(), fakePayment(), fakePayment());
+        List<Payment> payments = List.of(fakePayment(faker), fakePayment(faker), fakePayment(faker));
         // mock services
         given(paymentService.findAll(any())).willReturn(new PageImpl<>(payments));
 
@@ -118,7 +121,7 @@ public class PaymentControllerTests {
     @Test
     public void findSuccessful() throws
             Exception {
-        Payment payment = fakePayment();
+        Payment payment = fakePayment(faker);
         // mock services
         given(paymentService.find(payment.getId())).willReturn(payment);
 

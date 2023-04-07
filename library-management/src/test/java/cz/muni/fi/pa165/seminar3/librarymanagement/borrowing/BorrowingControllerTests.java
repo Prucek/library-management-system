@@ -1,6 +1,7 @@
 package cz.muni.fi.pa165.seminar3.librarymanagement.borrowing;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.javafaker.Faker;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.borrowing.BorrowingDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.user.UserDto;
 import jakarta.persistence.EntityNotFoundException;
@@ -33,10 +34,12 @@ public class BorrowingControllerTests {
     @Autowired
     private ObjectMapper objectMapper;
 
+    private final Faker faker = new Faker();
+
     @Test
     public void findSuccessful() throws
             Exception {
-        Borrowing borrowing = fakeBorrowing();
+        Borrowing borrowing = fakeBorrowing(faker);
         // mock services
         given(borrowingService.find(borrowing.getId())).willReturn(borrowing);
 
@@ -59,7 +62,7 @@ public class BorrowingControllerTests {
     @Test
     public void createSuccessful() throws
             Exception {
-        Borrowing borrowing = fakeBorrowing();
+        Borrowing borrowing = fakeBorrowing(faker);
         // mock services
         given(borrowingService.create(any())).willReturn(borrowing);
 
@@ -78,7 +81,7 @@ public class BorrowingControllerTests {
     @Test
     public void updateSuccessful() throws
             Exception {
-        Borrowing borrowing = fakeBorrowing();
+        Borrowing borrowing = fakeBorrowing(faker);
         // mock services
         given(borrowingService.find(borrowing.getId())).willReturn(borrowing);
         given(borrowingService.create(borrowing)).willReturn(borrowing);
@@ -98,7 +101,7 @@ public class BorrowingControllerTests {
     @Test
     public void deleteSuccessful() throws
             Exception {
-        Borrowing borrowing = fakeBorrowing();
+        Borrowing borrowing = fakeBorrowing(faker);
         // mock services
         given(borrowingService.find(borrowing.getId())).willReturn(borrowing);
 
@@ -119,7 +122,7 @@ public class BorrowingControllerTests {
     @Test
     public void findAllSuccessful() throws
             Exception {
-        List<Borrowing> borrowings = List.of(fakeBorrowing(), fakeBorrowing(), fakeBorrowing());
+        List<Borrowing> borrowings = List.of(fakeBorrowing(faker), fakeBorrowing(faker), fakeBorrowing(faker));
         // mock services
         given(borrowingService.findAll(any())).willReturn(new PageImpl<>(borrowings));
 
