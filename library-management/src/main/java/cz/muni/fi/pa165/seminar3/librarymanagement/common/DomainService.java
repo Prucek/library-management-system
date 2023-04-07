@@ -58,8 +58,7 @@ public abstract class DomainService<T extends DomainObject> {
      */
     public T find(String id) throws EntityNotFoundException {
         return getRepository().findById(id)
-                .orElseThrow(
-                        () -> new EntityNotFoundException(String.format("ID %s not found", id)));
+                .orElseThrow(() -> new EntityNotFoundException(String.format("ID %s not found", id)));
     }
 
     public Page<T> findAll(Pageable pageable) {
