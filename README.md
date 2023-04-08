@@ -33,8 +33,8 @@ books without having an account.
 
 ## Use Case Diagram
 
-![Use Case Diagram](./UseCaseDiagram.png)
+![Use Case Diagram](docs/UseCaseDiagram.png)
 
 ## DTO Class Diagram
 
-![DTO Class Diagram](./DtoClassDiagram.png)
+![DTO Class Diagram](docs/DtoClassDiagram.png)
