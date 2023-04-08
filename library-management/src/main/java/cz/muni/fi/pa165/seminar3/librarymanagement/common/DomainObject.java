@@ -1,15 +1,23 @@
 package cz.muni.fi.pa165.seminar3.librarymanagement.common;
 
 
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
+import java.time.LocalDateTime;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
-import java.util.UUID;
-
+/**
+ * Class representing generic entity.
+ *
+ * @author Marek Miček
+ */
 @Getter
 @Setter
 @MappedSuperclass
@@ -18,5 +26,12 @@ import java.util.UUID;
 public abstract class DomainObject {
 
     @Id
-    private String id = UUID.randomUUID().toString();
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String id;
+
+    @CreationTimestamp
+    private LocalDateTime createdAt;
+
+    @UpdateTimestamp
+    private LocalDateTime updatedAt;
 }

@@ -2,11 +2,9 @@ package cz.muni.fi.pa165.seminar3.librarymanagement.reservation;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.reservation.ReservationCreateDto;
-import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.reservation.ReservationDto;
-import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.user.UserDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.user.Address;
 import cz.muni.fi.pa165.seminar3.librarymanagement.user.User;
-import cz.muni.fi.pa165.seminar3.librarymanagement.user.UserType;
+import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.user.UserType;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;

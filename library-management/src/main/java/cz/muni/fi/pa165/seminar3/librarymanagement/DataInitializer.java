@@ -17,7 +17,7 @@ import cz.muni.fi.pa165.seminar3.librarymanagement.reservation.ReservationServic
 import cz.muni.fi.pa165.seminar3.librarymanagement.user.Address;
 import cz.muni.fi.pa165.seminar3.librarymanagement.user.User;
 import cz.muni.fi.pa165.seminar3.librarymanagement.user.UserService;
-import cz.muni.fi.pa165.seminar3.librarymanagement.user.UserType;
+import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.user.UserType;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
@@ -64,7 +64,6 @@ public class DataInitializer implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) {
         User user = User.builder()
-                .id(UUID.randomUUID().toString())
                 .email("test@email.com")
                 .firstName("John")
                 .lastName("Doe")
@@ -77,7 +76,6 @@ public class DataInitializer implements ApplicationRunner {
         userService.create(user);
 
         Borrowing borrowing = Borrowing.builder()
-                .id(UUID.randomUUID().toString())
                 .from(LocalDateTime.now().minusDays(60))
                 .to(LocalDateTime.now().minusDays(30))
                 .user(user)
@@ -86,7 +84,6 @@ public class DataInitializer implements ApplicationRunner {
         borrowingService.create(borrowing);
 
         Reservation reservation = Reservation.builder()
-                .id(UUID.randomUUID().toString())
                 .from(LocalDateTime.now())
                 .to(LocalDateTime.now().plus(10, ChronoUnit.DAYS))
                 .user(user)
@@ -95,7 +92,6 @@ public class DataInitializer implements ApplicationRunner {
         reservationService.create(reservation);
 
         Fine fine = Fine.builder()
-                .id(UUID.randomUUID().toString())
                 .issuer(user)
                 .outstandingBorrowing(borrowing)
                 .amount(42.0)
@@ -104,7 +100,6 @@ public class DataInitializer implements ApplicationRunner {
         fineService.create(fine);
 
         Payment payment = Payment.builder()
-                .id(UUID.randomUUID().toString())
                 .transactionId(UUID.randomUUID().toString())
                 .status(PaymentStatus.PAID)
                 .paidFines(List.of(fine))
@@ -112,16 +107,15 @@ public class DataInitializer implements ApplicationRunner {
 
         paymentService.create(payment);
 
-        Author author = Author.builder().id(UUID.randomUUID().toString()).name("John").surname("Wick").build();
+        Author author = Author.builder().name("John").surname("Wick").build();
 
         authorService.create(author);
 
-        Author author2 = Author.builder().id(UUID.randomUUID().toString()).name("Stephan").surname("Hawking").build();
+        Author author2 = Author.builder().name("Stephan").surname("Hawking").build();
 
         authorService.create(author2);
 
         Book book = Book.builder()
-                .id(UUID.randomUUID().toString())
                 .title("Sloni žerou medvědy")
                 .author(author)
                 .author(author2)

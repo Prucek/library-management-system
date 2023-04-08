@@ -12,6 +12,11 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
+/**
+ * Class representing fine dto.
+ *
+ * @author Juraj Marcin
+ */
 @Getter
 @Setter
 @SuperBuilder

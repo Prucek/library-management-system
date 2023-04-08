@@ -36,6 +36,8 @@ public class Borrowing extends DomainObject implements Serializable {
     @Column(name = "borrowing_to")
     private LocalDateTime to;
 
+    private LocalDateTime returned;
+
     @ManyToOne
     private User user;
 

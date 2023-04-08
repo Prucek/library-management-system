@@ -1,6 +1,7 @@
 package cz.muni.fi.pa165.seminar3.librarymanagement.user;
 
 import cz.muni.fi.pa165.seminar3.librarymanagement.common.DomainObject;
+import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.user.UserType;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

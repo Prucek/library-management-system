@@ -1,11 +1,9 @@
 package cz.muni.fi.pa165.seminar3.librarymanagement.payment;
 
 import cz.muni.fi.pa165.seminar3.librarymanagement.common.ErrorMessage;
-import cz.muni.fi.pa165.seminar3.librarymanagement.fine.FineService;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.common.Result;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.payment.PaymentCreateDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.payment.PaymentDto;
-import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.payment.PaymentStatus;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -14,29 +12,33 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.UUID;
-
 /**
- * Payments REST Controller
+ * Class representing payment controller
+ *
+ * @author Juraj Marcin
  */
 @RestController
 @RequestMapping(path = "/payments")
 public class PaymentController {
 
-    private final PaymentService paymentService;
-    private final FineService fineService;
-    private final PaymentMapper paymentMapper;
+    private final PaymentFacade paymentFacade;
 
+    /**
+     * Create a new payment controller instance
+     *
+     * @param paymentFacade payment facade instance
+     */
     @Autowired
-    public PaymentController(PaymentService paymentService,
-                             FineService fineService,
-                             PaymentMapper paymentMapper) {
-        this.paymentService = paymentService;
-        this.fineService = fineService;
-        this.paymentMapper = paymentMapper;
+    public PaymentController(PaymentFacade paymentFacade) {
+        this.paymentFacade = paymentFacade;
     }
 
     @Operation(summary = "Create a new payment for fines")
@@ -49,13 +51,7 @@ public class PaymentController {
     @PostMapping
     public PaymentDto create(@RequestBody PaymentCreateDto paymentCreateDto) {
         try {
-            String newTransactionId = UUID.randomUUID().toString(); // from payment gate microservice
-            return paymentMapper.toDto(paymentService.create(Payment.builder()
-                    .id(UUID.randomUUID().toString())
-                    .status(PaymentStatus.CREATED)
-                    .transactionId(newTransactionId)
-                    .paidFines(paymentCreateDto.getFines().stream().map(fineService::find).toList())
-                    .build()));
+            return paymentFacade.create(paymentCreateDto);
         } catch (EntityNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.toString());
         }
@@ -69,11 +65,7 @@ public class PaymentController {
     @PostMapping(path = "{id}")
     public PaymentDto paymentGateCallback(@PathVariable String id) {
         try {
-            Payment payment = paymentService.find(id);
-            // contact payment gate and check if the transaction is accepted
-            payment.setStatus(PaymentStatus.PAID);
-            paymentService.update(payment);
-            return paymentMapper.toDto(payment);
+            return paymentFacade.finalizePayment(id);
         } catch (EntityNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.toString());
         }
@@ -85,7 +77,7 @@ public class PaymentController {
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
     @GetMapping
     public Result<PaymentDto> findAll(Pageable pageable) {
-        return paymentMapper.toResult(paymentService.findAll(pageable));
+        return paymentFacade.findAll(pageable);
     }
 
     @Operation(summary = "Find a payment")
@@ -95,7 +87,7 @@ public class PaymentController {
     @GetMapping(path = "{id}")
     public PaymentDto find(@PathVariable String id) {
         try {
-            return paymentMapper.toDto(paymentService.find(id));
+            return paymentFacade.find(id);
         } catch (EntityNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.toString());
         }

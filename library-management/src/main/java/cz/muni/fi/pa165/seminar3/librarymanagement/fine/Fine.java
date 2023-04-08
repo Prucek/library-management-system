@@ -6,28 +6,37 @@ import cz.muni.fi.pa165.seminar3.librarymanagement.payment.Payment;
 import cz.muni.fi.pa165.seminar3.librarymanagement.user.User;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
+/**
+ * Class representing Fine entity.
+ *
+ * @author Juraj Marcin
+ */
 @Getter
 @Setter
 @SuperBuilder
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "domain_fine")
 public class Fine extends DomainObject {
 
+    @NotNull
+    @Positive
     private Double amount;
 
     @ManyToOne
+    @NotNull
     private User issuer;
 
     @ManyToOne
+    @NotNull
     private Borrowing outstandingBorrowing;
 
     @ManyToOne

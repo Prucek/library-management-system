@@ -1,208 +1,176 @@
 package cz.muni.fi.pa165.seminar3.librarymanagement.fine;
 
+import static cz.muni.fi.pa165.seminar3.librarymanagement.utils.FineUtils.fakeFineDto;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
-import cz.muni.fi.pa165.seminar3.librarymanagement.borrowing.BorrowingService;
+import com.github.javafaker.Faker;
+import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.common.Result;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.fine.FineCreateDto;
-import cz.muni.fi.pa165.seminar3.librarymanagement.user.UserService;
+import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.fine.FineDto;
 import jakarta.persistence.EntityNotFoundException;
+import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.List;
-import java.util.UUID;
-
-import static cz.muni.fi.pa165.seminar3.librarymanagement.utils.FineUtils.fakeFine;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
+/**
+ * Tests for fine controller.
+ */
 @WebMvcTest(controllers = {FineController.class, FineMapper.class})
 public class FineControllerTests {
     @Autowired
     private MockMvc mockMvc;
 
     @MockBean
-    private UserService userService;
-
-    @MockBean
-    private BorrowingService borrowingService;
-
-    @MockBean
-    private FineService fineService;
+    private FineFacade fineFacade;
 
     @Autowired
     private ObjectMapper objectMapper;
 
+    private final Faker faker = new Faker();
+
     @Test
-    public void createFineSuccessful() throws
-            Exception {
-        Fine fine = fakeFine();
-        // mock services
-        given(userService.find(fine.getIssuer().getId())).willReturn(fine.getIssuer());
-        given(borrowingService.find(fine.getOutstandingBorrowing().getId())).willReturn(fine.getOutstandingBorrowing());
-        given(fineService.create(any())).willReturn(fine);
+    public void createFineSuccessful() throws Exception {
+        FineDto fineDto = fakeFineDto(faker);
+        // mock facade
+        given(fineFacade.create(any(FineCreateDto.class))).willReturn(fineDto);
 
         // perform test
         mockMvc.perform(post("/fines").contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(FineCreateDto.builder()
-                                .amount(fine.getAmount())
-                                .issuerId(fine.getIssuer().getId())
-                                .outstandingBorrowingId(fine.getOutstandingBorrowing().getId())
+                                .amount(fineDto.getAmount())
+                                .issuerId(fineDto.getIssuer().getId())
+                                .outstandingBorrowingId(fineDto.getOutstandingBorrowing().getId())
                                 .build())))
                 .andExpect(status().is2xxSuccessful())
-                .andExpect(jsonPath("$.id").value(fine.getId()))
-                .andExpect(jsonPath("$.amount").value(fine.getAmount()))
-                .andExpect(jsonPath("$.issuer.id").value(fine.getIssuer().getId()))
-                .andExpect(jsonPath("$.outstandingBorrowing.id").value(fine.getOutstandingBorrowing().getId()));
+                .andExpect(jsonPath("$.id").value(fineDto.getId()))
+                .andExpect(jsonPath("$.amount").value(fineDto.getAmount()))
+                .andExpect(jsonPath("$.issuer.id").value(fineDto.getIssuer().getId()))
+                .andExpect(jsonPath("$.outstandingBorrowing.id").value(fineDto.getOutstandingBorrowing().getId()));
     }
 
     @Test
-    public void createFineIssuerNotFound() throws
-            Exception {
-        Fine fine = fakeFine();
-        // mock services
-        given(userService.find(any())).willThrow(EntityNotFoundException.class);
-        given(borrowingService.find(fine.getOutstandingBorrowing().getId())).willReturn(fine.getOutstandingBorrowing());
-        given(fineService.create(any())).willReturn(fine);
+    public void createFineEntityNotFound() throws Exception {
+        FineDto fineDto = fakeFineDto(faker);
+        // mock facade
+        given(fineFacade.create(any(FineCreateDto.class))).willThrow(EntityNotFoundException.class);
 
         // perform test
         mockMvc.perform(post("/fines").contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(FineCreateDto.builder()
-                        .amount(fine.getAmount())
-                        .issuerId(fine.getIssuer().getId())
-                        .outstandingBorrowingId(fine.getOutstandingBorrowing().getId())
+                        .amount(fineDto.getAmount())
+                        .issuerId(fineDto.getIssuer().getId())
+                        .outstandingBorrowingId(fineDto.getOutstandingBorrowing().getId())
                         .build()))).andExpect(status().isNotFound());
     }
 
     @Test
-    public void createFineBorrowingNotFound() throws
-            Exception {
-        Fine fine = fakeFine();
-        // mock services
-        given(userService.find(fine.getIssuer().getId())).willReturn(fine.getIssuer());
-        given(borrowingService.find(any())).willThrow(EntityNotFoundException.class);
-        given(fineService.create(any())).willReturn(fine);
-
-        // perform test
-        mockMvc.perform(post("/fines").contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(FineCreateDto.builder()
-                        .amount(fine.getAmount())
-                        .issuerId(fine.getIssuer().getId())
-                        .outstandingBorrowingId(fine.getOutstandingBorrowing().getId())
-                        .build()))).andExpect(status().isNotFound());
-    }
-
-    @Test
-    public void findAll() throws
-            Exception {
-        List<Fine> fines = List.of(fakeFine(), fakeFine(), fakeFine());
-        // mock services
-        given(fineService.findAll(any())).willReturn(new PageImpl<>(fines));
+    public void findAll() throws Exception {
+        Result<FineDto> fineDtoResult = Result.of(fakeFineDto(faker), fakeFineDto(faker), fakeFineDto(faker));
+        // mock facade
+        given(fineFacade.findAll(any(Pageable.class))).willReturn(fineDtoResult);
 
         // perform test
         mockMvc.perform(get("/fines"))
                 .andExpect(status().is2xxSuccessful())
-                .andExpect(jsonPath("$.total").value(fines.size()))
-                .andExpect(jsonPath("$.page").value(0))
-                .andExpect(jsonPath("$.items[0].id").value(fines.get(0).getId()))
-                .andExpect(jsonPath("$.items[1].id").value(fines.get(1).getId()))
-                .andExpect(jsonPath("$.items[2].id").value(fines.get(2).getId()));
+                .andExpect(jsonPath("$.total").value(fineDtoResult.getTotal()))
+                .andExpect(jsonPath("$.page").value(fineDtoResult.getPage()))
+                .andExpect(jsonPath("$.items[0].id").value(fineDtoResult.getItems().get(0).getId()))
+                .andExpect(jsonPath("$.items[1].id").value(fineDtoResult.getItems().get(1).getId()))
+                .andExpect(jsonPath("$.items[2].id").value(fineDtoResult.getItems().get(2).getId()));
     }
 
     @Test
-    public void findSuccessful() throws
-            Exception {
-        Fine fine = fakeFine();
-        // mock services
-        given(fineService.find(fine.getId())).willReturn(fine);
+    public void findSuccessful() throws Exception {
+        FineDto fineDto = fakeFineDto(faker);
+        // mock facade
+        given(fineFacade.find(fineDto.getId())).willReturn(fineDto);
 
         // perform test
-        mockMvc.perform(get("/fines/" + fine.getId()))
+        mockMvc.perform(get("/fines/" + fineDto.getId()))
                 .andExpect(status().is2xxSuccessful())
-                .andExpect(jsonPath("$.id").value(fine.getId()))
-                .andExpect(jsonPath("$.amount").value(fine.getAmount()))
-                .andExpect(jsonPath("$.issuer.id").value(fine.getIssuer().getId()))
-                .andExpect(jsonPath("$.outstandingBorrowing.id").value(fine.getOutstandingBorrowing().getId()));
+                .andExpect(jsonPath("$.id").value(fineDto.getId()))
+                .andExpect(jsonPath("$.amount").value(fineDto.getAmount()))
+                .andExpect(jsonPath("$.issuer.id").value(fineDto.getIssuer().getId()))
+                .andExpect(jsonPath("$.outstandingBorrowing.id").value(fineDto.getOutstandingBorrowing().getId()));
     }
 
     @Test
-    public void findNotFound() throws
-            Exception {
-        // mock services
-        given(fineService.find(any())).willThrow(EntityNotFoundException.class);
+    public void findNotFound() throws Exception {
+        String fineId = UUID.randomUUID().toString();
+        // mock facade
+        given(fineFacade.find(fineId)).willThrow(EntityNotFoundException.class);
 
         // perform test
-        mockMvc.perform(get("/fines/" + UUID.randomUUID())).andExpect(status().isNotFound());
+        mockMvc.perform(get("/fines/" + fineId)).andExpect(status().isNotFound());
     }
 
     @Test
-    public void updateSuccessful() throws
-            Exception {
-        Fine fine = fakeFine();
-        Fine newFine = fakeFine();
-        newFine.setId(fine.getId());
-        // mock services
-        given(userService.find(newFine.getIssuer().getId())).willReturn(newFine.getIssuer());
-        given(borrowingService.find(newFine.getOutstandingBorrowing().getId())).willReturn(
-                newFine.getOutstandingBorrowing());
-        given(fineService.find(fine.getId())).willReturn(fine);
-        given(fineService.update(fine)).willReturn(newFine);
+    public void updateSuccessful() throws Exception {
+        FineDto fineDto = fakeFineDto(faker);
+        FineDto newFineDto = fakeFineDto(faker);
+        newFineDto.setId(fineDto.getId());
+        // mock facade
+        given(fineFacade.updateFine(eq(fineDto.getId()), any())).willReturn(newFineDto);
 
         // perform test
-        mockMvc.perform(put("/fines/" + fine.getId()).contentType(MediaType.APPLICATION_JSON)
+        mockMvc.perform(put("/fines/" + fineDto.getId()).contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(FineCreateDto.builder()
-                                .amount(newFine.getAmount())
-                                .issuerId(newFine.getIssuer().getId())
-                                .outstandingBorrowingId(newFine.getOutstandingBorrowing().getId())
+                                .amount(newFineDto.getAmount())
+                                .issuerId(newFineDto.getIssuer().getId())
+                                .outstandingBorrowingId(newFineDto.getOutstandingBorrowing().getId())
                                 .build())))
                 .andExpect(status().is2xxSuccessful())
-                .andExpect(jsonPath("$.id").value(newFine.getId()))
-                .andExpect(jsonPath("$.amount").value(newFine.getAmount()))
-                .andExpect(jsonPath("$.issuer.id").value(newFine.getIssuer().getId()))
-                .andExpect(jsonPath("$.outstandingBorrowing.id").value(newFine.getOutstandingBorrowing().getId()));
+                .andExpect(jsonPath("$.id").value(newFineDto.getId()))
+                .andExpect(jsonPath("$.amount").value(newFineDto.getAmount()))
+                .andExpect(jsonPath("$.issuer.id").value(newFineDto.getIssuer().getId()))
+                .andExpect(jsonPath("$.outstandingBorrowing.id").value(newFineDto.getOutstandingBorrowing().getId()));
     }
 
     @Test
-    public void updateNotFound() throws
-            Exception {
-        Fine fine = fakeFine();
-        Fine newFine = fakeFine();
-        newFine.setId(fine.getId());
-        // mock services
-        given(fineService.find(any())).willThrow(EntityNotFoundException.class);
+    public void updateNotFound() throws Exception {
+        FineDto fineDto = fakeFineDto(faker);
+        // mock facade
+        given(fineFacade.updateFine(eq(fineDto.getId()), any())).willThrow(EntityNotFoundException.class);
 
         // perform test
-        mockMvc.perform(put("/fines/" + UUID.randomUUID()).contentType(MediaType.APPLICATION_JSON)
+        mockMvc.perform(put("/fines/" + fineDto.getId()).contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(FineCreateDto.builder()
-                        .amount(newFine.getAmount())
-                        .issuerId(newFine.getIssuer().getId())
-                        .outstandingBorrowingId(newFine.getOutstandingBorrowing().getId())
+                        .amount(fineDto.getAmount())
+                        .issuerId(fineDto.getIssuer().getId())
+                        .outstandingBorrowingId(fineDto.getOutstandingBorrowing().getId())
                         .build()))).andExpect(status().isNotFound());
     }
 
     @Test
-    public void deleteSuccessful() throws
-            Exception {
-        Fine fine = fakeFine();
-        // mock services
-        given(fineService.find(fine.getId())).willReturn(fine);
+    public void deleteSuccessful() throws Exception {
+        FineDto fineDto = fakeFineDto(faker);
+        // mock facade
+        doNothing().when(fineFacade).deleteFine(fineDto.getId());
 
         // perform test
-        mockMvc.perform(delete("/fines/" + fine.getId())).andExpect(status().is2xxSuccessful());
+        mockMvc.perform(delete("/fines/" + fineDto.getId())).andExpect(status().is2xxSuccessful());
     }
 
     @Test
-    public void deleteNotFound() throws
-            Exception {
+    public void deleteNotFound() throws Exception {
         // mock services
-        given(fineService.find(any())).willThrow(EntityNotFoundException.class);
+        doThrow(EntityNotFoundException.class).when(fineFacade).deleteFine(any());
 
         // perform test
         mockMvc.perform(delete("/fines/" + UUID.randomUUID())).andExpect(status().isNotFound());
