@@ -31,6 +31,40 @@ books without having an account.
 - reporting
 - self-service-kiosk
 
+## Running with Podman Compose
+
+To build the containers you can simply run:
+```shell
+podman-compose build
+```
+ 
+or build using your favourite container build tool (the `podman-compose.yml`
+uses `quay.io/juraj_marcin/pa165-library-management-system` as image)
+```shell
+buildah build -t quay.io/juraj_marcin/pa165-library-management-system
+```
+
+Then you can start all services with (use `-d` to run detached):
+```shell
+podman-compose up [-d]
+```
+
+Services can afterwards stopped with
+```shell
+podman-compose down
+```
+or by sending a `SIGINT` signal to the services running in foreground (not
+detached).
+
+### Default ports
+
+|                    | Port |
+|--------------------|------|
+| library-management | 8080 |
+| payment-gate       | 8081 |
+| reporting          | 8082 |
+| self-service-kiosk | 8083 |
+
 ## Use Case Diagram
 
 ![Use Case Diagram](docs/UseCaseDiagram.png)

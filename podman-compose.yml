@@ -1,0 +1,50 @@
+version: "3.9"
+services:
+  library-management:
+    restart: on-failure
+    image: quay.io/juraj_marcin/pa165-library-management-system:latest
+    build: .
+    depends_on:
+      - payment-gate
+    command:
+      - "library-management.jar"
+    ports:
+      - "8080:8080"
+    networks:
+      - library-net
+  payment-gate:
+    restart: on-failure
+    image: quay.io/juraj_marcin/pa165-library-management-system:latest
+    build: .
+    command:
+      - "payment-gate.jar"
+    ports:
+      - "8081:8080"
+    networks:
+      - library-net
+  reporting:
+    restart: on-failure
+    image: quay.io/juraj_marcin/pa165-library-management-system:latest
+    build: .
+    depends_on:
+      - library-management
+    command:
+      - "reporting.jar"
+    ports:
+      - "8082:8080"
+    networks:
+      - library-net
+  self-service-kiosk:
+    restart: on-failure
+    image: quay.io/juraj_marcin/pa165-library-management-system:latest
+    build: .
+    depends_on:
+      - library-management
+    command:
+      - "self-service-kiosk.jar"
+    ports:
+      - "8083:8080"
+    networks:
+      - library-net
+networks:
+  library-net:
