@@ -7,11 +7,10 @@
         <artifactId>library-management-system</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
-
     <artifactId>payment-gate</artifactId>
-
     <name>payment-gate</name>
     <description>payment-gate</description>
+
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>

@@ -1,0 +1,40 @@
+default:
+  image: "maven:3.8-openjdk-17-slim"
+
+cache:
+  paths:
+    - ".m2/repository"
+
+variables:
+  MAVEN_OPTS: "-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
+  MAVEN_CLI_OPTS: "--batch-mode --color always --errors --fail-at-end --show-version"
+
+stages:
+  - style
+  - test
+
+style:
+  tags:
+    - shared-fi
+  stage: style
+  script:
+    - ./mvnw clean checkstyle:check $MAVEN_CLI_OPTS -Dcheckstyle.violationSeverity=warning -Dcheckstyle.config.location=$CI_PROJECT_DIR/checkstyle-config.xml
+  allow_failure: true
+  only:
+    - merge_requests
+
+test:
+  tags:
+    - shared-fi
+  stage: test
+  script:
+    - ./mvnw clean install $MAVEN_CLI_OPTS
+  only:
+    - merge_requests
+    - main
+  artifacts:
+    when: always
+    reports:
+      junit:
+        - '**/target/surefire-reports/TEST-*.xml'
+        - '**/target/failsafe-reports/TEST-*.xml'

@@ -7,11 +7,10 @@
         <artifactId>library-management-system</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
-
     <artifactId>self-service-kiosk</artifactId>
-
     <name>self-service-kiosk</name>
     <description>self-service-kiosk</description>
+
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
