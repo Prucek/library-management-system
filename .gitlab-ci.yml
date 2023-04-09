@@ -45,5 +45,6 @@ build:
     - morty
   stage: build
   script:
+    - podman login --authfile ~/.config/container/auth.json $CI_REPO
     - podman build -t $CI_REPO/pa165-library-management-system:latest .
     - podman push $CI_REPO/pa165-library-management-system:latest
