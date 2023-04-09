@@ -42,7 +42,7 @@ test:
 
 build:
   tags:
-    - rick
+    - morty
   stage: build
   script:
     - podman build -t $CI_REPO/pa165-library-management-system:latest .
