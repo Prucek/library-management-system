@@ -12,6 +12,7 @@ variables:
 stages:
   - style
   - test
+  - build
 
 style:
   tags:
@@ -38,3 +39,11 @@ test:
       junit:
         - '**/target/surefire-reports/TEST-*.xml'
         - '**/target/failsafe-reports/TEST-*.xml'
+
+build:
+  tags:
+    - rick
+  stage: build
+  script:
+    - podman build -t $CI_REPO/pa165-library-management-system:latest .
+    - podman push $CI_REPO/pa165-library-management-system:latest
