@@ -1,6 +1,7 @@
 package cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.reservation;
 
 
+import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.book.BookDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.common.DomainObjectDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.user.UserDto;
 import lombok.AllArgsConstructor;
@@ -27,8 +28,8 @@ public class ReservationDto extends DomainObjectDto {
 
     private LocalDateTime to;
 
-//      private BookDto book;
-//
-      private UserDto user;
+    private BookDto book;
+
+    private UserDto user;
 
 }
