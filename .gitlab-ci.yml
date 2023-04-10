@@ -48,3 +48,5 @@ build:
     - podman login -u $CI_USERNAME -p $CI_PASSWORD $CI_REPO
     - podman build -t $CI_REPO/pa165-library-management-system:latest .
     - podman push $CI_REPO/pa165-library-management-system:latest
+  only:
+    - main
