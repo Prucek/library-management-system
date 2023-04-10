@@ -2,6 +2,7 @@ package cz.muni.fi.pa165.seminar3.librarymanagement.reservation;
 
 import cz.muni.fi.pa165.seminar3.librarymanagement.common.ErrorMessage;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.common.Result;
+import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.reservation.ReservationCreateDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.reservation.ReservationDto;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
@@ -39,14 +40,11 @@ import org.springframework.web.server.ResponseStatusException;
 @RequestMapping(path = "/reservations")
 public class ReservationController {
 
-    private final ReservationService service;
-
-    private final ReservationMapper mapper;
+    private final ReservationFacade reservationFacade;
 
     @Autowired
-    public ReservationController(ReservationService service, ReservationMapper mapper) {
-        this.service = service;
-        this.mapper = mapper;
+    public ReservationController(ReservationFacade reservationFacade) {
+        this.reservationFacade = reservationFacade;
     }
 
     /**
@@ -58,25 +56,23 @@ public class ReservationController {
             summary = "Returns identified reservation",
             description = "Looks up a reservation by its id.",
             responses = {
-                    @ApiResponse(responseCode = "200", ref = "#/components/responses/SingleReservationResponse"),
+                    @ApiResponse(responseCode = "200",  description = "Reservation found", useReturnTypeSchema = true),
                     @ApiResponse(responseCode = "404", description = "reservation not found",
                             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
             }
     )
     @GetMapping("/{id}")
     public ReservationDto find(@PathVariable String id) {
-        Reservation reservation;
         try {
-            reservation = service.find(id);
+            return reservationFacade.find(id);
         } catch (EntityNotFoundException e){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "reservation with id=" + id + " not found");
         }
-        return mapper.toDto(reservation);
     }
 
     /**
      * REST method for creating a new borrowing.
-     * @param reservation Reservation to be posted and created
+     * @param reservationCreateDto Reservation to be posted and created
      * @return Newly created reservation as a response for calling REST create method
      */
     @Operation(
@@ -84,17 +80,15 @@ public class ReservationController {
             description = """
                     Receives data in request body and stores it as a new message.
                     Returns the new reservation as its response.
-                    """,
-            responses = {
-                    @ApiResponse(responseCode = "201", ref = "#/components/responses/SingleReservationResponse"),
-                    @ApiResponse(responseCode = "400", description = "input data were not correct",
-                            content = @Content(schema = @Schema(implementation = ErrorMessage.class))
-                    ),
-            }
-    )
+                    """ )
+    @ApiResponse(responseCode = "200", description = "Reservation created", useReturnTypeSchema = true)
+    @ApiResponse(responseCode = "400", description = "Invalid payload",
+            content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
+    @ApiResponse(responseCode = "404", description = "User or book not found",
+            content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
     @PostMapping
-    public ReservationDto create(@RequestBody ReservationDto reservation) {
-        return mapper.toDto(service.create(mapper.fromDto(reservation)));
+    public ReservationDto create(@RequestBody ReservationCreateDto reservationCreateDto) {
+        return reservationFacade.create(reservationCreateDto);
     }
 
     /**
@@ -107,17 +101,16 @@ public class ReservationController {
             description = """
                     Provides update of existing reservation.
                     Returns updated reservation as its response.
-                    """,
-            responses = {
-                    @ApiResponse(responseCode = "201", ref = "#/components/responses/SingleReservationResponse"),
-                    @ApiResponse(responseCode = "400", description = "input data were not correct",
-                            content = @Content(schema = @Schema(implementation = ErrorMessage.class))
-                    ),
-            }
-    )
+                    """ )
+    @ApiResponse(responseCode = "200", description = "Reservation updated", useReturnTypeSchema = true)
+    @ApiResponse(responseCode = "400", description = "Invalid payload",
+            content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
+    @ApiResponse(responseCode = "404", description = "Reservation not found",
+            content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
     @PutMapping("/{id}")
-    public ReservationDto update(@PathVariable String id) {
-        return mapper.toDto(service.create(service.find(id)));
+    public ReservationDto update(@PathVariable String id,
+                                 @RequestBody ReservationCreateDto reservationCreateDto) {
+        return reservationFacade.updateReservation(id, reservationCreateDto);
     }
 
     /**
@@ -128,17 +121,17 @@ public class ReservationController {
             summary = "Delete existing reservation",
             description = """
                     Enables deleting of existing reservation.
-                    """,
-            responses = {
-                    @ApiResponse(responseCode = "201", ref = "#/components/responses/SingleReservationResponse"),
-                    @ApiResponse(responseCode = "400", description = "input data were not correct",
-                            content = @Content(schema = @Schema(implementation = ErrorMessage.class))
-                    ),
-            }
-    )
+                    """ )
+    @ApiResponse(responseCode = "200", description = "Reservation deleted", useReturnTypeSchema = true)
+    @ApiResponse(responseCode = "404", description = "Reservation not found",
+            content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
     @DeleteMapping("/{id}")
     public void delete(@PathVariable String id) {
-        service.delete(service.find(id));
+        try {
+            reservationFacade.deleteReservation(id);
+        } catch (EntityNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
     }
 
     /**
@@ -151,8 +144,11 @@ public class ReservationController {
             description = """
                     Returns all reservations
                     """)
+    @ApiResponse(responseCode = "200", description = "Pages list of all reservations", useReturnTypeSchema = true)
+    @ApiResponse(responseCode = "400", description = "Invalid paging",
+            content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
     @GetMapping
     public Result<ReservationDto> findAll(Pageable pageable) {
-        return mapper.toResult(service.findAll(pageable));
+        return reservationFacade.findAll(pageable);
     }
 }
