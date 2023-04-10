@@ -42,7 +42,7 @@ public class BorrowingFacadeImpl extends DomainFacadeImpl<Borrowing, BorrowingDt
     /**
      * @param id                 id of borrowing to update
      * @param borrowingCreateDto new borrowing values
-     * @return
+     * @return                   update borrowing DTO
      */
     @Override
     public BorrowingDto updateBorrowing(String id, BorrowingCreateDto borrowingCreateDto) {
@@ -70,7 +70,7 @@ public class BorrowingFacadeImpl extends DomainFacadeImpl<Borrowing, BorrowingDt
 
     /**
      * @param borrowingCreateDto dto to create from
-     * @return
+     * @return                   created borrowing DTO
      */
     @Override
     public BorrowingDto create(BorrowingCreateDto borrowingCreateDto) {
