@@ -1,5 +1,6 @@
 package cz.muni.fi.pa165.seminar3.librarymanagement.reservation;
 
+import cz.muni.fi.pa165.seminar3.librarymanagement.book.Book;
 import cz.muni.fi.pa165.seminar3.librarymanagement.common.DomainObject;
 import cz.muni.fi.pa165.seminar3.librarymanagement.user.User;
 import jakarta.persistence.Column;
@@ -37,6 +38,6 @@ public class Reservation extends DomainObject {
     @ManyToOne
     private User user;
 
-//    @ManyToOne
-//    private Book book;
+    @ManyToOne
+    private Book book;
 }
