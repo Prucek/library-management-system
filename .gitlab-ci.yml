@@ -50,3 +50,5 @@ build:
     - podman push $CI_REPO/pa165-library-management-system:latest
   only:
     - main
+  needs:
+    - test
