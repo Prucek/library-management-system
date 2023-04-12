@@ -82,7 +82,7 @@ public class FineController {
     public FineDto update(@PathVariable String id,
                           @RequestBody FineCreateDto fineCreateDto) {
         try {
-            return fineFacade.updateFine(id, fineCreateDto);
+            return fineFacade.update(id, fineCreateDto);
         } catch (EntityNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.toString());
         }
@@ -95,7 +95,7 @@ public class FineController {
     @DeleteMapping(path = "{id}")
     public void delete(@PathVariable String id) {
         try {
-            fineFacade.deleteFine(id);
+            fineFacade.delete(id);
         } catch (EntityNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.toString());
         }
