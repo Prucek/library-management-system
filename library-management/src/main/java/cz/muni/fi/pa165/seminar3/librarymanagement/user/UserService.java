@@ -8,6 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * Class representing User service.
+ */
 @Service
 public class UserService extends DomainService<User> {
 
@@ -25,8 +28,7 @@ public class UserService extends DomainService<User> {
 
     @Transactional(readOnly = true)
     public User find(String id) {
-        return repository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("User '" + id + "' not found."));
+        return repository.findById(id).orElseThrow(() -> new EntityNotFoundException("User '" + id + "' not found."));
     }
 
     @Override

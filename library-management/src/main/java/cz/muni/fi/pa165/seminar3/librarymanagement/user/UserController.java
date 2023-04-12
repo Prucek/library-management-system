@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 /**
- * Spring REST Controller for users
+ * Spring REST Controller for users.
  */
 @RestController
 @RequestMapping("/users")
@@ -92,7 +92,7 @@ public class UserController {
     @ApiResponse(responseCode = "404", description = "User not found",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
     @PutMapping("/{id}")
-    public UserDto update(@PathVariable String id,  @RequestBody UserCreateDto userCreateDto) {
+    public UserDto update(@PathVariable String id, @RequestBody UserCreateDto userCreateDto) {
         try {
             return userFacade.update(id, userCreateDto);
         } catch (EntityNotFoundException e) {

@@ -6,23 +6,22 @@ import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.user.UserDto;
 
 /**
  * Interface representing user facade.
- *
  */
 public interface UserFacade extends DomainFacade<UserDto, UserCreateDto> {
 
     /**
-    * Updates a user.
-    *
-    * @param id            id of user to update
-    * @param userCreateDto new user values
-    * @return updated user
-    */
+     * Updates a user.
+     *
+     * @param id            id of user to update
+     * @param userCreateDto new user values
+     * @return updated user
+     */
     UserDto update(String id, UserCreateDto userCreateDto);
 
     /**
-    * Deletes a user.
-    *
-    * @param userId id to delete
-    */
+     * Deletes a user.
+     *
+     * @param userId id to delete
+     */
     void delete(String userId);
 }

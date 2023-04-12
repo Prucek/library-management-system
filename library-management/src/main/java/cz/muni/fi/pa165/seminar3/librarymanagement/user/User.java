@@ -9,6 +9,7 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -16,8 +17,11 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.Singular;
 import lombok.experimental.SuperBuilder;
-import jakarta.persistence.Table;
 
+
+/**
+ * Class representing User entity.
+ */
 @Getter
 @Setter
 @Entity

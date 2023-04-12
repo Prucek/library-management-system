@@ -12,6 +12,9 @@ import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+/**
+ * Class representing User facade.
+ */
 @Service
 public class UserFacadeImpl extends DomainFacadeImpl<User, UserDto, UserCreateDto> implements UserFacade {
 
@@ -24,8 +27,8 @@ public class UserFacadeImpl extends DomainFacadeImpl<User, UserDto, UserCreateDt
     /**
      * Creates a new user facade instance.
      *
-     * @param domainService    user service instance
-     * @param domainMapper     user mapper instance
+     * @param domainService user service instance
+     * @param domainMapper  user mapper instance
      */
     @Autowired
     public UserFacadeImpl(UserService domainService, UserMapper domainMapper, AddressMapper addressMapper) {

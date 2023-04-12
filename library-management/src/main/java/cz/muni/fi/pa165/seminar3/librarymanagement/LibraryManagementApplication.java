@@ -3,6 +3,9 @@ package cz.muni.fi.pa165.seminar3.librarymanagement;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+/**
+ * Main class for Spring Boot application.
+ */
 @SpringBootApplication
 public class LibraryManagementApplication {
 
