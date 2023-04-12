@@ -5,15 +5,9 @@ import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.common.Result;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.user.UserCreateDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.user.UserDto;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.info.Contact;
-import io.swagger.v3.oas.annotations.info.Info;
-import io.swagger.v3.oas.annotations.info.License;
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.servers.Server;
-import io.swagger.v3.oas.annotations.servers.ServerVariable;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -33,23 +27,6 @@ import org.springframework.web.server.ResponseStatusException;
  * Spring REST Controller for users
  */
 @RestController
-@OpenAPIDefinition( // metadata for inclusion into OpenAPI document
-        // see javadoc at https://javadoc.io/doc/io.swagger.core.v3/swagger-annotations/latest/index.html
-        // see docs at https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Annotations
-        info = @Info(title = "Users REST API",
-                version = "1.0",
-                description = """
-                        Simple service for users REST API
-                        """,
-                contact = @Contact(name = "Peter Rucek", email = "xrucek@fi.muni.cz"),
-                license = @License(name = "Apache 2.0", url = "https://www.apache.org/licenses/LICENSE-2.0.html")
-        ),
-        servers = @Server(description = "library management server", url = "{scheme}://{server}:{port}", variables = {
-                @ServerVariable(name = "scheme", allowableValues = {"http", "https"}, defaultValue = "http"),
-                @ServerVariable(name = "server", defaultValue = "localhost"),
-                @ServerVariable(name = "port", defaultValue = "8080"),
-        })
-)
 @RequestMapping("/users")
 public class UserController {
 
@@ -64,68 +41,71 @@ public class UserController {
     }
 
     /**
-     * REST method returning user with specified id.
-     */
-    @Operation(
-            summary = "Returns identified user",
-            description = "Looks up a user by its id.",
-            responses = {
-                    @ApiResponse(responseCode = "200", ref = "#/components/responses/SingleUserResponse"),
-                    @ApiResponse(responseCode = "404", description = "message not found",
-                            content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
-            }
-    )
-    @GetMapping("/{id}")
-    public UserDto find(@PathVariable String id) {
-        User user;
-        try {
-            user = service.find(id);
-        } catch (EntityNotFoundException e){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "user with id=" + id + " not found");
-        }
-        return mapper.toDto(user);
-    }
-
-    /**
      * REST method for creating a new user.
      */
-    @Operation(
-            summary = "Create a new user",
-            description = """
-                    """,
-            responses = {
-                    @ApiResponse(responseCode = "201", ref = "#/components/responses/SingleUserResponse"),
-                    @ApiResponse(responseCode = "400", description = "input data were not correct",
-                            content = @Content(schema = @Schema(implementation = ErrorMessage.class))
-                    ),
-            }
-    )
+    @Operation(summary = "Create a new fine")
+    @ApiResponse(responseCode = "200", description = "User created", useReturnTypeSchema = true)
+    @ApiResponse(responseCode = "400", description = "Invalid payload",
+            content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public UserDto create(@RequestBody UserCreateDto dto) {
         return mapper.toDto(service.create(mapper.fromCreateDto(dto)));
     }
 
-    @PutMapping("/{id}")
-    public UserDto update(@PathVariable String id) {
-        return mapper.toDto(service.create(service.find(id)));
-    }
-
-    @DeleteMapping("/{id}")
-    public void delete(@PathVariable String id) {
-        service.delete(service.find(id));
-    }
-
     /**
      * REST method returning all users.
      */
-    @Operation( // metadata for inclusion into OpenAPI document
-            summary = "Get all users",
-            description = """
-                    Returns all users as JSON
-                    """)
+    @Operation(summary = "List all users")
+    @ApiResponse(responseCode = "200", description = "Pages list of all users", useReturnTypeSchema = true)
+    @ApiResponse(responseCode = "400", description = "Invalid paging",
+            content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
     @GetMapping
     public Result<UserDto> findAll(Pageable page) {
         return mapper.toResult(service.findAll(page));
+    }
+
+    /**
+     * REST method returning user with specified id.
+     */
+    @Operation(summary = "Find user with id")
+    @ApiResponse(responseCode = "200", description = "User found", useReturnTypeSchema = true)
+    @ApiResponse(responseCode = "404", description = "User not found",
+            content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
+    @GetMapping("/{id}")
+    public UserDto find(@PathVariable String id) {
+        User user;
+        try {
+            user = service.find(id);
+        } catch (EntityNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "user with id=" + id + " not found");
+        }
+        return mapper.toDto(user);
+    }
+
+    /**
+     * REST method for updating a new user.
+     */
+    @Operation(summary = "Update user")
+    @ApiResponse(responseCode = "200", description = "User updated", useReturnTypeSchema = true)
+    @ApiResponse(responseCode = "400", description = "Invalid payload",
+            content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
+    @ApiResponse(responseCode = "404", description = "User not found",
+            content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
+    @PutMapping("/{id}")
+    public UserDto update(@PathVariable String id,  @RequestBody UserCreateDto userCreateDto) {
+        return mapper.toDto(service.create(service.find(id)));
+    }
+
+    /**
+     * REST method for deleting a user.
+     */
+    @Operation(summary = "Delete user")
+    @ApiResponse(responseCode = "200", description = "User deleted", useReturnTypeSchema = true)
+    @ApiResponse(responseCode = "404", description = "User not found",
+            content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable String id) {
+        service.delete(service.find(id));
     }
 }
