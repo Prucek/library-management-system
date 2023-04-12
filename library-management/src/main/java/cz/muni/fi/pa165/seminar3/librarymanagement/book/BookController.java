@@ -72,13 +72,11 @@ public class BookController {
      */
     @Operation(
             summary = "Returns identified book",
-            description = "Looks up a by by its id.",
-            responses = {
-                    @ApiResponse(responseCode = "200", ref = "#/components/responses/SingleBookResponse"),
-                    @ApiResponse(responseCode = "404", description = "book not found",
-                            content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
-            }
+            description = "Looks up a by by its id."
     )
+    @ApiResponse(responseCode = "200", description = "Book found", useReturnTypeSchema = true)
+    @ApiResponse(responseCode = "404", description = "Book not found",
+            content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
     @GetMapping("/{id}")
     public BookDto find(@PathVariable String id) {
         Book book;
@@ -95,9 +93,10 @@ public class BookController {
      */
     @Operation( // metadata for inclusion into OpenAPI document
             summary = "Get all books",
-            description = """
-                    Returns all books with authors as JSON
-                    """)
+            description = "Returns all books with authors as JSON")
+    @ApiResponse(responseCode = "200", description = "Pages list of all books", useReturnTypeSchema = true)
+    @ApiResponse(responseCode = "400", description = "Invalid paging",
+            content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
     @GetMapping
     public Result<BookDto> findAll(Pageable pageable) {
         return mapper.toResult(service.findAll(pageable));
@@ -107,19 +106,13 @@ public class BookController {
      * REST method for creating a new book.
      */
     @Operation(
-            summary = "Create a new book",
-            description = """
-                    Authors are defined by its id, if the ID is not found,
-                    the book is created without author
-                    """,
-            responses = {
-                    @ApiResponse(responseCode = "201", ref = "#/components/responses/SingleBookResponse")
-//                    ,
-//                    @ApiResponse(responseCode = "400", description = "input data were not correct",
-//                            content = @Content(schema = @Schema(implementation = ErrorMessage.class))
-//                    )
-            }
+            summary = "Create a new book"
     )
+    @ApiResponse(responseCode = "201", description = "Book created", useReturnTypeSchema = true)
+//    @ApiResponse(responseCode = "400", description = "Invalid payload",
+//            content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
+    @ApiResponse(responseCode = "404", description = "Author not found",
+            content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
     @PostMapping(
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
@@ -131,7 +124,9 @@ public class BookController {
             Author x;
             try {
                 x = authorService.find(authorDto.getId());
-            } catch (EntityNotFoundException e){continue;}
+            } catch (EntityNotFoundException e){
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.toString());
+            }
             authors.add(x);
 //            Todo: find by name
         }
