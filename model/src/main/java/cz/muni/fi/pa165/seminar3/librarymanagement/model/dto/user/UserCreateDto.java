@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.Singular;
 import lombok.experimental.SuperBuilder;
 
 /**
@@ -29,5 +30,6 @@ public class UserCreateDto {
 
     private String lastName;
 
+    @Singular
     private List<AddressDto> addresses;
 }

@@ -30,14 +30,11 @@ import org.springframework.web.server.ResponseStatusException;
 @RequestMapping("/users")
 public class UserController {
 
-    private final UserService service;
-
-    private final UserMapper mapper;
+    private final UserFacade userFacade;
 
     @Autowired
-    public UserController(UserService service, UserMapper mapper) {
-        this.service = service;
-        this.mapper = mapper;
+    public UserController(UserFacade facade) {
+        this.userFacade = facade;
     }
 
     /**
@@ -49,8 +46,12 @@ public class UserController {
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public UserDto create(@RequestBody UserCreateDto dto) {
-        return mapper.toDto(service.create(mapper.fromCreateDto(dto)));
+    public UserDto create(@RequestBody UserCreateDto userCreateDto) {
+        try {
+            return userFacade.create(userCreateDto);
+        } catch (EntityNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.toString());
+        }
     }
 
     /**
@@ -61,8 +62,8 @@ public class UserController {
     @ApiResponse(responseCode = "400", description = "Invalid paging",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
     @GetMapping
-    public Result<UserDto> findAll(Pageable page) {
-        return mapper.toResult(service.findAll(page));
+    public Result<UserDto> findAll(Pageable pageable) {
+        return userFacade.findAll(pageable);
     }
 
     /**
@@ -74,13 +75,11 @@ public class UserController {
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
     @GetMapping("/{id}")
     public UserDto find(@PathVariable String id) {
-        User user;
         try {
-            user = service.find(id);
+            return userFacade.find(id);
         } catch (EntityNotFoundException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "user with id=" + id + " not found");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("Fine %s not found", id));
         }
-        return mapper.toDto(user);
     }
 
     /**
@@ -94,7 +93,11 @@ public class UserController {
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
     @PutMapping("/{id}")
     public UserDto update(@PathVariable String id,  @RequestBody UserCreateDto userCreateDto) {
-        return mapper.toDto(service.create(service.find(id)));
+        try {
+            return userFacade.update(id, userCreateDto);
+        } catch (EntityNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.toString());
+        }
     }
 
     /**
@@ -106,6 +109,10 @@ public class UserController {
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
     @DeleteMapping("/{id}")
     public void delete(@PathVariable String id) {
-        service.delete(service.find(id));
+        try {
+            userFacade.delete(id);
+        } catch (EntityNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.toString());
+        }
     }
 }
