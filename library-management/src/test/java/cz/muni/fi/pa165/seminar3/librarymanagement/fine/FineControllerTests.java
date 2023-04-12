@@ -126,7 +126,7 @@ public class FineControllerTests {
         FineDto newFineDto = fakeFineDto(faker);
         newFineDto.setId(fineDto.getId());
         // mock facade
-        given(fineFacade.updateFine(eq(fineDto.getId()), any())).willReturn(newFineDto);
+        given(fineFacade.update(eq(fineDto.getId()), any())).willReturn(newFineDto);
 
         // perform test
         mockMvc.perform(put("/fines/" + fineDto.getId()).contentType(MediaType.APPLICATION_JSON)
@@ -146,7 +146,7 @@ public class FineControllerTests {
     public void updateNotFound() throws Exception {
         FineDto fineDto = fakeFineDto(faker);
         // mock facade
-        given(fineFacade.updateFine(eq(fineDto.getId()), any())).willThrow(EntityNotFoundException.class);
+        given(fineFacade.update(eq(fineDto.getId()), any())).willThrow(EntityNotFoundException.class);
 
         // perform test
         mockMvc.perform(put("/fines/" + fineDto.getId()).contentType(MediaType.APPLICATION_JSON)
@@ -161,7 +161,7 @@ public class FineControllerTests {
     public void deleteSuccessful() throws Exception {
         FineDto fineDto = fakeFineDto(faker);
         // mock facade
-        doNothing().when(fineFacade).deleteFine(fineDto.getId());
+        doNothing().when(fineFacade).delete(fineDto.getId());
 
         // perform test
         mockMvc.perform(delete("/fines/" + fineDto.getId())).andExpect(status().is2xxSuccessful());
@@ -170,7 +170,7 @@ public class FineControllerTests {
     @Test
     public void deleteNotFound() throws Exception {
         // mock services
-        doThrow(EntityNotFoundException.class).when(fineFacade).deleteFine(any());
+        doThrow(EntityNotFoundException.class).when(fineFacade).delete(any());
 
         // perform test
         mockMvc.perform(delete("/fines/" + UUID.randomUUID())).andExpect(status().isNotFound());
