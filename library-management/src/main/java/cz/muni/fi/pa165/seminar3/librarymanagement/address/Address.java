@@ -1,21 +1,20 @@
-package cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.user;
+package cz.muni.fi.pa165.seminar3.librarymanagement.address;
 
+import cz.muni.fi.pa165.seminar3.librarymanagement.common.DomainObject;
+import jakarta.persistence.Entity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
-/**
- * DTO for an address. Data Transfer Object that is stable for API,
- * independent of internal Address class.
- */
 @Getter
 @Setter
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AddressDto {
+@Entity
+public class Address extends DomainObject {
 
     private String country;
 
@@ -27,4 +26,3 @@ public class AddressDto {
 
     private String zip;
 }
-

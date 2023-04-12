@@ -1,7 +1,8 @@
 package cz.muni.fi.pa165.seminar3.librarymanagement;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.user.AddressDto;
+import cz.muni.fi.pa165.seminar3.librarymanagement.address.Address;
+import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.address.AddressDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.user.UserCreateDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.user.UserType;
 import cz.muni.fi.pa165.seminar3.librarymanagement.user.*;
@@ -66,6 +67,8 @@ public class UserTests {
         List<User> users = List.of(user1, user2);
         given(userService.findAll(any())).willReturn(new PageImpl<>(users));
 
+        System.out.println( user1.getAddresses().get(0).getCity());
+
         mockMvc.perform(get("/users"))
                 .andDo(print())
                 .andExpect(status().is2xxSuccessful())
@@ -75,19 +78,19 @@ public class UserTests {
                 .andExpect(jsonPath("$.items[0].firstName").value(user1.getFirstName()))
                 .andExpect(jsonPath("$.items[0].lastName").value(user1.getLastName()))
                 .andExpect(jsonPath("$.items[0].email").value(user1.getEmail()))
-                .andExpect(jsonPath("$.items[0].address.country").value(user1.getAddress().getCountry()))
-                .andExpect(jsonPath("$.items[0].address.city").value(user1.getAddress().getCity()))
-                .andExpect(jsonPath("$.items[0].address.street").value(user1.getAddress().getStreet()))
-                .andExpect(jsonPath("$.items[0].address.houseNumber").value(user1.getAddress().getHouseNumber()))
+                .andExpect(jsonPath("$.items[0].addresses[0].country").value(user1.getAddresses().get(0).getCountry()))
+                .andExpect(jsonPath("$.items[0].addresses[0].city").value(user1.getAddresses().get(0).getCity()))
+                .andExpect(jsonPath("$.items[0].addresses[0].street").value(user1.getAddresses().get(0).getStreet()))
+                .andExpect(jsonPath("$.items[0].addresses[0].houseNumber").value(user1.getAddresses().get(0).getHouseNumber()))
                 .andExpect(jsonPath("$.items[1].username").value(user2.getUsername()))
                 .andExpect(jsonPath("$.items[1].email").value(user2.getEmail()))
                 .andExpect(jsonPath("$.items[1].firstName").value(user2.getFirstName()))
                 .andExpect(jsonPath("$.items[1].lastName").value(user2.getLastName()))
                 .andExpect(jsonPath("$.items[1].email").value(user2.getEmail()))
-                .andExpect(jsonPath("$.items[1].address.country").value(user2.getAddress().getCountry()))
-                .andExpect(jsonPath("$.items[1].address.city").value(user2.getAddress().getCity()))
-                .andExpect(jsonPath("$.items[1].address.street").value(user2.getAddress().getStreet()))
-                .andExpect(jsonPath("$.items[1].address.houseNumber").value(user2.getAddress().getHouseNumber()));
+                .andExpect(jsonPath("$.items[1].addresses[0].country").value(user2.getAddresses().get(0).getCountry()))
+                .andExpect(jsonPath("$.items[1].addresses[0].city").value(user2.getAddresses().get(0).getCity()))
+                .andExpect(jsonPath("$.items[1].addresses[0].street").value(user2.getAddresses().get(0).getStreet()))
+                .andExpect(jsonPath("$.items[1].addresses[0].houseNumber").value(user2.getAddresses().get(0).getHouseNumber()));
     }
 
     @Test
@@ -104,10 +107,10 @@ public class UserTests {
                 .andExpect(jsonPath("$.firstName").value(user.getFirstName()))
                 .andExpect(jsonPath("$.lastName").value(user.getLastName()))
                 .andExpect(jsonPath("$.email").value(user.getEmail()))
-                .andExpect(jsonPath("$.address.country").value(user.getAddress().getCountry()))
-                .andExpect(jsonPath("$.address.city").value(user.getAddress().getCity()))
-                .andExpect(jsonPath("$.address.street").value(user.getAddress().getStreet()))
-                .andExpect(jsonPath("$.address.houseNumber").value(user.getAddress().getHouseNumber()));
+                .andExpect(jsonPath("$.addresses[0].country").value(user.getAddresses().get(0).getCountry()))
+                .andExpect(jsonPath("$.addresses[0].city").value(user.getAddresses().get(0).getCity()))
+                .andExpect(jsonPath("$.addresses[0].street").value(user.getAddresses().get(0).getStreet()))
+                .andExpect(jsonPath("$.addresses[0].houseNumber").value(user.getAddresses().get(0).getHouseNumber()));
     }
 
     @Test
@@ -120,12 +123,12 @@ public class UserTests {
         userCreateDto.setLastName("Colinski");
         userCreateDto.setEmail("alexcolinski@email.com");
         userCreateDto.setPassword("password");
-        userCreateDto.setAddress(AddressDto.builder()
+        userCreateDto.setAddresses(List.of(AddressDto.builder()
                 .city("Brno")
                 .country("CZ")
                 .street("Hradecka")
                 .houseNumber("31")
-                .build());
+                .build()));
 
         given(userService.create(any())).willReturn(user);
 
@@ -138,10 +141,10 @@ public class UserTests {
                 .andExpect(jsonPath("$.firstName").value(user.getFirstName()))
                 .andExpect(jsonPath("$.lastName").value(user.getLastName()))
                 .andExpect(jsonPath("$.email").value(user.getEmail()))
-                .andExpect(jsonPath("$.address.country").value(user.getAddress().getCountry()))
-                .andExpect(jsonPath("$.address.city").value(user.getAddress().getCity()))
-                .andExpect(jsonPath("$.address.street").value(user.getAddress().getStreet()))
-                .andExpect(jsonPath("$.address.houseNumber").value(user.getAddress().getHouseNumber()));
+                .andExpect(jsonPath("$.addresses[0].country").value(user.getAddresses().get(0).getCountry()))
+                .andExpect(jsonPath("$.addresses[0].city").value(user.getAddresses().get(0).getCity()))
+                .andExpect(jsonPath("$.addresses[0].street").value(user.getAddresses().get(0).getStreet()))
+                .andExpect(jsonPath("$.addresses[0].houseNumber").value(user.getAddresses().get(0).getHouseNumber()));
 
     }
 
@@ -173,9 +176,9 @@ public class UserTests {
                 .andExpect(jsonPath("$.firstName").value(updatedUser.getFirstName()))
                 .andExpect(jsonPath("$.lastName").value(updatedUser.getLastName()))
                 .andExpect(jsonPath("$.email").value(updatedUser.getEmail()))
-                .andExpect(jsonPath("$.address.country").value(updatedUser.getAddress().getCountry()))
-                .andExpect(jsonPath("$.address.city").value(updatedUser.getAddress().getCity()))
-                .andExpect(jsonPath("$.address.street").value(updatedUser.getAddress().getStreet()))
-                .andExpect(jsonPath("$.address.houseNumber").value(updatedUser.getAddress().getHouseNumber()));
+                .andExpect(jsonPath("$.addresses[0].country").value(updatedUser.getAddresses().get(0).getCountry()))
+                .andExpect(jsonPath("$.addresses[0].city").value(updatedUser.getAddresses().get(0).getCity()))
+                .andExpect(jsonPath("$.addresses[0].street").value(updatedUser.getAddresses().get(0).getStreet()))
+                .andExpect(jsonPath("$.addresses[0].houseNumber").value(updatedUser.getAddresses().get(0).getHouseNumber()));
     }
 }

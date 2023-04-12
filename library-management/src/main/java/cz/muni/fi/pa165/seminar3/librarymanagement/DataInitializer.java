@@ -14,7 +14,7 @@ import cz.muni.fi.pa165.seminar3.librarymanagement.payment.Payment;
 import cz.muni.fi.pa165.seminar3.librarymanagement.payment.PaymentService;
 import cz.muni.fi.pa165.seminar3.librarymanagement.reservation.Reservation;
 import cz.muni.fi.pa165.seminar3.librarymanagement.reservation.ReservationService;
-import cz.muni.fi.pa165.seminar3.librarymanagement.user.Address;
+import cz.muni.fi.pa165.seminar3.librarymanagement.address.Address;
 import cz.muni.fi.pa165.seminar3.librarymanagement.user.User;
 import cz.muni.fi.pa165.seminar3.librarymanagement.user.UserService;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.user.UserType;
@@ -45,6 +45,7 @@ public class DataInitializer implements ApplicationRunner {
 
     private final AuthorService authorService;
 
+
     public DataInitializer(UserService userService,
                            ReservationService reservationService,
                            BorrowingService borrowingService,
@@ -63,6 +64,15 @@ public class DataInitializer implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) {
+
+        Address address = Address.builder()
+                .city("Brno")
+                .country("CZ")
+                .street("Hrnčírska")
+                .houseNumber("99")
+                .build();
+
+
         User user = User.builder()
                 .email("test@email.com")
                 .firstName("John")
@@ -70,7 +80,7 @@ public class DataInitializer implements ApplicationRunner {
                 .username("johnD")
                 .password("password")
                 .userType(UserType.CLIENT)
-                .address(Address.builder().city("Brno").country("CZ").street("Hrnčírska").houseNumber("99").build())
+                .address(address)
                 .build();
 
         userService.create(user);

@@ -1,10 +1,10 @@
 package cz.muni.fi.pa165.seminar3.librarymanagement.utils;
 
 import com.github.javafaker.Faker;
-import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.user.AddressDto;
+import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.address.AddressDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.user.UserDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.user.UserType;
-import cz.muni.fi.pa165.seminar3.librarymanagement.user.Address;
+import cz.muni.fi.pa165.seminar3.librarymanagement.address.Address;
 import cz.muni.fi.pa165.seminar3.librarymanagement.user.User;
 
 /**
