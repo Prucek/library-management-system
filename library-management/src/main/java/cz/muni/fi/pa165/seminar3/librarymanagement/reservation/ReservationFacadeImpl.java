@@ -10,6 +10,11 @@ import cz.muni.fi.pa165.seminar3.librarymanagement.user.UserService;
 import lombok.Getter;
 import org.springframework.stereotype.Service;
 
+/**
+ * Class representing reservation facade.
+ *
+ * @author Marek Miček
+ */
 @Service
 public class ReservationFacadeImpl extends DomainFacadeImpl<Reservation, ReservationDto, ReservationCreateDto>
         implements ReservationFacade {
@@ -21,6 +26,14 @@ public class ReservationFacadeImpl extends DomainFacadeImpl<Reservation, Reserva
     private final UserService userService;
     private final BookService bookService;
 
+    /**
+     * Creates a new borrowing facade instance.
+     *
+     * @param domainService    reservation service instance
+     * @param domainMapper     reservation mapper instance
+     * @param userService      user service instance
+     * @param bookService      book service instance
+     */
     public ReservationFacadeImpl(ReservationService domainService, ReservationMapper domainMapper,
                                  UserService userService, BookService bookService) {
         this.domainService = domainService;
@@ -30,6 +43,8 @@ public class ReservationFacadeImpl extends DomainFacadeImpl<Reservation, Reserva
     }
 
     /**
+     * Creates reservation.
+     *
      * @param reservationCreateDto dto to create from
      * @return                     created reservation DTO
      */
@@ -49,6 +64,8 @@ public class ReservationFacadeImpl extends DomainFacadeImpl<Reservation, Reserva
     }
 
     /**
+     * Updates existing reservation.
+     *
      * @param id                   id of reservation to update
      * @param reservationCreateDto new reservation values
      * @return                     updated reservation DTO
@@ -68,6 +85,8 @@ public class ReservationFacadeImpl extends DomainFacadeImpl<Reservation, Reserva
     }
 
     /**
+     * Delete reservation.
+     *
      * @param reservationId id to delete
      */
     @Override

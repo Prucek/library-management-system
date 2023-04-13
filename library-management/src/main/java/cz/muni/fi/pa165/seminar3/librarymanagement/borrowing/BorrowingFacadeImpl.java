@@ -11,8 +11,14 @@ import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+/**
+ * Class representing borrowing facade.
+ *
+ * @author Marek Miček
+ */
 @Service
-public class BorrowingFacadeImpl extends DomainFacadeImpl<Borrowing, BorrowingDto, BorrowingCreateDto> implements BorrowingFacade {
+public class BorrowingFacadeImpl extends DomainFacadeImpl<Borrowing, BorrowingDto, BorrowingCreateDto>
+        implements BorrowingFacade {
 
     @Getter
     private final BorrowingService domainService;
@@ -40,6 +46,8 @@ public class BorrowingFacadeImpl extends DomainFacadeImpl<Borrowing, BorrowingDt
     }
 
     /**
+     * Updates existing borrowing.
+     *
      * @param id                 id of borrowing to update
      * @param borrowingCreateDto new borrowing values
      * @return                   update borrowing DTO
@@ -60,6 +68,8 @@ public class BorrowingFacadeImpl extends DomainFacadeImpl<Borrowing, BorrowingDt
     }
 
     /**
+     * Deletes borrowing.
+     *
      * @param borrowingId id to delete
      */
     @Override
@@ -69,6 +79,8 @@ public class BorrowingFacadeImpl extends DomainFacadeImpl<Borrowing, BorrowingDt
     }
 
     /**
+     * Creates borrowing.
+     *
      * @param borrowingCreateDto dto to create from
      * @return                   created borrowing DTO
      */

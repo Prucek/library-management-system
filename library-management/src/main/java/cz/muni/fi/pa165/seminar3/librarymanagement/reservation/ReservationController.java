@@ -15,11 +15,19 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 /**
  * Spring REST Controller for reservation service.
+ *
  * @author Marek Miček
  */
 @RestController
@@ -49,6 +57,7 @@ public class ReservationController {
 
     /**
      * REST method returning reservation with specified id.
+     *
      * @param id Specifies reservation which is requested
      * @return Concrete reservation specified by its id
      */
@@ -65,13 +74,14 @@ public class ReservationController {
     public ReservationDto find(@PathVariable String id) {
         try {
             return reservationFacade.find(id);
-        } catch (EntityNotFoundException e){
+        } catch (EntityNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "reservation with id=" + id + " not found");
         }
     }
 
     /**
      * REST method for creating a new borrowing.
+     *
      * @param reservationCreateDto Reservation to be posted and created
      * @return Newly created reservation as a response for calling REST create method
      */
@@ -80,7 +90,7 @@ public class ReservationController {
             description = """
                     Receives data in request body and stores it as a new message.
                     Returns the new reservation as its response.
-                    """ )
+                    """)
     @ApiResponse(responseCode = "200", description = "Reservation created", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "400", description = "Invalid payload",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
@@ -93,6 +103,7 @@ public class ReservationController {
 
     /**
      * REST method for updating reservation.
+     *
      * @param id Specifies reservation to be updated
      * @return Updated reservation as a response for calling REST update method
      */
@@ -101,7 +112,7 @@ public class ReservationController {
             description = """
                     Provides update of existing reservation.
                     Returns updated reservation as its response.
-                    """ )
+                    """)
     @ApiResponse(responseCode = "200", description = "Reservation updated", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "400", description = "Invalid payload",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
@@ -115,13 +126,14 @@ public class ReservationController {
 
     /**
     * REST method for deleting reservation.
+     *
     * @param id Specifies reservation to be deleted
      */
     @Operation(
             summary = "Delete existing reservation",
             description = """
                     Enables deleting of existing reservation.
-                    """ )
+                    """)
     @ApiResponse(responseCode = "200", description = "Reservation deleted", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "404", description = "Reservation not found",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
@@ -136,6 +148,7 @@ public class ReservationController {
 
     /**
      * REST method returning all reservations.
+     *
      * @param pageable Represents Page object of reservation which will be used for return value
      * @return Result object with all reservations
      */

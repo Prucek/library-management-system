@@ -4,6 +4,11 @@ import cz.muni.fi.pa165.seminar3.librarymanagement.common.DomainFacade;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.borrowing.BorrowingCreateDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.borrowing.BorrowingDto;
 
+/**
+ * Interface representing borrowing facade.
+ *
+ * @author Marek Miček
+ */
 public interface BorrowingFacade extends DomainFacade<BorrowingDto, BorrowingCreateDto> {
 
     /**

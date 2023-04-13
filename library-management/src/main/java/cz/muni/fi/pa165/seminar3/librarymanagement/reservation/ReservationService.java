@@ -6,7 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
- * Represents reservation service which enables working with JPA repository
+ * Represents reservation service which enables working with JPA repository.
+ *
  * @author Marek Miček
  */
 @Service

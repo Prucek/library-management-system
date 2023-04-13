@@ -4,6 +4,11 @@ import cz.muni.fi.pa165.seminar3.librarymanagement.common.DomainFacade;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.reservation.ReservationCreateDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.reservation.ReservationDto;
 
+/**
+ * Interface representing reservation facade.
+ *
+ * @author Marek Miček
+ */
 public interface ReservationFacade extends DomainFacade<ReservationDto, ReservationCreateDto> {
 
     /**
