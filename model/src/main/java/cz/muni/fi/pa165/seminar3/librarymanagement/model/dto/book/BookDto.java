@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.Singular;
 import lombok.experimental.SuperBuilder;
 
 import java.util.List;
@@ -21,6 +22,8 @@ import java.util.List;
 public class BookDto extends DomainObjectDto {
 
     private String title;
+    @Singular
     private List<AuthorDto> authors;
+    @Singular
     private List<BookInstanceDto> instances;
 }

@@ -119,6 +119,8 @@ public class BookController {
             return facade.create(dto);
         } catch (ResponseStatusException e) {
             throw new ResponseStatusException(e.getStatusCode(), e.toString());
+        } catch (EntityNotFoundException e){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.toString());
         }
     }
 

@@ -57,7 +57,7 @@ public class BookFacadeImpl extends DomainFacadeImpl<Book, BookDto, BookDto> imp
             try {
                 x = authorService.find(authorDto.getId());
             } catch (EntityNotFoundException e) {
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.toString());
+                throw new EntityNotFoundException(e.toString());
             }
             authors.add(x);
         }
