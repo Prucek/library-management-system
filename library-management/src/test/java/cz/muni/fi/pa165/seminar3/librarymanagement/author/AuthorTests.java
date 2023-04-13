@@ -1,10 +1,6 @@
-package cz.muni.fi.pa165.seminar3.librarymanagement;
+package cz.muni.fi.pa165.seminar3.librarymanagement.author;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import cz.muni.fi.pa165.seminar3.librarymanagement.author.Author;
-import cz.muni.fi.pa165.seminar3.librarymanagement.author.AuthorController;
-import cz.muni.fi.pa165.seminar3.librarymanagement.author.AuthorMapper;
-import cz.muni.fi.pa165.seminar3.librarymanagement.author.AuthorService;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.author.AuthorDto;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

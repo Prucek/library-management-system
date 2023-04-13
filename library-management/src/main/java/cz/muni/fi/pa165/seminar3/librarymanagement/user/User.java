@@ -1,17 +1,34 @@
 package cz.muni.fi.pa165.seminar3.librarymanagement.user;
 
+import cz.muni.fi.pa165.seminar3.librarymanagement.address.Address;
 import cz.muni.fi.pa165.seminar3.librarymanagement.common.DomainObject;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.user.UserType;
-import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import java.util.List;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.Singular;
 import lombok.experimental.SuperBuilder;
 
+
+/**
+ * Class representing User entity.
+ *
+ * @author Peter Rúček
+ */
 @Getter
 @Setter
 @Entity
 @NoArgsConstructor
+@AllArgsConstructor
 @SuperBuilder
 @Table(name = "domain_user")
 public class User extends DomainObject {
@@ -29,6 +46,7 @@ public class User extends DomainObject {
 
     private String lastName;
 
-    @Embedded
-    private Address address;
+    @Singular
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
+    private List<Address> addresses;
 }

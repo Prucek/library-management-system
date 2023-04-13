@@ -26,6 +26,6 @@ public abstract class DomainFacadeImpl<T extends DomainObject, DtoT extends Doma
 
     @Override
     public DtoT find(String id) {
-        return null;
+        return getDomainMapper().toDto(getDomainService().find(id));
     }
 }

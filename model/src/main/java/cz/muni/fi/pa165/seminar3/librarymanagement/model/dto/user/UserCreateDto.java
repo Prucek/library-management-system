@@ -1,14 +1,19 @@
 package cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.user;
 
+import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.address.AddressDto;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.Singular;
 import lombok.experimental.SuperBuilder;
 
 /**
  * DTO for a created user. Data Transfer Object that is stable for API,
  * independent of internal User class.
+ *
+ * @author Peter Rúček
  */
 @Getter
 @Setter
@@ -27,5 +32,6 @@ public class UserCreateDto {
 
     private String lastName;
 
-    private AddressDto address;
+    @Singular
+    private List<AddressDto> addresses;
 }
