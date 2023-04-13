@@ -21,6 +21,8 @@ import lombok.experimental.SuperBuilder;
 
 /**
  * Class representing User entity.
+ *
+ * @author Peter Rúček
  */
 @Getter
 @Setter
@@ -45,6 +47,6 @@ public class User extends DomainObject {
     private String lastName;
 
     @Singular
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
     private List<Address> addresses;
 }

@@ -6,6 +6,8 @@ import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.user.UserDto;
 
 /**
  * Interface representing user facade.
+ *
+ * @author Peter Rúček
  */
 public interface UserFacade extends DomainFacade<UserDto, UserCreateDto> {
 

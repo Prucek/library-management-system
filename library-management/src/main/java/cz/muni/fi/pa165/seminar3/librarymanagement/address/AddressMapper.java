@@ -6,6 +6,8 @@ import org.mapstruct.Mapper;
 
 /**
  * Mapper mapping Address DTO to Address.
+ *
+ * @author Peter Rúček
  */
 @Mapper
 public interface AddressMapper extends DomainMapper<Address, AddressDto> {

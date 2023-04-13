@@ -25,6 +25,8 @@ import org.springframework.web.server.ResponseStatusException;
 
 /**
  * Spring REST Controller for users.
+ *
+ * @author Peter Rúček
  */
 @RestController
 @RequestMapping("/users")

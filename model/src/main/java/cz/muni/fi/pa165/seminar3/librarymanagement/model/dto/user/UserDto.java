@@ -14,6 +14,8 @@ import lombok.experimental.SuperBuilder;
 /**
  * DTO for a user. Data Transfer Object that is stable for API,
  * independent of internal User class.
+ *
+ * @author Peter Rúček
  */
 @Getter
 @Setter

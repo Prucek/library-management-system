@@ -10,6 +10,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Class representing User service.
+ *
+ * @author Peter Rúček
  */
 @Service
 public class UserService extends DomainService<User> {

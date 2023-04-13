@@ -5,6 +5,8 @@ import org.springframework.stereotype.Repository;
 
 /**
  * Interface representing address repository.
+ *
+ * @author Peter Rúček
  */
 @Repository
 public interface AddressRepository extends JpaRepository<Address, String> {

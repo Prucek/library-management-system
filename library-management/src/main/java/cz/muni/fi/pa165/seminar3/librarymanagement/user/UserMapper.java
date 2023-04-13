@@ -7,6 +7,8 @@ import org.mapstruct.Mapper;
 
 /**
  * Mapper mapping User DTO to User.
+ *
+ * @author Peter Rúček
  */
 @Mapper
 public interface UserMapper extends DomainMapper<User, UserDto> {

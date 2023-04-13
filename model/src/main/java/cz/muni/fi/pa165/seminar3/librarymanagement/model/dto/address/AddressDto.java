@@ -10,6 +10,8 @@ import lombok.experimental.SuperBuilder;
 /**
  * DTO for an address. Data Transfer Object that is stable for API,
  * independent of internal Address class.
+ *
+ * @author Peter Rúček
  */
 @Getter
 @Setter

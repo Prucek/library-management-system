@@ -10,6 +10,8 @@ import lombok.experimental.SuperBuilder;
 
 /**
  * Class representing Address entity.
+ *
+ * @author Peter Rúček
  */
 @Getter
 @Setter

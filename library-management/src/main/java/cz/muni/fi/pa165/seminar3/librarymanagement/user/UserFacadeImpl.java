@@ -14,6 +14,8 @@ import org.springframework.stereotype.Service;
 
 /**
  * Class representing User facade.
+ *
+ * @author Peter Rúček
  */
 @Service
 public class UserFacadeImpl extends DomainFacadeImpl<User, UserDto, UserCreateDto> implements UserFacade {
