@@ -5,14 +5,14 @@ import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.payment.PaymentCrea
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.payment.PaymentDto;
 
 /**
- * Interface representing payment facade
+ * Interface representing payment facade.
  *
  * @author Juraj Marcin
  */
 public interface PaymentFacade extends DomainFacade<PaymentDto, PaymentCreateDto> {
 
     /**
-     * Finalizes a payment by contacting the payment gate to check the status
+     * Finalizes a payment by contacting the payment gate to check the status.
      *
      * @param id id of the payment
      * @return finalized payment

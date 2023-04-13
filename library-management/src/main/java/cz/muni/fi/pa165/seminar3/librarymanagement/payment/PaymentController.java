@@ -17,11 +17,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 /**
- * Class representing payment controller
+ * Class representing payment controller.
  *
  * @author Juraj Marcin
  */
@@ -32,7 +33,7 @@ public class PaymentController {
     private final PaymentFacade paymentFacade;
 
     /**
-     * Create a new payment controller instance
+     * Create a new payment controller instance.
      *
      * @param paymentFacade payment facade instance
      */
@@ -41,6 +42,12 @@ public class PaymentController {
         this.paymentFacade = paymentFacade;
     }
 
+    /**
+     * Creates a new payment.
+     *
+     * @param paymentCreateDto payment creation data
+     * @return created payment
+     */
     @Operation(summary = "Create a new payment for fines")
     @ApiResponse(responseCode = "200", description = "Payment created, proceed to payment gate",
             useReturnTypeSchema = true)
@@ -49,6 +56,7 @@ public class PaymentController {
     @ApiResponse(responseCode = "404", description = "Fine not found",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public PaymentDto create(@RequestBody PaymentCreateDto paymentCreateDto) {
         try {
             return paymentFacade.create(paymentCreateDto);
@@ -57,6 +65,12 @@ public class PaymentController {
         }
     }
 
+    /**
+     * Updates the payment status by contacting the payment gate.
+     *
+     * @param id id of the payment
+     * @return updated payment
+     */
     @Operation(summary = "Callback for the payment gate",
             description = "Checks the transaction status with the payment gate and updates the status")
     @ApiResponse(responseCode = "200", description = "Payment status updated", useReturnTypeSchema = true)
@@ -71,6 +85,12 @@ public class PaymentController {
         }
     }
 
+    /**
+     * Finds all payments.
+     *
+     * @param pageable page request
+     * @return paged payments
+     */
     @Operation(summary = "List all payments")
     @ApiResponse(responseCode = "200", description = "Paged list of payments", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "400", description = "Invalid paging",
@@ -80,6 +100,12 @@ public class PaymentController {
         return paymentFacade.findAll(pageable);
     }
 
+    /**
+     * Finds a payment with id.
+     *
+     * @param id id of the payment
+     * @return found payment
+     */
     @Operation(summary = "Find a payment")
     @ApiResponse(responseCode = "200", description = "Payment found", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "404", description = "Payment not found",
