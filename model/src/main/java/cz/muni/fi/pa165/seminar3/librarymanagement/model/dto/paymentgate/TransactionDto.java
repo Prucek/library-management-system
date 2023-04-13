@@ -1,13 +1,13 @@
 package cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.paymentgate;
 
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.common.DomainObjectDto;
+import java.util.Objects;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
-import java.util.Objects;
 
 /**
  * DTO for a transaction. Data Transfer Object that is stable for API.
@@ -20,8 +20,10 @@ import java.util.Objects;
 public class TransactionDto extends DomainObjectDto {
 
     private double amount;
+
     private TransactionStatus status = TransactionStatus.WAITING;
-    private String callbackURL;
+
+    private String callbackUrl;
 
     @Override
     public boolean equals(Object obj) {
@@ -32,6 +34,6 @@ public class TransactionDto extends DomainObjectDto {
             return false;
         }
         return transactionDto.getAmount() == this.getAmount() && transactionDto.getStatus() == this.getStatus()
-                && Objects.equals(transactionDto.getCallbackURL(), this.getCallbackURL());
+                && Objects.equals(transactionDto.getCallbackUrl(), this.getCallbackUrl());
     }
 }
