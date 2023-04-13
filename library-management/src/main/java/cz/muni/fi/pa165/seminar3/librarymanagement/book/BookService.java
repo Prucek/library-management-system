@@ -2,15 +2,15 @@ package cz.muni.fi.pa165.seminar3.librarymanagement.book;
 
 import cz.muni.fi.pa165.seminar3.librarymanagement.common.DomainService;
 import jakarta.persistence.EntityNotFoundException;
+import java.util.List;
+import java.util.UUID;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.UUID;
-
 /**
- * Book service providing access to Book repository
+ * Book service providing access to Book repository.
  */
 @Service
 public class BookService extends DomainService<Book> {
@@ -32,10 +32,24 @@ public class BookService extends DomainService<Book> {
         return repository.findById(id).orElseThrow(() -> new EntityNotFoundException("Book '" + id + "' not found."));
     }
 
+    /**
+     * Add new book instance to instanceRepository.
+     *
+     * @param bookId  Book id instance is associated with
+     * @param pages   Number of instance pages
+     * @return new book instance
+     */
     @Transactional
-    public BookInstance addInstance(String bookId) {
-        return instanceRepository.save(
-                BookInstance.builder().id(UUID.randomUUID().toString()).book(find(bookId)).build());
+    public BookInstance addInstance(String bookId, Integer pages) {
+        BookInstance bookInstance = instanceRepository.save(
+                BookInstance.builder().id(UUID.randomUUID().toString()).book(find(bookId)).pages(pages).build());
+        //        try{
+        //            Book b = find(bookId);
+        //            List<BookInstance> oldBookInstances = b.getInstances();
+        //            oldBookInstances.add(bookInstance);
+        //            b.setInstances(oldBookInstances);
+        //        }catch (EntityNotFoundException ignored){}
+        return bookInstance;
     }
 
     @Transactional(readOnly = true)

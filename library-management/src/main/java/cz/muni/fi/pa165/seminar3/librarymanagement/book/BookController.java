@@ -1,10 +1,7 @@
 package cz.muni.fi.pa165.seminar3.librarymanagement.book;
 
 
-import cz.muni.fi.pa165.seminar3.librarymanagement.author.Author;
-import cz.muni.fi.pa165.seminar3.librarymanagement.author.AuthorService;
 import cz.muni.fi.pa165.seminar3.librarymanagement.common.ErrorMessage;
-import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.author.AuthorDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.book.BookDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.book.BookInstanceDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.common.Result;
@@ -23,17 +20,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
- * Spring REST Controller for books
+ * Spring REST Controller for books.
  */
 @RestController
-@OpenAPIDefinition( // metadata for inclusion into OpenAPI document
+@OpenAPIDefinition(
         info = @Info(title = "Books REST API",
                 version = "1.0",
                 description = """
@@ -50,21 +52,17 @@ import java.util.List;
 )
 @RequestMapping("/books")
 public class BookController {
-    private final BookService service;
-    private final AuthorService authorService;
-    private final BookMapper mapper;
 
-    private final BookInstanceMapper instanceMapper;
+    private final BookFacade facade;
 
+    /**
+     * Creates a BookController instance.
+     *
+     * @param facade FineFacade instance
+     */
     @Autowired
-    public BookController(BookService service,
-                          BookMapper mapper,
-                          AuthorService authorService,
-                          BookInstanceMapper instanceMapper) {
-        this.service = service;
-        this.mapper = mapper;
-        this.authorService = authorService;
-        this.instanceMapper = instanceMapper;
+    public BookController(BookFacade facade) {
+        this.facade = facade;
     }
 
     /**
@@ -79,19 +77,17 @@ public class BookController {
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
     @GetMapping("/{id}")
     public BookDto find(@PathVariable String id) {
-        Book book;
         try {
-            book = service.find(id);
+            return facade.find(id);
         } catch (EntityNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "book with id=" + id + " not found");
         }
-        return mapper.toDto(book);
     }
 
     /**
      * REST method returning all books.
      */
-    @Operation( // metadata for inclusion into OpenAPI document
+    @Operation(
             summary = "Get all books",
             description = "Returns all books with authors as JSON")
     @ApiResponse(responseCode = "200", description = "Pages list of all books", useReturnTypeSchema = true)
@@ -99,7 +95,7 @@ public class BookController {
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
     @GetMapping
     public Result<BookDto> findAll(Pageable pageable) {
-        return mapper.toResult(service.findAll(pageable));
+        return facade.findAll(pageable);
     }
 
     /**
@@ -109,8 +105,8 @@ public class BookController {
             summary = "Create a new book"
     )
     @ApiResponse(responseCode = "201", description = "Book created", useReturnTypeSchema = true)
-//    @ApiResponse(responseCode = "400", description = "Invalid payload",
-//            content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
+    @ApiResponse(responseCode = "400", description = "Invalid payload",
+            content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
     @ApiResponse(responseCode = "404", description = "Author not found",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
     @PostMapping(
@@ -119,65 +115,73 @@ public class BookController {
     )
     @ResponseStatus(HttpStatus.CREATED)
     public BookDto create(@RequestBody BookDto dto) {
-        List<Author> authors = new ArrayList<>();
-        for (AuthorDto authorDto : dto.getAuthors()) {
-            Author x;
-            try {
-                x = authorService.find(authorDto.getId());
-            } catch (EntityNotFoundException e){
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.toString());
-            }
-            authors.add(x);
-//            Todo: find by name
+        try {
+            return facade.create(dto);
+        } catch (ResponseStatusException e) {
+            throw new ResponseStatusException(e.getStatusCode(), e.toString());
         }
-        dto.setAuthors(new ArrayList<>());
-        Book newBook = mapper.fromDto(dto);
-        newBook.setAuthors(authors);
-        return mapper.toDto(service.create(newBook));
     }
 
     /**
      * REST method deleting specific book.
      */
-    @Operation( // metadata for inclusion into OpenAPI document
+    @Operation(
             summary = "Delete book by its ID"
     )
+    @ApiResponse(responseCode = "200", description = "Book deleted", useReturnTypeSchema = true)
+    @ApiResponse(responseCode = "404", description = "Book not found",
+            content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
     @DeleteMapping("/{id}")
     public void delete(@PathVariable String id) {
-        service.delete(service.find(id));
+        try {
+            facade.delete(id);
+        } catch (EntityNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.toString());
+        }
     }
 
     /**
      * REST method updating specific book.
      */
-    @Operation( // metadata for inclusion into OpenAPI document
+    @Operation(
             summary = "Update book by its ID"
     )
     @PutMapping("/{id}")
-    public BookDto update(@PathVariable String id) {
-        return mapper.toDto(service.create(service.find(id)));
+    public BookDto update(@PathVariable String id,
+                          @RequestBody BookDto dto) {
+        try {
+            return facade.update(id, dto);
+        } catch (EntityNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.toString());
+        }
     }
 
+    /**
+     * REST method adding book instance.
+     */
     @Operation(summary = "Add book instance")
     @ApiResponse(responseCode = "200", description = "Book instance added", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "404", description = "Book not found", useReturnTypeSchema = true)
     @PostMapping("/{bookId}/instances")
     public BookInstanceDto addInstance(@PathVariable String bookId) {
         try {
-            return instanceMapper.toDto(service.addInstance(bookId));
+            return facade.addInstance(bookId);
         } catch (EntityNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.toString());
         }
     }
 
+    /**
+     * REST method removing book instance.
+     */
     @Operation(summary = "Remove book instance")
     @ApiResponse(responseCode = "200", description = "Book instance added", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "404", description = "Book or book instance not found", useReturnTypeSchema = true)
     @DeleteMapping("/{bookId}/instances/{id}")
-    public void addInstance(@PathVariable String bookId,
+    public void removeInstance(@PathVariable String bookId,
                             @PathVariable String id) {
         try {
-            service.removeInstance(service.getInstance(id));
+            facade.removeInstance(bookId, id);
         } catch (EntityNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.toString());
         }
