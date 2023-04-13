@@ -129,8 +129,8 @@ public class DataInitializer implements ApplicationRunner {
                 .title("Sloni žerou medvědy")
                 .author(author)
                 .author(author2)
-                .instance(BookInstance.builder().build())
-                .instance(BookInstance.builder().build())
+                .instance(BookInstance.builder().pages(156).build())
+                .instance(BookInstance.builder().pages(187).build())
                 .build();
 
         bookService.create(book);

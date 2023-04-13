@@ -17,5 +17,6 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @AllArgsConstructor
 public class BookInstanceDto extends DomainObjectDto {
+    private Integer pages;
     private BookDto book;
 }

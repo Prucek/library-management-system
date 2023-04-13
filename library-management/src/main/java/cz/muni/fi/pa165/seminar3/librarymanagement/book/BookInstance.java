@@ -18,6 +18,7 @@ import lombok.experimental.SuperBuilder;
 @Entity
 public class BookInstance extends DomainObject {
 
+    private Integer pages;
     @ManyToOne()
     private Book book;
 }
