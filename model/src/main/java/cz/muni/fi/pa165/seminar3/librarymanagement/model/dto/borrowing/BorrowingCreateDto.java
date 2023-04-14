@@ -28,11 +28,11 @@ public class BorrowingCreateDto {
     private LocalDateTime returned;
 
     @NotBlank
-    private String bookInstanceID;
+    private String bookInstanceId;
 
     @NotBlank
-    private String userID;
+    private String userId;
 
     @NotBlank
-    private String fineID;
+    private String fineId;
 }

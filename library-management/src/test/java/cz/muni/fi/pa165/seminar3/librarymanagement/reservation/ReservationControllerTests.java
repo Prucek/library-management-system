@@ -1,23 +1,5 @@
 package cz.muni.fi.pa165.seminar3.librarymanagement.reservation;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.javafaker.Faker;
-import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.borrowing.BorrowingCreateDto;
-import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.borrowing.BorrowingDto;
-import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.common.Result;
-import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.reservation.ReservationDto;
-import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.user.UserDto;
-import jakarta.persistence.EntityNotFoundException;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.domain.Pageable;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
-
-import java.util.UUID;
-
 import static cz.muni.fi.pa165.seminar3.librarymanagement.utils.ReservationUtils.fakeReservationDto;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -30,6 +12,28 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.javafaker.Faker;
+import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.borrowing.BorrowingCreateDto;
+import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.borrowing.BorrowingDto;
+import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.common.Result;
+import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.reservation.ReservationDto;
+import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.user.UserDto;
+import jakarta.persistence.EntityNotFoundException;
+import java.util.UUID;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+
+/**
+ * Tests for ReservationController.
+ *
+ * @author Marek Miček
+ */
 @WebMvcTest(controllers = {ReservationController.class, ReservationMapper.class})
 public class ReservationControllerTests {
     @Autowired
@@ -44,8 +48,7 @@ public class ReservationControllerTests {
     private ObjectMapper objectMapper;
 
     @Test
-    public void findSuccessful() throws
-            Exception {
+    public void findSuccessful() throws Exception {
         ReservationDto reservationDto = fakeReservationDto(faker);
         // mock facade
         given(reservationFacade.find(reservationDto.getId())).willReturn(reservationDto);
@@ -57,8 +60,7 @@ public class ReservationControllerTests {
     }
 
     @Test
-    public void findNotFound() throws
-            Exception {
+    public void findNotFound() throws Exception {
         // mock facade
         given(reservationFacade.find(any())).willThrow(EntityNotFoundException.class);
 
@@ -67,8 +69,7 @@ public class ReservationControllerTests {
     }
 
     @Test
-    public void createSuccessful() throws
-            Exception {
+    public void createSuccessful() throws Exception {
         ReservationDto reservationDto = fakeReservationDto(faker);
         // mock facade
         given(reservationFacade.create(any())).willReturn(reservationDto);
@@ -86,8 +87,7 @@ public class ReservationControllerTests {
     }
 
     @Test
-    public void updateSuccessful() throws
-            Exception {
+    public void updateSuccessful() throws Exception {
         ReservationDto reservationDto = fakeReservationDto(faker);
         ReservationDto newReservationDto = fakeReservationDto(faker);
         newReservationDto.setId(reservationDto.getId());
@@ -100,7 +100,7 @@ public class ReservationControllerTests {
                         .content(objectMapper.writeValueAsString(BorrowingCreateDto.builder()
                                 .from(newReservationDto.getFrom())
                                 .to(newReservationDto.getTo())
-                                .userID(newReservationDto.getUser().getId())
+                                .userId(newReservationDto.getUser().getId())
                                 .build())))
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(jsonPath("$.id").value(newReservationDto.getId()))
@@ -108,8 +108,7 @@ public class ReservationControllerTests {
     }
 
     @Test
-    public void deleteSuccessful() throws
-            Exception {
+    public void deleteSuccessful() throws Exception {
         ReservationDto reservationDto = fakeReservationDto(faker);
         // mock facade
         given(reservationFacade.find(reservationDto.getId())).willReturn(reservationDto);
@@ -119,8 +118,7 @@ public class ReservationControllerTests {
     }
 
     @Test
-    public void deleteNotFound() throws
-            Exception {
+    public void deleteNotFound() throws Exception {
         // mock facade
         doThrow(EntityNotFoundException.class).when(reservationFacade).deleteReservation(any());
 
@@ -129,10 +127,9 @@ public class ReservationControllerTests {
     }
 
     @Test
-    public void findAllSuccessful() throws
-            Exception {
-        Result<ReservationDto> reservationDtoResult = Result.of(fakeReservationDto(faker), fakeReservationDto(faker),
-                fakeReservationDto(faker));
+    public void findAllSuccessful() throws Exception {
+        Result<ReservationDto> reservationDtoResult =
+                Result.of(fakeReservationDto(faker), fakeReservationDto(faker), fakeReservationDto(faker));
         // mock facade
         given(reservationFacade.findAll(any(Pageable.class))).willReturn(reservationDtoResult);
 

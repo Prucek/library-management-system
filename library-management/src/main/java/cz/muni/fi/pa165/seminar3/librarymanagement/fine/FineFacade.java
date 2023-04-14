@@ -18,12 +18,12 @@ public interface FineFacade extends DomainFacade<FineDto, FineCreateDto> {
      * @param fineCreateDto new fine values
      * @return updated fine
      */
-    FineDto updateFine(String id, FineCreateDto fineCreateDto);
+    FineDto update(String id, FineCreateDto fineCreateDto);
 
     /**
      * Deletes a fine.
      *
      * @param fineId id to delete
      */
-    void deleteFine(String fineId);
+    void delete(String fineId);
 }

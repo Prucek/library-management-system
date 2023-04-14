@@ -19,7 +19,20 @@ style:
     - shared-fi
   stage: style
   script:
-    - ./mvnw clean checkstyle:check $MAVEN_CLI_OPTS -Dcheckstyle.violationSeverity=warning -Dcheckstyle.config.location=$CI_PROJECT_DIR/checkstyle-config.xml
+    - |
+      ./mvnw clean checkstyle:check \
+              --batch-mode \
+              --color always \
+              --show-version \
+              --fail-never \
+              -Dcheckstyle.violationSeverity=warning \
+              -Dcheckstyle.config.location=$CI_PROJECT_DIR/checkstyle-config.xml | while read -r line; do
+          if echo "$line" | grep -q "BUILD FAILURE"; then build_error=1; fi;
+          echo "$line";
+      done
+      if [ -n "$build_error" ]; then
+          exit 1;
+      fi
   allow_failure: true
   only:
     - merge_requests

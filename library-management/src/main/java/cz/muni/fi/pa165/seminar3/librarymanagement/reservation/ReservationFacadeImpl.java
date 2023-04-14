@@ -51,7 +51,7 @@ public class ReservationFacadeImpl extends DomainFacadeImpl<Reservation, Reserva
     @Override
     public ReservationDto create(ReservationCreateDto reservationCreateDto) {
         User user = userService.find(reservationCreateDto.getIssuerId());
-        Book book = bookService.find(reservationCreateDto.getBookID());
+        Book book = bookService.find(reservationCreateDto.getBookId());
 
         Reservation reservation = Reservation.builder()
                 .from(reservationCreateDto.getFrom())
@@ -74,7 +74,7 @@ public class ReservationFacadeImpl extends DomainFacadeImpl<Reservation, Reserva
     public ReservationDto updateReservation(String id, ReservationCreateDto reservationCreateDto) {
         Reservation reservation = domainService.find(id);
         User user = userService.find(reservationCreateDto.getIssuerId());
-        Book book = bookService.find(reservationCreateDto.getBookID());
+        Book book = bookService.find(reservationCreateDto.getBookId());
 
         reservation.setTo(reservationCreateDto.getTo());
         reservation.setFrom(reservationCreateDto.getFrom());

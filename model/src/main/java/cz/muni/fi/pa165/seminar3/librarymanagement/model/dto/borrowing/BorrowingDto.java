@@ -12,7 +12,7 @@ import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
 /**
- * Represents borrowing DTO
+ * Represents borrowing DTO.
  *
  * @author Marek Miček
  */

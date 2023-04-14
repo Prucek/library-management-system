@@ -5,7 +5,7 @@ import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.fine.FineDto;
 import org.mapstruct.Mapper;
 
 /**
- * Represents Fine mapper between Fine entity and Fine DTO
+ * Represents Fine mapper between Fine entity and Fine DTO.
  *
  * @author Juraj Marcin
  */

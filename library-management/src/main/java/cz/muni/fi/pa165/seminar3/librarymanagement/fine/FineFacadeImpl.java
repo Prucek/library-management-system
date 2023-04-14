@@ -57,7 +57,7 @@ public class FineFacadeImpl extends DomainFacadeImpl<Fine, FineDto, FineCreateDt
     }
 
     @Override
-    public FineDto updateFine(String id, FineCreateDto fineCreateDto) {
+    public FineDto update(String id, FineCreateDto fineCreateDto) {
         Fine fine = domainService.find(id);
         User issuer = userService.find(fineCreateDto.getIssuerId());
         Borrowing outstandingBorrowing = borrowingService.find(fineCreateDto.getOutstandingBorrowingId());
@@ -68,7 +68,7 @@ public class FineFacadeImpl extends DomainFacadeImpl<Fine, FineDto, FineCreateDt
     }
 
     @Override
-    public void deleteFine(String fineId) {
+    public void delete(String fineId) {
         Fine fine = domainService.find(fineId);
         domainService.delete(fine);
     }

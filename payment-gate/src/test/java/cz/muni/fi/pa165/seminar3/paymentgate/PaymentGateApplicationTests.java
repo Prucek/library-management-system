@@ -2,6 +2,7 @@ package cz.muni.fi.pa165.seminar3.paymentgate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.paymentgate.CardDto;
+import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.paymentgate.TransactionCreateDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.paymentgate.TransactionDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.paymentgate.TransactionStatus;
 import cz.muni.fi.pa165.seminar3.paymentgate.transaction.TransactionController;
@@ -15,6 +16,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.web.server.ResponseStatusException;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -41,21 +43,23 @@ class PaymentGateApplicationTests {
     }
 
     @Test
-    void createTransaction() throws
-            Exception {
+    void createTransaction() throws Exception {
+
         String id = "1";
         double amount = 125;
-        TransactionStatus status = TransactionStatus.WAITING;
         String callbackUrl = "/transactions/" + id;
 
-        TransactionDto transactionDto =
-                TransactionDto.builder().id(id).amount(amount).callbackURL(callbackUrl).status(status).build();
+        TransactionCreateDto transactionDto = TransactionCreateDto.builder().amount(amount).build();
 
-        TransactionDto expectedTransactionDto =
-                TransactionDto.builder().id(id).amount(amount).callbackURL(callbackUrl).status(status).build();
+        TransactionDto expectedTransactionDto = TransactionDto.builder()
+                .id(id)
+                .amount(amount)
+                .callbackUrl(callbackUrl)
+                .status(TransactionStatus.WAITING)
+                .build();
 
         // define what mock service returns when called
-        given(transactionController.create(transactionDto)).willReturn(expectedTransactionDto);
+        given(transactionController.create(any(TransactionCreateDto.class))).willReturn(expectedTransactionDto);
 
         // call controller and check the result
         mockMvc.perform(post("/transactions").header("User-Agent", "007")
@@ -65,8 +69,8 @@ class PaymentGateApplicationTests {
                 .andExpect(status().isCreated())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(id))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.amount").value(amount))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.status").value(status.toString()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.callbackURL").value(callbackUrl))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.status").value(TransactionStatus.WAITING.toString()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.callbackUrl").value(callbackUrl))
                 .andDo(print());
     }
 
@@ -92,7 +96,7 @@ class PaymentGateApplicationTests {
         String callbackUrl = "/transactions/" + id;
 
         TransactionDto transactionDto =
-                TransactionDto.builder().id(id).callbackURL(callbackUrl).amount(amount).status(status).build();
+                TransactionDto.builder().id(id).callbackUrl(callbackUrl).amount(amount).status(status).build();
 
         given(transactionController.find(id)).willReturn(transactionDto);
         // call controller and check the result
@@ -101,7 +105,7 @@ class PaymentGateApplicationTests {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(id))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.amount").value(amount))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.status").value(status.toString()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.callbackURL").value(callbackUrl))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.callbackUrl").value(callbackUrl))
                 .andDo(print());
     }
 

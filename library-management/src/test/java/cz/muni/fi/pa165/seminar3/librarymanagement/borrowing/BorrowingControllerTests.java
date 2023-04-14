@@ -1,5 +1,17 @@
 package cz.muni.fi.pa165.seminar3.librarymanagement.borrowing;
 
+import static cz.muni.fi.pa165.seminar3.librarymanagement.utils.BorrowingUtils.fakeBorrowingDto;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doThrow;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.javafaker.Faker;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.borrowing.BorrowingCreateDto;
@@ -7,6 +19,7 @@ import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.borrowing.Borrowing
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.common.Result;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.user.UserDto;
 import jakarta.persistence.EntityNotFoundException;
+import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -15,17 +28,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.UUID;
-
-import static cz.muni.fi.pa165.seminar3.librarymanagement.utils.BorrowingUtils.fakeBorrowingDto;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.doThrow;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
+/**
+ * Tests for BorrowingsController.
+ *
+ * @author Juraj Marcin
+ */
 @WebMvcTest(controllers = {BorrowingController.class, BorrowingMapper.class})
 public class BorrowingControllerTests {
     @Autowired
@@ -40,8 +47,7 @@ public class BorrowingControllerTests {
     private final Faker faker = new Faker();
 
     @Test
-    public void findSuccessful() throws
-            Exception {
+    public void findSuccessful() throws Exception {
         BorrowingDto borrowingDto = fakeBorrowingDto(faker);
         // mock facade
         given(borrowingFacade.find(borrowingDto.getId())).willReturn(borrowingDto);
@@ -53,8 +59,7 @@ public class BorrowingControllerTests {
     }
 
     @Test
-    public void findNotFound() throws
-            Exception {
+    public void findNotFound() throws Exception {
         // mock facade
         given(borrowingFacade.find(any())).willThrow(EntityNotFoundException.class);
 
@@ -63,8 +68,7 @@ public class BorrowingControllerTests {
     }
 
     @Test
-    public void createSuccessful() throws
-            Exception {
+    public void createSuccessful() throws Exception {
         BorrowingDto borrowingDto = fakeBorrowingDto(faker);
         // mock facade
         given(borrowingFacade.create(any())).willReturn(borrowingDto);
@@ -82,8 +86,7 @@ public class BorrowingControllerTests {
     }
 
     @Test
-    public void updateSuccessful() throws
-            Exception {
+    public void updateSuccessful() throws Exception {
         BorrowingDto borrowingDto = fakeBorrowingDto(faker);
         BorrowingDto newBorrowingDto = fakeBorrowingDto(faker);
         newBorrowingDto.setId(borrowingDto.getId());
@@ -96,7 +99,7 @@ public class BorrowingControllerTests {
                         .content(objectMapper.writeValueAsString(BorrowingCreateDto.builder()
                                 .from(newBorrowingDto.getFrom())
                                 .to(newBorrowingDto.getTo())
-                                .userID(newBorrowingDto.getUser().getId())
+                                .userId(newBorrowingDto.getUser().getId())
                                 .build())))
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(jsonPath("$.id").value(newBorrowingDto.getId()))
@@ -104,8 +107,7 @@ public class BorrowingControllerTests {
     }
 
     @Test
-    public void deleteSuccessful() throws
-            Exception {
+    public void deleteSuccessful() throws Exception {
         BorrowingDto borrowing = fakeBorrowingDto(faker);
         // mock facade
         given(borrowingFacade.find(borrowing.getId())).willReturn(borrowing);
@@ -115,8 +117,7 @@ public class BorrowingControllerTests {
     }
 
     @Test
-    public void deleteNotFound() throws
-            Exception {
+    public void deleteNotFound() throws Exception {
         // mock facade
         doThrow(EntityNotFoundException.class).when(borrowingFacade).deleteBorrowing(any());
 
@@ -125,10 +126,9 @@ public class BorrowingControllerTests {
     }
 
     @Test
-    public void findAllSuccessful() throws
-            Exception {
-        Result<BorrowingDto> borrowingDtoResult = Result.of(fakeBorrowingDto(faker), fakeBorrowingDto(faker),
-                fakeBorrowingDto(faker));
+    public void findAllSuccessful() throws Exception {
+        Result<BorrowingDto> borrowingDtoResult =
+                Result.of(fakeBorrowingDto(faker), fakeBorrowingDto(faker), fakeBorrowingDto(faker));
         // mock facade
         given(borrowingFacade.findAll(any(Pageable.class))).willReturn(borrowingDtoResult);
 

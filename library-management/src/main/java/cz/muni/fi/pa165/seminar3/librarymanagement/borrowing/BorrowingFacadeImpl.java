@@ -55,8 +55,8 @@ public class BorrowingFacadeImpl extends DomainFacadeImpl<Borrowing, BorrowingDt
     @Override
     public BorrowingDto updateBorrowing(String id, BorrowingCreateDto borrowingCreateDto) {
         Borrowing borrowing = domainService.find(id);
-        User user = userService.find(borrowingCreateDto.getUserID());
-        BookInstance bookInstance = bookService.getInstance(borrowingCreateDto.getBookInstanceID());
+        User user = userService.find(borrowingCreateDto.getUserId());
+        BookInstance bookInstance = bookService.getInstance(borrowingCreateDto.getBookInstanceId());
 
         borrowing.setTo(borrowingCreateDto.getTo());
         borrowing.setFrom(borrowingCreateDto.getFrom());
@@ -86,8 +86,8 @@ public class BorrowingFacadeImpl extends DomainFacadeImpl<Borrowing, BorrowingDt
      */
     @Override
     public BorrowingDto create(BorrowingCreateDto borrowingCreateDto) {
-        User user = userService.find(borrowingCreateDto.getUserID());
-        BookInstance bookInstance = bookService.getInstance(borrowingCreateDto.getBookInstanceID());
+        User user = userService.find(borrowingCreateDto.getUserId());
+        BookInstance bookInstance = bookService.getInstance(borrowingCreateDto.getBookInstanceId());
 
         Borrowing borrowing = Borrowing.builder()
                 .to(borrowingCreateDto.getTo())

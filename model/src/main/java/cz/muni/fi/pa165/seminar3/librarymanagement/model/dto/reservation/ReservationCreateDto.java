@@ -1,14 +1,18 @@
 package cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.reservation;
 
 import jakarta.validation.constraints.NotBlank;
+import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
-import java.time.LocalDateTime;
-
+/**
+ * Class representing reservation create dto.
+ *
+ * @author Marek Miček
+ */
 @Getter
 @Setter
 @SuperBuilder
@@ -21,7 +25,7 @@ public class ReservationCreateDto {
     private LocalDateTime to;
 
     @NotBlank
-    private String bookID;
+    private String bookId;
 
     @NotBlank
     private String issuerId;
