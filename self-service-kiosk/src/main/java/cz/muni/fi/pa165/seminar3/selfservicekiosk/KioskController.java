@@ -9,6 +9,8 @@ import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.info.Contact;
 import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -44,14 +46,10 @@ public class KioskController {
     /**
      * User can borrow a book at kiosk
      */
-    @Operation(
-            summary = "Borrow a book at kiosk",
-            description = "New borrowing is made based on incoming BookInstanceId and USerId data",
-            responses = {
-                    @ApiResponse(responseCode = "202", ref = "#/components/responses/KioskBorrowResponse"),
-                    @ApiResponse(responseCode = "404", description = "input data were not correct")
-            }
-    )
+    @Operation(summary = "Borrow a book at kiosk")
+    @ApiResponse(responseCode = "202", description = "New borrowing accepted", useReturnTypeSchema = true)
+    @ApiResponse(responseCode = "400", description = "Invalid Payload",
+            content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
     @PostMapping("/borrow")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public BorrowingDto borrow(@RequestBody KioskBorrowDto dto){
@@ -76,14 +74,10 @@ public class KioskController {
     /**
      * User can return a book at kiosk
      */
-    @Operation(
-            summary = "Return a book at kiosk",
-            description = "Returning is made based on incoming BookInstanceId data",
-            responses = {
-                    @ApiResponse(responseCode = "202", ref = "#/components/responses/KioskReturnResponse"),
-                    @ApiResponse(responseCode = "404", description = "input data were not correct")
-            }
-    )
+    @Operation(summary = "Return a book at kiosk")
+    @ApiResponse(responseCode = "202", description = "New borrowing accepted", useReturnTypeSchema = true)
+    @ApiResponse(responseCode = "400", description = "Invalid Payload",
+            content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
     @PostMapping("/return")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public BorrowingDto returnBook(@RequestBody KioskReturnDto dto){
