@@ -33,7 +33,7 @@ public class PaymentGateApi {
     public TransactionDto createTransaction(Double amount, String callbackUrl) {
         return getWebClient().post()
                 .uri(uriBuilder -> uriBuilder.path("/transaction").build())
-                .bodyValue(TransactionDto.builder().amount(amount).callbackURL(callbackUrl).build())
+                .bodyValue(TransactionDto.builder().amount(amount).callbackUrl(callbackUrl).build())
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .bodyToMono(TransactionDto.class)
