@@ -5,6 +5,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
  * Main class of the payment gate application.
+ *
+ * @author Peter Rúček
  */
 @SpringBootApplication
 public class PaymentGateApplication {

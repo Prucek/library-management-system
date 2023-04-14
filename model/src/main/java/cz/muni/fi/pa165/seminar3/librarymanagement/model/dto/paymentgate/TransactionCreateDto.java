@@ -8,6 +8,8 @@ import lombok.experimental.SuperBuilder;
 
 /**
  * DTO for a created transaction.
+ *
+ * @author Peter Rúček
  */
 @Getter
 @Setter

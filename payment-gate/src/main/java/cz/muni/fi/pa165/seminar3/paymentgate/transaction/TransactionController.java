@@ -24,6 +24,8 @@ import org.springframework.web.server.ResponseStatusException;
 
 /**
  * Controller for creating transactions and payments.
+ *
+ * @author Peter Rúček
  */
 @RestController
 @RequestMapping("/transactions")

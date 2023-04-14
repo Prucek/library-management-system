@@ -5,6 +5,8 @@ import org.springframework.stereotype.Repository;
 
 /**
  * Interface representing transaction repository.
+ *
+ * @author Peter Rúček
  */
 @Repository
 public interface TransactionRepository extends JpaRepository<Transaction, String> {

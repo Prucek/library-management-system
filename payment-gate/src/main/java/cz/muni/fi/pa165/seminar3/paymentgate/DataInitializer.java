@@ -9,6 +9,8 @@ import org.springframework.stereotype.Component;
 
 /**
  * Data initializer for the payment gate.
+ *
+ * @author Peter Rúček
  */
 @Component
 public class DataInitializer implements ApplicationRunner {

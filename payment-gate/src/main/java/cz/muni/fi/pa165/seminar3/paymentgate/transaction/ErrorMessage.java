@@ -4,6 +4,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * Provides description of JSON returned for ResponseStatusException.
+ *
+ * @author Peter Rúček
  */
 @Schema(title = "error message",
         description = "response body for HTML statuses"

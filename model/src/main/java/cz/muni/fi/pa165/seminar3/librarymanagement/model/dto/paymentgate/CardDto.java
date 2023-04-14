@@ -9,6 +9,8 @@ import lombok.experimental.SuperBuilder;
 
 /**
  * DTO for a card with which the payment will be made. Data Transfer Object that is stable for API.
+ *
+ * @author Peter Rúček
  */
 @Getter
 @Setter

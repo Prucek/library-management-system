@@ -11,6 +11,8 @@ import org.springframework.data.domain.Page;
 
 /**
  * Represents Transaction mapper between Transaction entity and Transaction DTO.
+ *
+ * @author Peter Rúček
  */
 @Mapper
 public interface TransactionMapper {

@@ -20,6 +20,8 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 /**
  * Transaction entity.
+ *
+ * @author Peter Rúček
  */
 @Getter
 @Setter

@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 
 /**
  * Class representing transaction service.
+ *
+ * @author Peter Rúček
  */
 @Service
 public class TransactionService {

@@ -11,6 +11,8 @@ import lombok.experimental.SuperBuilder;
 
 /**
  * DTO for a transaction. Data Transfer Object that is stable for API.
+ *
+ * @author Peter Rúček
  */
 @Getter
 @Setter
