@@ -4,11 +4,13 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * @brief Represents DTO for user report
+ * Represents DTO for user report.
+ *
+ * @author Peter Rúček
  */
 @Getter
 @Setter
-public class UserReportDto extends ReportDto{
+public class UserReportDto extends ReportDto {
 
     private int usersCount;
 

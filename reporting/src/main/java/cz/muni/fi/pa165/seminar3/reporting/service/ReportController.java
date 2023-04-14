@@ -4,10 +4,20 @@ import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.info.Contact;
 import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Spring REST Controller for report service.
+ *
+ * @author Marek Miček
+ */
 @RestController
 @OpenAPIDefinition(
         info = @Info(title = "RestAPI controller for generating report stats",
@@ -33,6 +43,7 @@ public class ReportController {
 
     /**
      * REST method for getting finance report of specific user.
+     *
      * @param userId Specifies user for whom the report is generated
      * @return ReportDto with finance report info
      */
@@ -44,16 +55,19 @@ public class ReportController {
                     """,
             responses = {
                     @ApiResponse(responseCode = "201", ref = "#/components/responses/SingleFinanceReportResponse"),
-                    @ApiResponse(responseCode = "400", description = "input data were not correct"
-                            //content = @Content(schema = @Schema(implementation = ErrorMessage.class))
+                    @ApiResponse(responseCode = "400", description = "input data were not correct",
+                            content = @Content(schema = @Schema(implementation = ErrorMessage.class))
                     ),
             }
     )
     @GetMapping("/finances/{userId}")
-    public FinanceReportDto generateFinanceReport(@PathVariable String userId) { return service.generateFinanceReport(userId); }
+    public FinanceReportDto generateFinanceReport(@PathVariable String userId) {
+        return service.generateFinanceReport(userId);
+    }
 
     /**
      * REST method for getting user report.
+     *
      * @return ReportDto with number of all users in system
      */
     @Operation(
@@ -63,16 +77,19 @@ public class ReportController {
                     """,
             responses = {
                     @ApiResponse(responseCode = "201", ref = "#/components/responses/SingleUserReportResponse"),
-                    @ApiResponse(responseCode = "400", description = "input data were not correct"
-//                            content = @Content(schema = @Schema(implementation = ErrorMessage.class))
+                    @ApiResponse(responseCode = "400", description = "input data were not correct",
+                            content = @Content(schema = @Schema(implementation = ErrorMessage.class))
                     ),
             }
     )
     @GetMapping("/users")
-    public UserReportDto generateUserReport() { return service.generateUserReport(); }
+    public UserReportDto generateUserReport() {
+        return service.generateUserReport();
+    }
 
     /**
      * REST method for getting book report of specific user.
+     *
      * @param userId Specifies user for whom the report is generated
      * @return ReportDto with book report info
      */
@@ -84,8 +101,8 @@ public class ReportController {
                     """,
             responses = {
                     @ApiResponse(responseCode = "201", ref = "#/components/responses/SingleFinanceReportResponse"),
-                    @ApiResponse(responseCode = "400", description = "input data were not correct"
-//                            content = @Content(schema = @Schema(implementation = ErrorMessage.class))
+                    @ApiResponse(responseCode = "400", description = "input data were not correct",
+                            content = @Content(schema = @Schema(implementation = ErrorMessage.class))
                     ),
             }
     )
