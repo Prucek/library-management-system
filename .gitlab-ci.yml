@@ -27,11 +27,14 @@ style:
               --fail-never \
               -Dcheckstyle.violationSeverity=warning \
               -Dcheckstyle.config.location=$CI_PROJECT_DIR/checkstyle-config.xml | while read -r line; do
-          if echo "$line" | grep -q "BUILD FAILURE"; then build_error=1; fi;
+          if echo "$line" | grep -q "BUILD SUCCESS"; then
+              build_success=1
+              echo "Found success mark"
+          fi
           echo "$line";
       done
-      if [ -n "$build_error" ]; then
-          exit 1;
+      if [ "$build_success" != "1" ]; then
+          exit 1
       fi
   allow_failure: true
   only:

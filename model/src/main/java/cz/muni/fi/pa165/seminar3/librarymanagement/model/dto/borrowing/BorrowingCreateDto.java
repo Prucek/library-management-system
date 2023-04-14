@@ -1,4 +1,4 @@
-package cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.reservation;
+package cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.borrowing;
 
 import jakarta.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
@@ -8,8 +8,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
+
 /**
- * Class representing reservation create dto.
+ * Class representing borrowing create dto.
  *
  * @author Marek Miček
  */
@@ -18,15 +19,20 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ReservationCreateDto {
+public class BorrowingCreateDto {
 
     private LocalDateTime from;
 
     private LocalDateTime to;
 
-    @NotBlank
-    private String bookId;
+    private LocalDateTime returned;
 
     @NotBlank
-    private String issuerId;
+    private String bookInstanceId;
+
+    @NotBlank
+    private String userId;
+
+    @NotBlank
+    private String fineId;
 }

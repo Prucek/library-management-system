@@ -1,6 +1,7 @@
 package cz.muni.fi.pa165.seminar3.librarymanagement.borrowing;
 
 import cz.muni.fi.pa165.seminar3.librarymanagement.common.ErrorMessage;
+import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.borrowing.BorrowingCreateDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.borrowing.BorrowingDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.common.Result;
 import io.swagger.v3.oas.annotations.Operation;
@@ -11,10 +12,16 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.UUID;
 
 /**
  * Spring REST Controller for borrowing service.
@@ -25,15 +32,11 @@ import java.util.UUID;
 @RequestMapping("/borrowings")
 public class BorrowingController {
 
-    private final BorrowingService service;
-
-    private final BorrowingMapper mapper;
+    private final BorrowingFacade borrowingFacade;
 
     @Autowired
-    public BorrowingController(BorrowingService service,
-                               BorrowingMapper mapper) {
-        this.service = service;
-        this.mapper = mapper;
+    public BorrowingController(BorrowingFacade borrowingFacade) {
+        this.borrowingFacade = borrowingFacade;
     }
 
     /**
@@ -49,7 +52,7 @@ public class BorrowingController {
     @GetMapping("/{id}")
     public BorrowingDto find(@PathVariable String id) {
         try {
-            return mapper.toDto(service.find(id));
+            return borrowingFacade.find(id);
         } catch (EntityNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "borrowing with id=" + id + " not found");
         }
@@ -58,17 +61,18 @@ public class BorrowingController {
     /**
      * REST method for creating a new borrowing.
      *
-     * @param borrowing Borrowing to be posted and created
+     * @param borrowingCreateDto Borrowing to be posted and created
      * @return Newly created borrowing as a response for calling REST create method
      */
     @Operation(summary = "Create a new borrowing")
     @ApiResponse(responseCode = "200", description = "Borrowing created", useReturnTypeSchema = true)
-    @ApiResponse(responseCode = "400", description = "input data were not correct",
+    @ApiResponse(responseCode = "400", description = "Invalid payload",
+            content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
+    @ApiResponse(responseCode = "404", description = "User or book not found",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
     @PostMapping
-    public BorrowingDto create(@RequestBody BorrowingDto borrowing) {
-        borrowing.setId(UUID.randomUUID().toString());
-        return mapper.toDto(service.create(mapper.fromDto(borrowing)));
+    public BorrowingDto create(@RequestBody BorrowingCreateDto borrowingCreateDto) {
+        return borrowingFacade.create(borrowingCreateDto);
     }
 
     /**
@@ -80,15 +84,16 @@ public class BorrowingController {
     @Operation(summary = "Update existing borrowing", description = """
             Provides update of existing borrowing".
             Returns updated borrowing" as its response.
-            """, responses = {
-            @ApiResponse(responseCode = "201", ref = "#/components/responses/SingleReservationResponse"),
-            @ApiResponse(responseCode = "400", description = "input data were not correct",
-                    content = @Content(schema = @Schema(implementation = ErrorMessage.class))),
-    })
+            """)
+    @ApiResponse(responseCode = "200", description = "Borrowing updated", useReturnTypeSchema = true)
+    @ApiResponse(responseCode = "400", description = "Invalid payload",
+            content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
+    @ApiResponse(responseCode = "404", description = "Borrowing not found",
+            content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
     @PutMapping("/{id}")
     public BorrowingDto update(@PathVariable String id,
-                               @RequestBody BorrowingDto borrowingDto) {
-        return mapper.toDto(service.create(service.find(id)));
+                               @RequestBody BorrowingCreateDto borrowingCreateDto) {
+        return borrowingFacade.updateBorrowing(id, borrowingCreateDto);
     }
 
     /**
@@ -98,15 +103,14 @@ public class BorrowingController {
      */
     @Operation(summary = "Delete existing borrowing", description = """
             Enables deleting of existing borrowing.
-            """, responses = {
-            @ApiResponse(responseCode = "201", ref = "#/components/responses/SingleReservationResponse"),
-            @ApiResponse(responseCode = "400", description = "input data were not correct",
-                    content = @Content(schema = @Schema(implementation = ErrorMessage.class))),
-    })
+            """)
+    @ApiResponse(responseCode = "200", description = "Borrowing deleted", useReturnTypeSchema = true)
+    @ApiResponse(responseCode = "404", description = "Borrowing not found",
+            content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
     @DeleteMapping("/{id}")
     public void delete(@PathVariable String id) {
         try {
-            service.delete(service.find(id));
+            borrowingFacade.deleteBorrowing(id);
         } catch (EntityNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
@@ -121,8 +125,11 @@ public class BorrowingController {
     @Operation(summary = "Get all borrowings", description = """
             Returns all borrowings
             """)
+    @ApiResponse(responseCode = "200", description = "Pages list of all borrowings", useReturnTypeSchema = true)
+    @ApiResponse(responseCode = "400", description = "Invalid paging",
+            content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
     @GetMapping
     public Result<BorrowingDto> findAll(Pageable pageable) {
-        return mapper.toResult(service.findAll(pageable));
+        return borrowingFacade.findAll(pageable);
     }
 }

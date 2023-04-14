@@ -1,21 +1,21 @@
 package cz.muni.fi.pa165.seminar3.librarymanagement.reservation;
 
+import cz.muni.fi.pa165.seminar3.librarymanagement.book.Book;
 import cz.muni.fi.pa165.seminar3.librarymanagement.common.DomainObject;
 import cz.muni.fi.pa165.seminar3.librarymanagement.user.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
-import java.time.LocalDateTime;
-
 /**
- * Represents reservation entity
+ * Represents reservation entity.
  *
  * @author Marek Miček
  */
@@ -37,6 +37,6 @@ public class Reservation extends DomainObject {
     @ManyToOne
     private User user;
 
-//    @ManyToOne
-//    private Book book;
+    @ManyToOne
+    private Book book;
 }
