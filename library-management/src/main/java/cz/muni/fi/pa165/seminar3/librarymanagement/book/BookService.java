@@ -2,7 +2,6 @@ package cz.muni.fi.pa165.seminar3.librarymanagement.book;
 
 import cz.muni.fi.pa165.seminar3.librarymanagement.common.DomainService;
 import jakarta.persistence.EntityNotFoundException;
-import java.util.List;
 import java.util.UUID;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,15 +40,9 @@ public class BookService extends DomainService<Book> {
      */
     @Transactional
     public BookInstance addInstance(String bookId, Integer pages) {
-        BookInstance bookInstance = instanceRepository.save(
-                BookInstance.builder().id(UUID.randomUUID().toString()).book(find(bookId)).pages(pages).build());
-        //        try{
-        //            Book b = find(bookId);
-        //            List<BookInstance> oldBookInstances = b.getInstances();
-        //            oldBookInstances.add(bookInstance);
-        //            b.setInstances(oldBookInstances);
-        //        }catch (EntityNotFoundException ignored){}
-        return bookInstance;
+        return instanceRepository.save(
+                BookInstance.builder().id(UUID.randomUUID().toString())
+                        .bookAssigned(find(bookId)).pages(pages).build());
     }
 
     @Transactional(readOnly = true)

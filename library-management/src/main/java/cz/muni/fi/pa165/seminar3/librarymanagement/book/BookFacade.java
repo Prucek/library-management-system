@@ -17,5 +17,5 @@ public interface BookFacade extends DomainFacade<BookDto, BookDto> {
 
     BookInstanceDto addInstance(String bookId);
 
-    void removeInstance(String bookId, String id);
+    void removeInstance(String id);
 }

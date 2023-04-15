@@ -83,12 +83,12 @@ public class BookFacadeImpl extends DomainFacadeImpl<Book, BookDto, BookDto> imp
                 Author author = authorService.find(authorFromDto.getId());
                 newAuthors.add(author);
             } catch (Exception ignored) {
+                ;
             }
         }
         book.setAuthors(newAuthors);
         for (BookInstanceDto instFromDto : dto.getInstances()) {
-            BookInstance bookInstance = domainService.addInstance(book.getId(), instFromDto.getPages());
-            // book.appendInstance(bookInstance);
+            domainService.addInstance(book.getId(), instFromDto.getPages());
         }
         return domainMapper.toDto(domainService.update(book));
     }
@@ -103,7 +103,7 @@ public class BookFacadeImpl extends DomainFacadeImpl<Book, BookDto, BookDto> imp
     }
 
     @Override
-    public void removeInstance(String bookId, String id) {
+    public void removeInstance(String id) {
         domainService.removeInstance(domainService.getInstance(id));
     }
 }

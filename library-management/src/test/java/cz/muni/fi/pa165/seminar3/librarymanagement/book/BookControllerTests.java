@@ -146,6 +146,11 @@ public class BookControllerTests {
 
     @Test
     public void removeBookInstance() throws Exception {
-        ;
+        String bookInstanceId = UUID.randomUUID().toString();
+        // mock services
+        doNothing().when(bookFacade).delete(bookInstanceId);
+
+        // perform test
+        mockMvc.perform(delete("/books/instances/" + bookInstanceId)).andExpect(status().is2xxSuccessful());
     }
 }

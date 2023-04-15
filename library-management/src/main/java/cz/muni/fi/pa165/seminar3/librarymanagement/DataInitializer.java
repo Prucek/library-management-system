@@ -20,6 +20,7 @@ import cz.muni.fi.pa165.seminar3.librarymanagement.user.User;
 import cz.muni.fi.pa165.seminar3.librarymanagement.user.UserService;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.boot.ApplicationArguments;
@@ -47,21 +48,24 @@ public class DataInitializer implements ApplicationRunner {
 
     private final AuthorService authorService;
 
-
     /**
-     * Constructor for DataInitializer.
+     * Constructor for all used services.
      *
-     * @param userService      UserService
-     * @param reservationService ReservationService
-     * @param borrowingService BorrowingService
-     * @param fineService      FineService
-     * @param paymentService   PaymentService
-     * @param bookService      BookService
-     * @param authorService    AuthorService
+     * @param userService           user service instance
+     * @param reservationService    reservation service instance
+     * @param borrowingService      borrowing service instance
+     * @param fineService           fine service instance
+     * @param paymentService        payment service instance
+     * @param bookService           book service instance
+     * @param authorService         author service instance
      */
-    public DataInitializer(UserService userService, ReservationService reservationService,
-                           BorrowingService borrowingService, FineService fineService, PaymentService paymentService,
-                           BookService bookService, AuthorService authorService) {
+    public DataInitializer(UserService userService,
+                           ReservationService reservationService,
+                           BorrowingService borrowingService,
+                           FineService fineService,
+                           PaymentService paymentService,
+                           BookService bookService,
+                           AuthorService authorService) {
         this.userService = userService;
         this.reservationService = reservationService;
         this.borrowingService = borrowingService;
@@ -132,6 +136,12 @@ public class DataInitializer implements ApplicationRunner {
                 .instance(BookInstance.builder().pages(156).build())
                 .instance(BookInstance.builder().pages(187).build())
                 .build();
+
+        // Uncomment after toDto bookInstance recursion is fixed
+        //        BookInstance bookInstance1 = BookInstance.builder().pages(156).bookAssigned(book).build();
+        //        BookInstance bookInstance2 = BookInstance.builder().pages(187).bookAssigned(book).build();
+        //        List<BookInstance> instance_list = Arrays.asList(bookInstance1, bookInstance2);
+        //        book.setInstances(instance_list);
 
         bookService.create(book);
     }

@@ -119,7 +119,7 @@ public class BookController {
             return facade.create(dto);
         } catch (ResponseStatusException e) {
             throw new ResponseStatusException(e.getStatusCode(), e.toString());
-        } catch (EntityNotFoundException e){
+        } catch (EntityNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.toString());
         }
     }
@@ -179,11 +179,10 @@ public class BookController {
     @Operation(summary = "Remove book instance")
     @ApiResponse(responseCode = "200", description = "Book instance added", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "404", description = "Book or book instance not found", useReturnTypeSchema = true)
-    @DeleteMapping("/{bookId}/instances/{id}")
-    public void removeInstance(@PathVariable String bookId,
-                            @PathVariable String id) {
+    @DeleteMapping("/instances/{id}")
+    public void removeInstance(@PathVariable String id) {
         try {
-            facade.removeInstance(bookId, id);
+            facade.removeInstance(id);
         } catch (EntityNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.toString());
         }
