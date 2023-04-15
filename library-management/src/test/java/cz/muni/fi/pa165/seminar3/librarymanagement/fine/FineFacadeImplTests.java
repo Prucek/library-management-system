@@ -155,6 +155,31 @@ public class FineFacadeImplTests {
         assertThrows(NullPointerException.class, () -> fineFacade.update(result.getId(), fineCreateDto));
     }
 
+    @Test
+    public void deleteFineSuccessful() {
+
+        // first create a fine
+        FineDto result = createFine();
+
+        // now delete the fine
+        fineFacade.delete(result.getId());
+        assertThat(domainRepository.findById(result.getId())).isEmpty();
+        assertThat(userService.find(result.getIssuer().getId())).isNotNull();
+        assertThat(borrowingService.find(result.getOutstandingBorrowing().getId())).isNotNull();
+    }
+
+    @Test
+    public void deleteFineNullId() {
+
+        assertThrows(InvalidDataAccessApiUsageException.class, () -> fineFacade.delete(null));
+    }
+
+    @Test
+    public void deleteFineNonExistentId() {
+
+        assertThrows(EntityNotFoundException.class, () -> fineFacade.delete("non-existent"));
+    }
+
     private FineDto createFine() {
         FineCreateDto fineCreateDto =
                 FineCreateDto.builder().amount(10.).issuerId("random").outstandingBorrowingId("random").build();
