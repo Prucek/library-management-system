@@ -6,5 +6,7 @@ spring:
         driverClassName: org.h2.Driver
     jpa:
         database-platform: org.hibernate.dialect.H2Dialect
+    h2:
+        console.enabled: true
 paymentgateurl: http://localhost:8081/
 paymentgatecallback: http://localhost:8080/payments/
