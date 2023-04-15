@@ -5,7 +5,8 @@ import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.borrowing.Borrowing
 import org.mapstruct.Mapper;
 
 /**
- * Represents borrowing mapper between Borrowing entity and Borrowing DTO
+ * Represents borrowing mapper between Borrowing entity and Borrowing DTO.
+ *
  * @author Marek Miček
  */
 @Mapper

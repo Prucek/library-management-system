@@ -5,7 +5,8 @@ import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.reservation.Reserva
 import org.mapstruct.Mapper;
 
 /**
- * Represents reservation mapper between Reservation entity and Reservation DTO
+ * Represents reservation mapper between Reservation entity and Reservation DTO.
+ *
  * @author Marek Miček
  */
 @Mapper

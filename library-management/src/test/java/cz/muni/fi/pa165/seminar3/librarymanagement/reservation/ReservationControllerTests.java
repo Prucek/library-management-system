@@ -1,78 +1,145 @@
 package cz.muni.fi.pa165.seminar3.librarymanagement.reservation;
 
+import static cz.muni.fi.pa165.seminar3.librarymanagement.utils.ReservationUtils.fakeReservationDto;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doThrow;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
-import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.reservation.ReservationCreateDto;
-import cz.muni.fi.pa165.seminar3.librarymanagement.address.Address;
-import cz.muni.fi.pa165.seminar3.librarymanagement.user.User;
-import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.user.UserType;
+import com.github.javafaker.Faker;
+import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.borrowing.BorrowingCreateDto;
+import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.borrowing.BorrowingDto;
+import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.common.Result;
+import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.reservation.ReservationDto;
+import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.user.UserDto;
+import jakarta.persistence.EntityNotFoundException;
+import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
-import java.util.UUID;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
+/**
+ * Tests for ReservationController.
+ *
+ * @author Marek Miček
+ */
 @WebMvcTest(controllers = {ReservationController.class, ReservationMapper.class})
 public class ReservationControllerTests {
     @Autowired
     private MockMvc mockMvc;
 
     @MockBean
-    private ReservationService reservationService;
+    private ReservationFacade reservationFacade;
+
+    private final Faker faker = new Faker();
 
     @Autowired
     private ObjectMapper objectMapper;
 
     @Test
-    void CreateReservationSuccessful() throws Exception {
-        User user = User.builder()
-                .id(UUID.randomUUID().toString())
-                .email("test@email.com")
-                .firstName("John")
-                .lastName("Malkowich")
-                .username("johnM")
-                .password("password")
-                .userType(UserType.CLIENT)
-                .address(Address.builder().city("Brno").country("CZ").street("Hrnčírska").houseNumber("99").build())
-                .build();
+    public void findSuccessful() throws Exception {
+        ReservationDto reservationDto = fakeReservationDto(faker);
+        // mock facade
+        given(reservationFacade.find(reservationDto.getId())).willReturn(reservationDto);
 
-        Reservation reservation = Reservation.builder()
-                .id(UUID.randomUUID().toString())
-                .from(LocalDateTime.now().truncatedTo(ChronoUnit.HOURS))
-                .to(LocalDateTime.now().plus(10, ChronoUnit.DAYS).truncatedTo(ChronoUnit.HOURS))
-                .user(user)
-                .build();
+        // perform test
+        mockMvc.perform(get("/reservations/" + reservationDto.getId()))
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(jsonPath("$.id").value(reservationDto.getId()));
+    }
 
-        given(reservationService.create(any())).willReturn(reservation);
+    @Test
+    public void findNotFound() throws Exception {
+        // mock facade
+        given(reservationFacade.find(any())).willThrow(EntityNotFoundException.class);
+
+        // perform test
+        mockMvc.perform(get("/reservations/" + UUID.randomUUID())).andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void createSuccessful() throws Exception {
+        ReservationDto reservationDto = fakeReservationDto(faker);
+        // mock facade
+        given(reservationFacade.create(any())).willReturn(reservationDto);
 
         // perform test
         mockMvc.perform(post("/reservations").contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(ReservationCreateDto.builder()
-                                .from(reservation.getFrom())
-                                .to(reservation.getTo())
-                                .issuerId(reservation.getUser().getId())
+                        .content(objectMapper.writeValueAsString(BorrowingDto.builder()
+                                .from(reservationDto.getFrom())
+                                .to(reservationDto.getTo())
+                                .user(UserDto.builder().id(reservationDto.getUser().getId()).build())
                                 .build())))
                 .andExpect(status().is2xxSuccessful())
-//                .andExpect(jsonPath("$.from").value(reservation.getFrom()))
-//                .andExpect(jsonPath("$.to").value(reservation.getTo()))
-                .andExpect(jsonPath("$.id").value(reservation.getId()))
-                .andExpect(jsonPath("$.user.id").value(reservation.getUser().getId()))
-                .andExpect(jsonPath("$.user.email").value(reservation.getUser().getEmail()))
-                .andExpect(jsonPath("$.user.firstName").value(reservation.getUser().getFirstName()))
-                .andExpect(jsonPath("$.user.lastName").value(reservation.getUser().getLastName()))
-        ;
-
-
+                .andExpect(jsonPath("$.id").hasJsonPath())
+                .andExpect(jsonPath("$.user.id").value(reservationDto.getUser().getId()));
     }
 
+    @Test
+    public void updateSuccessful() throws Exception {
+        ReservationDto reservationDto = fakeReservationDto(faker);
+        ReservationDto newReservationDto = fakeReservationDto(faker);
+        newReservationDto.setId(reservationDto.getId());
+
+        // mock facade
+        given(reservationFacade.updateReservation(eq(reservationDto.getId()), any())).willReturn(newReservationDto);
+
+        // perform test
+        mockMvc.perform(put("/reservations/" + reservationDto.getId()).contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(BorrowingCreateDto.builder()
+                                .from(newReservationDto.getFrom())
+                                .to(newReservationDto.getTo())
+                                .userId(newReservationDto.getUser().getId())
+                                .build())))
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(jsonPath("$.id").value(newReservationDto.getId()))
+                .andExpect(jsonPath("$.user.id").value(newReservationDto.getUser().getId()));
+    }
+
+    @Test
+    public void deleteSuccessful() throws Exception {
+        ReservationDto reservationDto = fakeReservationDto(faker);
+        // mock facade
+        given(reservationFacade.find(reservationDto.getId())).willReturn(reservationDto);
+
+        // perform test
+        mockMvc.perform(delete("/reservations/" + reservationDto.getId())).andExpect(status().is2xxSuccessful());
+    }
+
+    @Test
+    public void deleteNotFound() throws Exception {
+        // mock facade
+        doThrow(EntityNotFoundException.class).when(reservationFacade).deleteReservation(any());
+
+        // perform test
+        mockMvc.perform(delete("/reservations/" + UUID.randomUUID())).andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void findAllSuccessful() throws Exception {
+        Result<ReservationDto> reservationDtoResult =
+                Result.of(fakeReservationDto(faker), fakeReservationDto(faker), fakeReservationDto(faker));
+        // mock facade
+        given(reservationFacade.findAll(any(Pageable.class))).willReturn(reservationDtoResult);
+
+        // perform test
+        mockMvc.perform(get("/reservations"))
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(jsonPath("$.total").value(reservationDtoResult.getTotal()))
+                .andExpect(jsonPath("$.page").value(0))
+                .andExpect(jsonPath("$.items[0].id").value(reservationDtoResult.getItems().get(0).getId()))
+                .andExpect(jsonPath("$.items[1].id").value(reservationDtoResult.getItems().get(1).getId()))
+                .andExpect(jsonPath("$.items[2].id").value(reservationDtoResult.getItems().get(2).getId()));
+    }
 }
