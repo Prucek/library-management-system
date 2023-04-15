@@ -31,6 +31,36 @@ public class ReportService {
     }
 
     /**
+     * Generates report with number of borrowed and returned books of specific user.
+     *
+     * @param userId Specifies user for whom the report is generated
+     * @return ReportDto object with number of borrowed and returned books of specific user
+     */
+    public BookReportDto generateBookReport(String userId) {
+        BookReportDto report = new BookReportDto();
+
+        UserDto user = getUserDto(userId);
+
+        List<BorrowingDto> borrowings = getUserBorrowings(userId);
+        int returnedBookCounter = 0;
+        int borrowedBookCounter = 0;
+
+        for (var borrowing : borrowings) {
+            if (borrowing.getTo() != null) {
+                returnedBookCounter++;
+            }
+            borrowedBookCounter++;
+        }
+
+        report.setGeneratedAt(Instant.now());
+        report.setUser(user);
+        report.setBorrowedBooksCount(borrowedBookCounter);
+        report.setReturnedBooksCount(returnedBookCounter);
+
+        return report;
+    }
+
+    /**
      * Generates report with number of fines and total paid fines of specific user.
      *
      * @param userId Specifies user for whom the report is generated
@@ -38,11 +68,7 @@ public class ReportService {
      */
     public FinanceReportDto generateFinanceReport(String userId) {
         FinanceReportDto report = new FinanceReportDto();
-        UserDto user = client.get()
-                .uri(uriBuilder -> uriBuilder.pathSegment("users", userId).build())
-                .retrieve()
-                .bodyToMono(UserDto.class)
-                .block();
+        UserDto user = getUserDto(userId);
 
         List<FineDto> fines = getUserFines(userId);
         double totalPaid = 0.0;
@@ -67,27 +93,7 @@ public class ReportService {
     public UserReportDto generateUserReport() {
         UserReportDto report = new UserReportDto();
 
-        List<UserDto> users = new ArrayList<>();
-        Result<UserDto> usersPage;
-        int page = 0;
-
-        while (true) {
-            int finalPage = page;
-
-            usersPage = client
-                    .get()
-                    .uri(uriBuilder -> uriBuilder.path("/users").queryParam("page", finalPage).build())
-                    .retrieve()
-                    .bodyToMono(new ParameterizedTypeReference<Result<UserDto>>() {})
-                    .block();
-
-            if (noMoreUsers(usersPage)) {
-                break;
-            }
-
-            users.addAll(usersPage.getItems());
-            page++;
-        }
+        List<UserDto> users = getAllUsers();
 
         report.setGeneratedAt(Instant.now());
         report.setUsersCount(getUsersCount(users));
@@ -98,37 +104,57 @@ public class ReportService {
     }
 
     /**
-     * Generates report with number of borrowed and returned books of specific user.
+     * Returns all users in system.
      *
-     * @param userId Specifies user for whom the report is generated
-     * @return ReportDto object with number of borrowed and returned books of specific user
+     * @return List of all users in system
      */
-    public BookReportDto generateBookReport(String userId) {
-        BookReportDto report = new BookReportDto();
+    public List<UserDto> getAllUsers() {
+        List<UserDto> users = new ArrayList<>();
+        Result<UserDto> usersPage;
+        int page = 0;
 
-        UserDto user = client.get()
-                .uri(uriBuilder -> uriBuilder.pathSegment("users", userId).build())
+        while (true) {
+            int finalPage = page;
+
+            usersPage = getUserPage(finalPage);
+
+            if (noMoreUsers(usersPage)) {
+                break;
+            }
+
+            users.addAll(usersPage.getItems());
+            page++;
+        }
+        return users;
+    }
+
+    /**
+     * Returns page of users.
+     *
+     * @param page page number
+     * @return page of users
+     */
+    private Result<UserDto> getUserPage(int page) {
+        return client.get()
+                .uri(uriBuilder -> uriBuilder.path("/users").queryParam("page", page).build())
+                .retrieve()
+                .bodyToMono(new ParameterizedTypeReference<Result<UserDto>>() {
+                })
+                .block();
+    }
+
+    /**
+     * Returns user with id.
+     *
+     * @param id id of user
+     * @return found user
+     */
+    public UserDto getUserDto(String id) {
+        return client.get()
+                .uri(uriBuilder -> uriBuilder.pathSegment("users", id).build())
                 .retrieve()
                 .bodyToMono(UserDto.class)
                 .block();
-
-        List<BorrowingDto> borrowings = getUserBorrowings(userId);
-        int returnedBookCounter = 0;
-        int borrowedBookCounter = 0;
-
-        for (var borrowing : borrowings) {
-            if (borrowing.getTo() != null) {
-                returnedBookCounter++;
-            }
-            borrowedBookCounter++;
-        }
-
-        report.setGeneratedAt(Instant.now());
-        report.setUser(user);
-        report.setBorrowedBooksCount(borrowedBookCounter);
-        report.setReturnedBooksCount(returnedBookCounter);
-
-        return report;
     }
 
     /**
@@ -137,7 +163,7 @@ public class ReportService {
      * @param userId Specifies user for whom the fines are returned
      * @return List of fines for specific user
      */
-    private List<FineDto> getUserFines(String userId) {
+    public List<FineDto> getUserFines(String userId) {
         List<FineDto> fines = new ArrayList<>();
         Result<FineDto> finesPage;
         int page = 0;
@@ -173,7 +199,7 @@ public class ReportService {
      * @param userId Specifies user for whom the borrowings are returned
      * @return List of borrowings for specific user
      */
-    private List<BorrowingDto> getUserBorrowings(String userId) {
+    public List<BorrowingDto> getUserBorrowings(String userId) {
         List<BorrowingDto> borrowings = new ArrayList<>();
         Result<BorrowingDto> borrowingsPage;
         int page = 0;
