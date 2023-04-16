@@ -24,9 +24,9 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 
 
 /**
- * Tests for BookController.
+ * Tests for BookFacade.
  *
- * @author Marek Fiala
+ * @author Juraj Marcin
  */
 @WebMvcTest(controllers = {BookFacade.class, BookMapper.class, BookInstanceMapper.class})
 public class BookFacadeTests {

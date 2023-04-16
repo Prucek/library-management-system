@@ -4,6 +4,7 @@ import static cz.muni.fi.pa165.seminar3.librarymanagement.utils.FineUtils.fakeFi
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 
 import com.github.javafaker.Faker;
@@ -15,24 +16,21 @@ import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.payment.PaymentStat
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.paymentgate.TransactionDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.paymentgate.TransactionStatus;
 import java.util.List;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Profile;
-import org.springframework.test.context.junit4.SpringRunner;
 
-@Profile("test")
-@RunWith(SpringRunner.class)
-@SpringBootTest()
-public class PaymentFacadeImplUnitTests {
+/**
+ * Tests for Payment facade.
+ *
+ * @author Peter Rúček
+ */
+@WebMvcTest(controllers = {PaymentFacade.class, PaymentMapper.class})
+public class PaymentFacadeTests {
 
     @MockBean
     private PaymentService domainService;
-
-    @MockBean
-    private PaymentMapper domainMapper;
 
     @MockBean
     private FineService fineService;
@@ -63,13 +61,14 @@ public class PaymentFacadeImplUnitTests {
                 .transactionId(transactionDto.getId())
                 .build();
 
-        given(fineService.find("randomId")).willReturn(fakeFine1);
-        given(fineService.find("randomId2")).willReturn(fakeFine2);
+        given(fineService.find(eq("randomId"))).willReturn(fakeFine1);
+        given(fineService.find(eq("randomId2"))).willReturn(fakeFine2);
         given(paymentGateApi.createTransaction(any(Double.class), any(String.class))).willReturn(transactionDto);
-        given(domainMapper.fromDto(any())).willReturn(payment);
+        given(domainService.create(any(Payment.class))).willReturn(payment);
 
         PaymentDto result = paymentFacade.create(paymentCreateDto);
-        assertThat(domainMapper.fromDto(result)).isEqualTo(payment);
+        assertThat(result.getId()).isEqualTo(payment.getId());
+        assertThat(result.getTransactionId()).isEqualTo(payment.getTransactionId());
     }
 
     @Test
@@ -90,10 +89,11 @@ public class PaymentFacadeImplUnitTests {
 
         given(fineService.find(any())).willCallRealMethod();
         given(paymentGateApi.createTransaction(any(Double.class), any(String.class))).willReturn(transactionDto);
-        given(domainMapper.fromDto(any())).willReturn(payment);
+        given(domainService.create(any(Payment.class))).willReturn(payment);
 
         PaymentDto result = paymentFacade.create(paymentCreateDto);
-        assertThat(domainMapper.fromDto(result)).isEqualTo(payment);
+        assertThat(result.getId()).isEqualTo(payment.getId());
+        assertThat(result.getTransactionId()).isEqualTo(payment.getTransactionId());
     }
 
     @Test
@@ -108,59 +108,47 @@ public class PaymentFacadeImplUnitTests {
     public void finalizePaymentCreated() {
 
 
-        Payment payment = Payment.builder()
-                .status(PaymentStatus.CREATED)
-                .build();
+        Payment payment = Payment.builder().status(PaymentStatus.CREATED).build();
 
-        TransactionDto transactionDto = TransactionDto.builder()
-                .status(TransactionStatus.WAITING)
-                .build();
+        TransactionDto transactionDto = TransactionDto.builder().status(TransactionStatus.WAITING).build();
 
         given(domainService.find(any())).willReturn(payment);
         given(paymentGateApi.findTransaction(any())).willReturn(transactionDto);
-        given(domainMapper.fromDto(any())).willReturn(payment);
 
         PaymentDto result = paymentFacade.finalizePayment("randomId");
-        assertThat(domainMapper.fromDto(result)).isEqualTo(payment);
+        assertThat(result.getId()).isEqualTo(payment.getId());
+        assertThat(result.getTransactionId()).isEqualTo(payment.getTransactionId());
     }
 
     @Test
     public void finalizePaymentPaid() {
 
 
-        Payment payment = Payment.builder()
-                .status(PaymentStatus.PAID)
-                .build();
+        Payment payment = Payment.builder().status(PaymentStatus.PAID).build();
 
-        TransactionDto transactionDto = TransactionDto.builder()
-                .status(TransactionStatus.APPROVED)
-                .build();
+        TransactionDto transactionDto = TransactionDto.builder().status(TransactionStatus.APPROVED).build();
 
         given(domainService.find(any())).willReturn(payment);
         given(paymentGateApi.findTransaction(any())).willReturn(transactionDto);
-        given(domainMapper.fromDto(any())).willReturn(payment);
 
         PaymentDto result = paymentFacade.finalizePayment("randomId");
-        assertThat(domainMapper.fromDto(result)).isEqualTo(payment);
+        assertThat(result.getId()).isEqualTo(payment.getId());
+        assertThat(result.getTransactionId()).isEqualTo(payment.getTransactionId());
     }
 
     @Test
     public void finalizePaymentCanceled() {
 
 
-        Payment payment = Payment.builder()
-                .status(PaymentStatus.CANCELED)
-                .build();
+        Payment payment = Payment.builder().status(PaymentStatus.CANCELED).build();
 
-        TransactionDto transactionDto = TransactionDto.builder()
-                .status(TransactionStatus.DECLINED)
-                .build();
+        TransactionDto transactionDto = TransactionDto.builder().status(TransactionStatus.DECLINED).build();
 
         given(domainService.find(any())).willReturn(payment);
         given(paymentGateApi.findTransaction(any())).willReturn(transactionDto);
-        given(domainMapper.fromDto(any())).willReturn(payment);
 
         PaymentDto result = paymentFacade.finalizePayment("randomId");
-        assertThat(domainMapper.fromDto(result)).isEqualTo(payment);
+        assertThat(result.getId()).isEqualTo(payment.getId());
+        assertThat(result.getTransactionId()).isEqualTo(payment.getTransactionId());
     }
 }

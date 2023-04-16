@@ -1,12 +1,13 @@
 spring:
-    datasource:
-        url: jdbc:h2:mem:exampleDb
-        username: sa
-        password: password
-        driverClassName: org.h2.Driver
-    jpa:
-        database-platform: org.hibernate.dialect.H2Dialect
-    h2:
-        console.enabled: true
-paymentgateurl: http://localhost:8081/
-paymentgatecallback: http://localhost:8080/payments/
+  datasource:
+    url: jdbc:h2:mem:exampleDb
+    username: sa
+    password: password
+    driverClassName: org.h2.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+  h2:
+    console.enabled: true
+payment-gate:
+  url: http://localhost:8081/
+  callback: http://localhost:8080/payments/

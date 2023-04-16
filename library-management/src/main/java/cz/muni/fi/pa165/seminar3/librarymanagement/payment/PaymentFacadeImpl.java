@@ -23,7 +23,7 @@ import org.springframework.stereotype.Service;
 public class PaymentFacadeImpl extends DomainFacadeImpl<Payment, PaymentDto, PaymentCreateDto>
         implements PaymentFacade {
 
-    @Value("${paymentgatecallback}")
+    @Value("${payment-gate.callback}")
     @NotBlank
     private String paymentGateCallback;
 
