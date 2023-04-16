@@ -5,6 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import java.util.Objects;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -30,4 +31,16 @@ public class BookInstance extends DomainObject {
     @ManyToOne
     @JoinColumn(name = "book_id")
     private Book bookAssigned;
+
+    @Override
+    public boolean equals(Object o) {
+
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof BookInstance bookInstance)) {
+            return false;
+        }
+        return Objects.equals(pages, bookInstance.pages);
+    }
 }

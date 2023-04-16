@@ -28,12 +28,14 @@ import java.util.List;
 import java.util.UUID;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 
 /**
  * Class for initializing data in database.
  */
+@Profile("!test")
 @Component
 public class DataInitializer implements ApplicationRunner {
 
@@ -67,6 +69,7 @@ public class DataInitializer implements ApplicationRunner {
      * @param bookFacade         book facade instance
      * @param authorMapper       author mapper instance
      */
+
     public DataInitializer(UserService userService,
                            ReservationService reservationService,
                            BorrowingService borrowingService,
