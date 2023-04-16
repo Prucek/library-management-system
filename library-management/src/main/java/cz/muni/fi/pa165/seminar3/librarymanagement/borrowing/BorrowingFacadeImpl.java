@@ -7,6 +7,7 @@ import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.borrowing.Borrowing
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.borrowing.BorrowingDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.user.User;
 import cz.muni.fi.pa165.seminar3.librarymanagement.user.UserService;
+import java.util.List;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,14 +31,14 @@ public class BorrowingFacadeImpl extends DomainFacadeImpl<Borrowing, BorrowingDt
     /**
      * Creates a new borrowing facade instance.
      *
-     * @param domainService    borrowing service instance
-     * @param domainMapper     borrowing mapper instance
-     * @param userService      user service instance
-     * @param bookService      book service instance
+     * @param domainService borrowing service instance
+     * @param domainMapper  borrowing mapper instance
+     * @param userService   user service instance
+     * @param bookService   book service instance
      */
     @Autowired
     public BorrowingFacadeImpl(BorrowingService domainService, BorrowingMapper domainMapper, UserService userService,
-                          BookService bookService) {
+                               BookService bookService) {
 
         this.domainService = domainService;
         this.domainMapper = domainMapper;
@@ -50,7 +51,7 @@ public class BorrowingFacadeImpl extends DomainFacadeImpl<Borrowing, BorrowingDt
      *
      * @param id                 id of borrowing to update
      * @param borrowingCreateDto new borrowing values
-     * @return                   update borrowing DTO
+     * @return update borrowing DTO
      */
     @Override
     public BorrowingDto updateBorrowing(String id, BorrowingCreateDto borrowingCreateDto) {
@@ -82,7 +83,7 @@ public class BorrowingFacadeImpl extends DomainFacadeImpl<Borrowing, BorrowingDt
      * Creates borrowing.
      *
      * @param borrowingCreateDto dto to create from
-     * @return                   created borrowing DTO
+     * @return created borrowing DTO
      */
     @Override
     public BorrowingDto create(BorrowingCreateDto borrowingCreateDto) {
@@ -98,5 +99,10 @@ public class BorrowingFacadeImpl extends DomainFacadeImpl<Borrowing, BorrowingDt
                 .build();
 
         return domainMapper.toDto(borrowing);
+    }
+
+    @Override
+    public List<BorrowingDto> findPending(String bookInstanceId) {
+        return domainMapper.toDtoList(domainService.findPending(bookInstanceId));
     }
 }

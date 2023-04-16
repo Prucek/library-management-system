@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -91,8 +92,7 @@ public class BorrowingController {
     @ApiResponse(responseCode = "404", description = "Borrowing not found",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
     @PutMapping("/{id}")
-    public BorrowingDto update(@PathVariable String id,
-                               @RequestBody BorrowingCreateDto borrowingCreateDto) {
+    public BorrowingDto update(@PathVariable String id, @RequestBody BorrowingCreateDto borrowingCreateDto) {
         return borrowingFacade.updateBorrowing(id, borrowingCreateDto);
     }
 
@@ -129,7 +129,10 @@ public class BorrowingController {
     @ApiResponse(responseCode = "400", description = "Invalid paging",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
     @GetMapping
-    public Result<BorrowingDto> findAll(Pageable pageable) {
+    public Result<BorrowingDto> findAll(Pageable pageable, @RequestParam(defaultValue = "") String bookInstanceId) {
+        if (bookInstanceId != null && !bookInstanceId.isBlank()) {
+            return Result.of(borrowingFacade.findPending(bookInstanceId));
+        }
         return borrowingFacade.findAll(pageable);
     }
 }
