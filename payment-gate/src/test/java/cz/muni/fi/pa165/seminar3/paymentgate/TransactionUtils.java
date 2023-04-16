@@ -4,6 +4,7 @@ import com.github.javafaker.Faker;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.paymentgate.CardDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.paymentgate.TransactionDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.paymentgate.TransactionStatus;
+import cz.muni.fi.pa165.seminar3.paymentgate.transaction.Transaction;
 import java.text.SimpleDateFormat;
 import java.util.concurrent.TimeUnit;
 
@@ -22,6 +23,21 @@ public class TransactionUtils {
      */
     public static TransactionDto fakeTransactionDto(Faker faker) {
         return TransactionDto.builder()
+                .id(faker.internet().uuid())
+                .amount(faker.number().randomDouble(2, 1, 100))
+                .status(TransactionStatus.APPROVED)
+                .callbackUrl(faker.internet().url())
+                .build();
+    }
+
+    /**
+     * Generates a fake transaction entity.
+     *
+     * @param faker faker instance
+     * @return fake transaction
+     */
+    public static Transaction fakeTransaction(Faker faker) {
+        return Transaction.builder()
                 .id(faker.internet().uuid())
                 .amount(faker.number().randomDouble(2, 1, 100))
                 .status(TransactionStatus.APPROVED)

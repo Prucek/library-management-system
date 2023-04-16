@@ -47,7 +47,7 @@ public class TransactionControllerTests {
     private final Faker faker = new Faker();
 
     @Test
-    public void createTransactionSuccessful() throws Exception {
+    public void createSuccessful() throws Exception {
         TransactionDto transactionDto = fakeTransactionDto(faker);
         // mock service
         given(transactionService.create(any(TransactionCreateDto.class))).willReturn(transactionDto);
