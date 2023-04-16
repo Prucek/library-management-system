@@ -2,6 +2,7 @@ package cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.author;
 
 
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.common.DomainObjectDto;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,6 +23,8 @@ import java.util.Objects;
 public class AuthorDto extends DomainObjectDto {
     private String name;
     private String surname;
+
+//    private List<BookDto> publications;
 
     @Override
     public boolean equals(Object o) {

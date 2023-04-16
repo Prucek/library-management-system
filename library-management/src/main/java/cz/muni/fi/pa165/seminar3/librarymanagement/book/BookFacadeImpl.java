@@ -87,8 +87,10 @@ public class BookFacadeImpl extends DomainFacadeImpl<Book, BookDto, BookDto> imp
             }
         }
         book.setAuthors(newAuthors);
-        for (BookInstanceDto instFromDto : dto.getInstances()) {
-            domainService.addInstance(book.getId(), instFromDto.getPages());
+        if (dto.getInstances() != null) {
+            for (BookInstanceDto instFromDto : dto.getInstances()) {
+                domainService.addInstance(book.getId(), instFromDto.getPages());
+            }
         }
         return domainMapper.toDto(domainService.update(book));
     }

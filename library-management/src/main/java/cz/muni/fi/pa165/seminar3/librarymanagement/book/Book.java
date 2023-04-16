@@ -5,6 +5,8 @@ import cz.muni.fi.pa165.seminar3.librarymanagement.common.DomainObject;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
@@ -32,11 +34,11 @@ public class Book extends DomainObject {
     private String title;
     @Singular
     @ManyToMany()
-    //    @JoinTable(
-    //            name = "written_by",
-    //            joinColumns = @JoinColumn(name = "book_id"),
-    //            inverseJoinColumns = @JoinColumn(name = "author_id")
-    //    )
+    @JoinTable(
+            name = "written_by",
+            joinColumns = @JoinColumn(name = "book_id"),
+            inverseJoinColumns = @JoinColumn(name = "author_id")
+    )
     private List<Author> authors;
 
     @Singular

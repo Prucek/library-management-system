@@ -10,6 +10,7 @@ import org.mapstruct.Mapping;
  *
  * @author MarekFiala
  */
+//@Mapper(uses = AuthorMapper.class)
 @Mapper
 public interface BookMapper extends DomainMapper<Book, BookDto> {
 //    @Override

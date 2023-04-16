@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.Singular;
 import lombok.experimental.SuperBuilder;
 
 import java.util.List;
@@ -26,7 +27,7 @@ import java.util.List;
 public class Author extends DomainObject {
     private String name;
     private String surname;
-    //    @ManyToMany(mappedBy = "written_by")
-    @ManyToMany()
+    @Singular
+    @ManyToMany(mappedBy = "authors")
     private List<Book> publications;
 }
