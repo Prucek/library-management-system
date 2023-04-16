@@ -1,13 +1,10 @@
 package cz.muni.fi.pa165.seminar3.librarymanagement.author;
 
-import cz.muni.fi.pa165.seminar3.librarymanagement.book.Book;
 import cz.muni.fi.pa165.seminar3.librarymanagement.common.DomainFacadeImpl;
+import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.author.AuthorCreateDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.author.AuthorDto;
 import lombok.Getter;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
-
 
 /**
  * Class representing Author facade.
@@ -15,7 +12,7 @@ import org.springframework.web.server.ResponseStatusException;
  * @author MarekFiala
  */
 @Service
-public class AuthorFacadeImpl extends DomainFacadeImpl<Author, AuthorDto, AuthorDto> implements AuthorFacade {
+public class AuthorFacadeImpl extends DomainFacadeImpl<Author, AuthorDto, AuthorCreateDto> implements AuthorFacade {
     @Getter
     private final AuthorService domainService;
 
@@ -34,34 +31,22 @@ public class AuthorFacadeImpl extends DomainFacadeImpl<Author, AuthorDto, Author
     }
 
     @Override
-    public AuthorDto create(AuthorDto createDto) {
-        if (createDto.getName() == null || createDto.getName().isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Author must have name.");
-        }
-        if (createDto.getSurname() == null || createDto.getSurname().isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Author must have surname.");
-        }
-        return domainMapper.toDto(domainService.create(domainMapper.fromDto(createDto)));
+    public AuthorDto create(AuthorCreateDto createDto) {
+        Author author = Author.builder().name(createDto.getName()).surname(createDto.getSurname()).build();
+        return domainMapper.toDto(domainService.create(author));
     }
 
     @Override
     public void delete(String id) {
-        Author a = domainService.find(id);
-        for (Book book : a.getPublications()) {
-            book.getAuthors().remove(a);
-        }
-        domainService.delete(domainService.find(id));
+        Author author = domainService.find(id);
+        domainService.delete(author);
     }
 
     @Override
-    public AuthorDto update(String id, AuthorDto authorDto) {
+    public AuthorDto update(String id, AuthorCreateDto authorDto) {
         Author author = domainService.find(id);
-        if (authorDto.getName() != null) {
-            author.setName(authorDto.getName());
-        }
-        if (authorDto.getSurname() != null) {
-            author.setSurname(authorDto.getSurname());
-        }
+        author.setName(authorDto.getName());
+        author.setSurname(authorDto.getSurname());
 
         return domainMapper.toDto(domainService.update(author));
     }
