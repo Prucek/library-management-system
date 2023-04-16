@@ -9,7 +9,6 @@ import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.payment.PaymentStat
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.paymentgate.TransactionDto;
 import jakarta.validation.constraints.NotBlank;
 import java.util.List;
-import java.util.UUID;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -60,7 +59,6 @@ public class PaymentFacadeImpl extends DomainFacadeImpl<Payment, PaymentDto, Pay
         TransactionDto transaction = paymentGateApi.createTransaction(fines.stream().mapToDouble(Fine::getAmount).sum(),
                 paymentGateCallback);
         return domainMapper.toDto(domainService.create(Payment.builder()
-                .id(UUID.randomUUID().toString())
                 .status(PaymentStatus.CREATED)
                 .transactionId(transaction.getId())
                 .paidFines(fines)
