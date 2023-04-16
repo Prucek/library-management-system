@@ -1,7 +1,6 @@
 package cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.book;
 
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.common.DomainObjectDto;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -15,7 +14,5 @@ import lombok.experimental.SuperBuilder;
 @Setter
 @SuperBuilder
 @NoArgsConstructor
-@AllArgsConstructor
 public class BookInstanceDto extends DomainObjectDto {
-    private BookDto book;
 }

@@ -11,7 +11,6 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.util.List;
-import java.util.Objects;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -50,18 +49,4 @@ public class User extends DomainObject {
     @Singular
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
     private List<Address> addresses;
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof User user)) {
-            return false;
-        }
-        return Objects.equals(username, user.username) && userType == user.userType && Objects.equals(password,
-                user.password) && Objects.equals(email, user.email) && Objects.equals(firstName, user.firstName)
-                && Objects.equals(lastName, user.lastName) && Objects.equals(addresses, user.addresses);
-    }
-
 }

@@ -4,7 +4,6 @@ import cz.muni.fi.pa165.seminar3.librarymanagement.address.Address;
 import cz.muni.fi.pa165.seminar3.librarymanagement.author.Author;
 import cz.muni.fi.pa165.seminar3.librarymanagement.author.AuthorService;
 import cz.muni.fi.pa165.seminar3.librarymanagement.book.Book;
-import cz.muni.fi.pa165.seminar3.librarymanagement.book.BookInstance;
 import cz.muni.fi.pa165.seminar3.librarymanagement.book.BookService;
 import cz.muni.fi.pa165.seminar3.librarymanagement.borrowing.Borrowing;
 import cz.muni.fi.pa165.seminar3.librarymanagement.borrowing.BorrowingService;
@@ -49,17 +48,16 @@ public class DataInitializer implements ApplicationRunner {
 
     private final AuthorService authorService;
 
-
     /**
-     * Constructor for DataInitializer.
+     * Constructor for all used services.
      *
-     * @param userService      UserService
-     * @param reservationService ReservationService
-     * @param borrowingService BorrowingService
-     * @param fineService      FineService
-     * @param paymentService   PaymentService
-     * @param bookService      BookService
-     * @param authorService    AuthorService
+     * @param userService        user service instance
+     * @param reservationService reservation service instance
+     * @param borrowingService   borrowing service instance
+     * @param fineService        fine service instance
+     * @param paymentService     payment service instance
+     * @param bookService        book service instance
+     * @param authorService      author service instance
      */
     public DataInitializer(UserService userService, ReservationService reservationService,
                            BorrowingService borrowingService, FineService fineService, PaymentService paymentService,
@@ -127,14 +125,11 @@ public class DataInitializer implements ApplicationRunner {
 
         authorService.create(author2);
 
-        Book book = Book.builder()
-                .title("Sloni žerou medvědy")
-                .author(author)
-                .author(author2)
-                .instance(BookInstance.builder().build())
-                .instance(BookInstance.builder().build())
-                .build();
+        Book book = Book.builder().title("Sloni žerou medvědy").author(author).author(author).build();
 
         bookService.create(book);
+
+        bookService.addInstance(book.getId());
+        bookService.addInstance(book.getId());
     }
 }

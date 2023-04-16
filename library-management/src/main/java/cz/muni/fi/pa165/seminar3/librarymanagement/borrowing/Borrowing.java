@@ -9,7 +9,6 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.Objects;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -43,18 +42,4 @@ public class Borrowing extends DomainObject implements Serializable {
 
     @ManyToOne
     private BookInstance bookInstance;
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof Borrowing borrowing)) {
-            return false;
-        }
-        return Objects.equals(from, borrowing.from) && Objects.equals(to, borrowing.to) && Objects.equals(returned,
-                borrowing.returned) && Objects.equals(user, borrowing.user) && Objects.equals(bookInstance,
-                borrowing.bookInstance);
-    }
-
 }

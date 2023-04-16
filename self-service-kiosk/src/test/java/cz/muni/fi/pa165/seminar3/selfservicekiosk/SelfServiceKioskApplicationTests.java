@@ -1,11 +1,9 @@
 package cz.muni.fi.pa165.seminar3.selfservicekiosk;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.book.BookInstanceDto;
-import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.borrowing.BorrowingDto;
+import com.github.javafaker.Faker;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.kiosk.KioskBorrowDto;
-import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.kiosk.KioskReturnDto;
-import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.user.UserDto;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -15,14 +13,18 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.UUID;
-
+import static cz.muni.fi.pa165.seminar3.selfservicekiosk.KioskUtils.fakeKioskBorrowingDto;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+/**
+ * Tests for self-service kiosk controller.
+ */
 @WebMvcTest(KioskController.class)
 class SelfServiceKioskApplicationTests {
 
@@ -34,115 +36,52 @@ class SelfServiceKioskApplicationTests {
     @Autowired
     private ObjectMapper objectMapper;
 
-    // injected mock implementation of the KioskController
     @MockBean
-    private KioskController kioskController;
+    private KioskFacade kioskFacade;
 
+    private final Faker faker = new Faker();
 
     @Test
     void contextLoads() {
     }
 
     @Test
-    void borrowNonExistingBook() throws Exception {
-        KioskBorrowDto kioskBorrowing = new KioskBorrowDto();
-        kioskBorrowing.setBookInstanceId("-1"); kioskBorrowing.setUserId("456");
+    void borrowInvalidPayload() throws Exception {
+        KioskBorrowDto kioskBorrowDto = fakeKioskBorrowingDto(faker);
+        kioskBorrowDto.setUserId("");
 
-        given(kioskController.borrow(kioskBorrowing)).willThrow(new ResponseStatusException(HttpStatus.NOT_FOUND,
-                "Book instance with id:-1 not found"));
+        given(kioskFacade.borrowBook(any(KioskBorrowDto.class)))
+                .willThrow(new ResponseStatusException(HttpStatus.BAD_REQUEST));
 
-        mockMvc.perform(post("/kiosk/borrow")
-                        .header("User-Agent", "007")
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(kioskBorrowing))
-                )
+        mockMvc.perform(post("/kiosk/borrow").contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(kioskBorrowDto)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void borrowSuccessful() throws Exception {
+        // Todo after library: Book Management layers merged
+        ;
+    }
+
+    @Test
+    void returnNonExistingBookInstance() throws Exception {
+        String bookInstanceId = UUID.randomUUID().toString();
+
+        doThrow(EntityNotFoundException.class).when(kioskFacade).returnBook(any());
+
+        mockMvc.perform(post("/kiosk/return/" + bookInstanceId))
                 .andExpect(status().isNotFound());
     }
 
     @Test
-    void borrowForNonExistingUser() throws Exception {
-        KioskBorrowDto kioskBorrowing = new KioskBorrowDto();
-        kioskBorrowing.setBookInstanceId("123"); kioskBorrowing.setUserId("-1");
+    void returnSuccessful() throws Exception {
+        String bookInstanceId = UUID.randomUUID().toString();
 
-        given(kioskController.borrow(kioskBorrowing)).willThrow(new ResponseStatusException(HttpStatus.NOT_FOUND,
-                "User with id:-1 not found"));
+        doNothing().when(kioskFacade).returnBook(bookInstanceId);
 
-        mockMvc.perform(post("/kiosk/borrow")
-                        .header("User-Agent", "007")
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(kioskBorrowing))
-                )
-                .andExpect(status().isNotFound());
-    }
-
-    @Test
-    void borrowExistingBook() throws Exception {
-        KioskBorrowDto kioskBorrowing = new KioskBorrowDto();
-        String exampleBookInstanceId = "123";
-        String exampleUserId = "456";
-        kioskBorrowing.setBookInstanceId(exampleBookInstanceId);
-        kioskBorrowing.setUserId(exampleUserId);
-
-        BorrowingDto newBorrowing = new BorrowingDto();
-        newBorrowing.setId(UUID.randomUUID().toString());
-        newBorrowing.setBookInstance(new BookInstanceDto());
-        newBorrowing.setUser(new UserDto());
-        newBorrowing.setFrom(LocalDateTime.now());
-        newBorrowing.setTo(LocalDateTime.now().plus(30, ChronoUnit.DAYS));
-
-        given(kioskController.borrow(kioskBorrowing)).willReturn(newBorrowing);
-
-        mockMvc.perform(post("/kiosk/borrow")
-                        .header("User-Agent", "007")
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(kioskBorrowing))
-                )
-                .andExpect(status().isAccepted());
-
-    }
-
-    @Test
-    void returnNonExistingBook() throws Exception {
-        KioskReturnDto kioskReturnDto = new KioskReturnDto();
-        kioskReturnDto.setBookInstanceId("-1");
-
-        given(kioskController.returnBook(kioskReturnDto)).willThrow(new ResponseStatusException(HttpStatus.NOT_FOUND));
-
-        mockMvc.perform(post("/kiosk/return")
-                        .header("User-Agent", "007")
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(kioskReturnDto))
-                )
-                .andExpect(status().isNotFound());
-
-    }
-
-    @Test
-    void returnExistingBook() throws Exception {
-        KioskReturnDto kioskReturnDto = new KioskReturnDto();
-        String exampleBookInstanceId = "123";
-        kioskReturnDto.setBookInstanceId(exampleBookInstanceId);
-
-        BorrowingDto newBorrowing = new BorrowingDto();
-        newBorrowing.setId(UUID.randomUUID().toString());
-        newBorrowing.setBookInstance(new BookInstanceDto());
-        newBorrowing.setUser(new UserDto());
-        newBorrowing.setFrom(LocalDateTime.now());
-        newBorrowing.setTo(LocalDateTime.now().plus(30, ChronoUnit.DAYS));
-
-        given(kioskController.returnBook(kioskReturnDto)).willReturn(newBorrowing);
-
-        mockMvc.perform(post("/kiosk/return")
-                        .header("User-Agent", "007")
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(kioskReturnDto))
-                )
-                .andExpect(status().isAccepted());
+        mockMvc.perform(post("/kiosk/return/" + bookInstanceId))
+                .andExpect(status().is2xxSuccessful());
 
     }
 }

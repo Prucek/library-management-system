@@ -19,4 +19,6 @@ import lombok.experimental.SuperBuilder;
 public class TransactionCreateDto {
 
     private double amount;
+
+    private String callbackUrl;
 }

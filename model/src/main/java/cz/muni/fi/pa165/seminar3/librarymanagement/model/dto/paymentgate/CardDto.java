@@ -1,6 +1,5 @@
 package cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.paymentgate;
 
-import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.common.DomainObjectDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,8 +16,8 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CardDto extends DomainObjectDto {
-    public String cardNumber;
-    public String expiration;
-    public String cvv2;
+public class CardDto {
+    private String cardNumber;
+    private String expiration;
+    private String cvv2;
 }
