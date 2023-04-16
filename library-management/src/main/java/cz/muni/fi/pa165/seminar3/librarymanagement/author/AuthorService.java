@@ -1,14 +1,14 @@
 package cz.muni.fi.pa165.seminar3.librarymanagement.author;
 
 import cz.muni.fi.pa165.seminar3.librarymanagement.common.DomainService;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
- * Author service providing access to Author repository
+ * Author service providing access to Author repository.
+ *
+ * @author Marek Fiala
  */
 @Service
 public class AuthorService extends DomainService<Author> {
@@ -16,14 +16,13 @@ public class AuthorService extends DomainService<Author> {
     @Getter
     private final AuthorRepository repository;
 
+    /**
+     * Creates a new author service instance.
+     *
+     * @param repository author repository instance
+     */
     @Autowired
     public AuthorService(AuthorRepository repository) {
         this.repository = repository;
-    }
-
-    @Transactional(readOnly = true)
-    public Author find(String id){
-        return repository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Author " + id + "not found."));
     }
 }

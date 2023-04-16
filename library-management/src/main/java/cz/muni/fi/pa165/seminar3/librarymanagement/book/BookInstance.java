@@ -25,8 +25,6 @@ import lombok.experimental.SuperBuilder;
 @Table
 public class BookInstance extends DomainObject {
 
-    private Integer pages;
-
     @ManyToOne
     @JoinColumn(name = "book_id")
     private Book bookAssigned;

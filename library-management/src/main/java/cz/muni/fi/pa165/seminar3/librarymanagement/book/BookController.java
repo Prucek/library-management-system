@@ -2,19 +2,14 @@ package cz.muni.fi.pa165.seminar3.librarymanagement.book;
 
 
 import cz.muni.fi.pa165.seminar3.librarymanagement.common.ErrorMessage;
+import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.book.BookCreateDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.book.BookDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.book.BookInstanceDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.common.Result;
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.info.Contact;
-import io.swagger.v3.oas.annotations.info.Info;
-import io.swagger.v3.oas.annotations.info.License;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.servers.Server;
-import io.swagger.v3.oas.annotations.servers.ServerVariable;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -35,21 +30,6 @@ import org.springframework.web.server.ResponseStatusException;
  * Spring REST Controller for books.
  */
 @RestController
-@OpenAPIDefinition(
-        info = @Info(title = "Books REST API",
-                version = "1.0",
-                description = """
-                        Simple service for books REST API
-                        """,
-                contact = @Contact(name = "Marek Fiala", email = "xfiala6@fi.muni.cz"),
-                license = @License(name = "Apache 2.0", url = "https://www.apache.org/licenses/LICENSE-2.0.html")
-        ),
-        servers = @Server(description = "library management server", url = "{scheme}://{server}:{port}", variables = {
-                @ServerVariable(name = "scheme", allowableValues = {"http", "https"}, defaultValue = "http"),
-                @ServerVariable(name = "server", defaultValue = "localhost"),
-                @ServerVariable(name = "port", defaultValue = "8080"),
-        })
-)
 @RequestMapping("/books")
 public class BookController {
 
@@ -68,10 +48,7 @@ public class BookController {
     /**
      * REST method returning book with specified id.
      */
-    @Operation(
-            summary = "Returns identified book",
-            description = "Looks up a by by its id."
-    )
+    @Operation(summary = "Returns identified book", description = "Looks up a by by its id.")
     @ApiResponse(responseCode = "200", description = "Book found", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "404", description = "Book not found",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
@@ -87,9 +64,7 @@ public class BookController {
     /**
      * REST method returning all books.
      */
-    @Operation(
-            summary = "Get all books",
-            description = "Returns all books with authors as JSON")
+    @Operation(summary = "Get all books", description = "Returns all books with authors as JSON")
     @ApiResponse(responseCode = "200", description = "Pages list of all books", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "400", description = "Invalid paging",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
@@ -101,20 +76,15 @@ public class BookController {
     /**
      * REST method for creating a new book.
      */
-    @Operation(
-            summary = "Create a new book"
-    )
+    @Operation(summary = "Create a new book")
     @ApiResponse(responseCode = "201", description = "Book created", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "400", description = "Invalid payload",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
     @ApiResponse(responseCode = "404", description = "Author not found",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
-    @PostMapping(
-            consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE
-    )
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public BookDto create(@RequestBody BookDto dto) {
+    public BookDto create(@RequestBody BookCreateDto dto) {
         try {
             return facade.create(dto);
         } catch (ResponseStatusException e) {
@@ -127,9 +97,7 @@ public class BookController {
     /**
      * REST method deleting specific book.
      */
-    @Operation(
-            summary = "Delete book by its ID"
-    )
+    @Operation(summary = "Delete book by its ID")
     @ApiResponse(responseCode = "200", description = "Book deleted", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "404", description = "Book not found",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
@@ -145,12 +113,9 @@ public class BookController {
     /**
      * REST method updating specific book.
      */
-    @Operation(
-            summary = "Update book by its ID"
-    )
+    @Operation(summary = "Update book by its ID")
     @PutMapping("/{id}")
-    public BookDto update(@PathVariable String id,
-                          @RequestBody BookDto dto) {
+    public BookDto update(@PathVariable String id, @RequestBody BookCreateDto dto) {
         try {
             return facade.update(id, dto);
         } catch (EntityNotFoundException e) {
@@ -191,10 +156,7 @@ public class BookController {
     /**
      * REST method getting book instance.
      */
-    @Operation(
-            summary = "Returns identified book instance",
-            description = "Looks up a by by its id."
-    )
+    @Operation(summary = "Returns identified book instance", description = "Looks up a by by its id.")
     @ApiResponse(responseCode = "200", description = "Book instance found", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "404", description = "Book instance not found",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
