@@ -98,7 +98,7 @@ public class BorrowingFacadeImpl extends DomainFacadeImpl<Borrowing, BorrowingDt
                 .bookInstance(bookInstance)
                 .build();
 
-        return domainMapper.toDto(borrowing);
+        return domainMapper.toDto(domainService.create(borrowing));
     }
 
     @Override

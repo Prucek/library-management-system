@@ -48,6 +48,7 @@ public class UserFacadeImpl extends DomainFacadeImpl<User, UserDto, UserCreateDt
     @Override
     public UserDto update(String id, UserCreateDto userCreateDto) {
         User user = domainService.find(id);
+        user.setUsername(userCreateDto.getUsername());
         user.setFirstName(userCreateDto.getFirstName());
         user.setLastName(userCreateDto.getLastName());
         List<Address> addresses = new ArrayList<>();

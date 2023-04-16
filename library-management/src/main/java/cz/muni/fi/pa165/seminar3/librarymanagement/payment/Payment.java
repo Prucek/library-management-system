@@ -8,6 +8,7 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.OneToMany;
 import java.util.List;
+import java.util.Objects;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -34,4 +35,16 @@ public class Payment extends DomainObject {
 
     @OneToMany
     private List<Fine> paidFines;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Payment payment)) {
+            return false;
+        }
+        return Objects.equals(transactionId, payment.transactionId) && status == payment.status && Objects.equals(
+                paidFines, payment.paidFines);
+    }
 }
