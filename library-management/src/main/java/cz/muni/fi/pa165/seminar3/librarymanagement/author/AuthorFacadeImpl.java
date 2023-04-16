@@ -5,6 +5,8 @@ import cz.muni.fi.pa165.seminar3.librarymanagement.book.BookService;
 import cz.muni.fi.pa165.seminar3.librarymanagement.common.DomainFacadeImpl;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.author.AuthorDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.book.BookDto;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
@@ -53,7 +55,10 @@ public class AuthorFacadeImpl extends DomainFacadeImpl<Author, AuthorDto, Author
 
     @Override
     public void delete(String id) {
-        // Todo: remove authors from individual books, then author from repo
+        Author a = domainService.find(id);
+        for (Book book : a.getPublications()) {
+            book.getAuthors().remove(a);
+        }
         domainService.delete(domainService.find(id));
     }
 

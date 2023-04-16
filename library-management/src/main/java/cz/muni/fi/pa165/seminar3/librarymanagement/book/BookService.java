@@ -1,5 +1,6 @@
 package cz.muni.fi.pa165.seminar3.librarymanagement.book;
 
+import cz.muni.fi.pa165.seminar3.librarymanagement.author.Author;
 import cz.muni.fi.pa165.seminar3.librarymanagement.common.DomainService;
 import jakarta.persistence.EntityNotFoundException;
 import java.util.UUID;

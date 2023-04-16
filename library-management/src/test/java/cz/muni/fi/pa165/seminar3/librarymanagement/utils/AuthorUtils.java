@@ -20,6 +20,7 @@ public class AuthorUtils {
      */
     public static Author fakeAuthor(Faker faker){
         return Author.builder()
+                .id(faker.internet().uuid())
                 .name(faker.name().firstName())
                 .surname(faker.name().lastName())
                 .build();
@@ -33,6 +34,7 @@ public class AuthorUtils {
      */
     public static AuthorDto fakeAuthorDto(Faker faker){
         return AuthorDto.builder()
+                .id(faker.internet().uuid())
                 .name(faker.name().firstName())
                 .surname(faker.name().lastName())
                 .build();
