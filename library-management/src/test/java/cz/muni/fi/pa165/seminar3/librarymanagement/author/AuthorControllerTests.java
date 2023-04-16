@@ -33,7 +33,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
  *
  * @author Marek Fiala
  */
-@WebMvcTest(controllers = {AuthorController.class, AuthorMapper.class})
+@WebMvcTest(controllers = {AuthorController.class})
 public class AuthorControllerTests {
 
     @Autowired
