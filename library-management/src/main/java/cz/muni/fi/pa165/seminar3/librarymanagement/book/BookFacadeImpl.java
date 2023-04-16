@@ -108,4 +108,9 @@ public class BookFacadeImpl extends DomainFacadeImpl<Book, BookDto, BookDto> imp
     public void removeInstance(String id) {
         domainService.removeInstance(domainService.getInstance(id));
     }
+
+    @Override
+    public BookInstanceDto getInstance(String instanceId) {
+        return instanceMapper.toDto(domainService.getInstance(instanceId));
+    }
 }

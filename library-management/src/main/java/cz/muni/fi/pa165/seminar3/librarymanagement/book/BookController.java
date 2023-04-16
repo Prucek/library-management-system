@@ -187,4 +187,23 @@ public class BookController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.toString());
         }
     }
+
+    /**
+     * REST method getting book instance.
+     */
+    @Operation(
+            summary = "Returns identified book instance",
+            description = "Looks up a by by its id."
+    )
+    @ApiResponse(responseCode = "200", description = "Book instance found", useReturnTypeSchema = true)
+    @ApiResponse(responseCode = "404", description = "Book instance not found",
+            content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
+    @GetMapping("/instances/{id}")
+    public BookInstanceDto getInstance(@PathVariable String id) {
+        try {
+            return facade.getInstance(id);
+        } catch (EntityNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "book instance with id=" + id + " not found");
+        }
+    }
 }

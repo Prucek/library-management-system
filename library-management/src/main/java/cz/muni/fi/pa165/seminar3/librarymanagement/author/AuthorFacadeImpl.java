@@ -1,13 +1,8 @@
 package cz.muni.fi.pa165.seminar3.librarymanagement.author;
 
 import cz.muni.fi.pa165.seminar3.librarymanagement.book.Book;
-import cz.muni.fi.pa165.seminar3.librarymanagement.book.BookService;
 import cz.muni.fi.pa165.seminar3.librarymanagement.common.DomainFacadeImpl;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.author.AuthorDto;
-import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.book.BookDto;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -27,19 +22,15 @@ public class AuthorFacadeImpl extends DomainFacadeImpl<Author, AuthorDto, Author
     @Getter
     private final AuthorMapper domainMapper;
 
-    private final BookService bookService;
-
     /**
      * Creates a new author facade instance.
      *
      * @param domainService author service instance
      * @param domainMapper  author mapper instance
-     * @param bookService   book service instance
      */
-    public AuthorFacadeImpl(AuthorService domainService, AuthorMapper domainMapper, BookService bookService) {
+    public AuthorFacadeImpl(AuthorService domainService, AuthorMapper domainMapper) {
         this.domainService = domainService;
         this.domainMapper = domainMapper;
-        this.bookService = bookService;
     }
 
     @Override
@@ -71,19 +62,6 @@ public class AuthorFacadeImpl extends DomainFacadeImpl<Author, AuthorDto, Author
         if (authorDto.getSurname() != null) {
             author.setSurname(authorDto.getSurname());
         }
-
-        //        if(authorDto.getPublications() != null){
-        //            List<Book> newPublications = null;
-        //            for (BookDto bookFromDto : authorDto.getPublications()){
-        //                try {
-        //                    Book book = bookService.find(bookFromDto.getId());
-        //                    newPublications.add(book);
-        //                } catch (Exception ignored) {
-        //                    ;
-        //                }
-        //            }
-        //            author.setPublications(newPublications);
-        //        }
 
         return domainMapper.toDto(domainService.update(author));
     }

@@ -18,4 +18,6 @@ public interface BookFacade extends DomainFacade<BookDto, BookDto> {
     BookInstanceDto addInstance(String bookId);
 
     void removeInstance(String id);
+
+    BookInstanceDto getInstance(String instanceId);
 }
