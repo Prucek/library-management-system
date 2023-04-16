@@ -2,17 +2,13 @@ package cz.muni.fi.pa165.seminar3.librarymanagement;
 
 import cz.muni.fi.pa165.seminar3.librarymanagement.address.Address;
 import cz.muni.fi.pa165.seminar3.librarymanagement.author.Author;
-import cz.muni.fi.pa165.seminar3.librarymanagement.author.AuthorMapper;
 import cz.muni.fi.pa165.seminar3.librarymanagement.author.AuthorService;
 import cz.muni.fi.pa165.seminar3.librarymanagement.book.Book;
-import cz.muni.fi.pa165.seminar3.librarymanagement.book.BookFacade;
-import cz.muni.fi.pa165.seminar3.librarymanagement.book.BookInstance;
 import cz.muni.fi.pa165.seminar3.librarymanagement.book.BookService;
 import cz.muni.fi.pa165.seminar3.librarymanagement.borrowing.Borrowing;
 import cz.muni.fi.pa165.seminar3.librarymanagement.borrowing.BorrowingService;
 import cz.muni.fi.pa165.seminar3.librarymanagement.fine.Fine;
 import cz.muni.fi.pa165.seminar3.librarymanagement.fine.FineService;
-import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.book.BookDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.payment.PaymentStatus;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.user.UserType;
 import cz.muni.fi.pa165.seminar3.librarymanagement.payment.Payment;
@@ -23,7 +19,6 @@ import cz.muni.fi.pa165.seminar3.librarymanagement.user.User;
 import cz.muni.fi.pa165.seminar3.librarymanagement.user.UserService;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.boot.ApplicationArguments;
@@ -51,9 +46,6 @@ public class DataInitializer implements ApplicationRunner {
 
     private final AuthorService authorService;
 
-    private final BookFacade bookFacade;
-    private final AuthorMapper authorMapper;
-
     /**
      * Constructor for all used services.
      *
@@ -64,16 +56,10 @@ public class DataInitializer implements ApplicationRunner {
      * @param paymentService     payment service instance
      * @param bookService        book service instance
      * @param authorService      author service instance
-     * @param bookFacade         book facade instance
-     * @param authorMapper       author mapper instance
      */
-    public DataInitializer(UserService userService,
-                           ReservationService reservationService,
-                           BorrowingService borrowingService,
-                           FineService fineService,
-                           PaymentService paymentService,
-                           BookService bookService,
-                           AuthorService authorService, BookFacade bookFacade, AuthorMapper authorMapper) {
+    public DataInitializer(UserService userService, ReservationService reservationService,
+                           BorrowingService borrowingService, FineService fineService, PaymentService paymentService,
+                           BookService bookService, AuthorService authorService) {
         this.userService = userService;
         this.reservationService = reservationService;
         this.borrowingService = borrowingService;
@@ -81,8 +67,6 @@ public class DataInitializer implements ApplicationRunner {
         this.paymentService = paymentService;
         this.bookService = bookService;
         this.authorService = authorService;
-        this.bookFacade = bookFacade;
-        this.authorMapper = authorMapper;
     }
 
     @Override
@@ -139,22 +123,11 @@ public class DataInitializer implements ApplicationRunner {
 
         authorService.create(author2);
 
-        Book book = Book.builder()
-                .title("Sloni žerou medvědy")
-                .build();
-
-        BookInstance bookInstance1 = BookInstance.builder().pages(156).bookAssigned(book).build();
-        BookInstance bookInstance2 = BookInstance.builder().pages(187).bookAssigned(book).build();
-        List<BookInstance> instanceList = Arrays.asList(bookInstance1, bookInstance2);
-        book.setInstances(instanceList);
+        Book book = Book.builder().title("Sloni žerou medvědy").author(author).author(author).build();
 
         bookService.create(book);
 
-        // Transaction that modifies m:n relationshitp Book:Author must be done at once
-        bookFacade.update(book.getId(), BookDto.builder()
-                .title(book.getTitle())
-                .author(authorMapper.toDto(author))
-                .author(authorMapper.toDto(author2))
-                .build());
+        bookService.addInstance(book.getId());
+        bookService.addInstance(book.getId());
     }
 }

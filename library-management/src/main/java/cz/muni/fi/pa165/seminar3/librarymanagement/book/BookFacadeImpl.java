@@ -1,18 +1,12 @@
 package cz.muni.fi.pa165.seminar3.librarymanagement.book;
 
-import cz.muni.fi.pa165.seminar3.librarymanagement.author.Author;
 import cz.muni.fi.pa165.seminar3.librarymanagement.author.AuthorService;
 import cz.muni.fi.pa165.seminar3.librarymanagement.common.DomainFacadeImpl;
-import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.author.AuthorDto;
+import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.book.BookCreateDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.book.BookDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.book.BookInstanceDto;
-import jakarta.persistence.EntityNotFoundException;
-import java.util.ArrayList;
-import java.util.List;
 import lombok.Getter;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 /**
  * Class representing Book facade.
@@ -20,7 +14,7 @@ import org.springframework.web.server.ResponseStatusException;
  * @author Marek Fiala
  */
 @Service
-public class BookFacadeImpl extends DomainFacadeImpl<Book, BookDto, BookDto> implements BookFacade {
+public class BookFacadeImpl extends DomainFacadeImpl<Book, BookDto, BookCreateDto> implements BookFacade {
     @Getter
     private final BookService domainService;
     private final AuthorService authorService;
@@ -45,27 +39,12 @@ public class BookFacadeImpl extends DomainFacadeImpl<Book, BookDto, BookDto> imp
     }
 
     @Override
-    public BookDto create(BookDto dto) {
-
-        if (dto.getTitle() == null || dto.getTitle().isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Book must have title.");
-        }
-
-        List<Author> authors = new ArrayList<>();
-        for (AuthorDto authorDto : dto.getAuthors()) {
-            Author x;
-            try {
-                x = authorService.find(authorDto.getId());
-            } catch (EntityNotFoundException e) {
-                throw new EntityNotFoundException(e.toString());
-            }
-            authors.add(x);
-        }
-        dto.setAuthors(new ArrayList<>());
-
-        Book newBook = domainMapper.fromDto(dto);
-        newBook.setAuthors(authors);
-        return domainMapper.toDto(domainService.create(newBook));
+    public BookDto create(BookCreateDto createDto) {
+        Book book = Book.builder()
+                .title(createDto.getTitle())
+                .authors(createDto.getAuthorIds().stream().map(authorService::find).toList())
+                .build();
+        return domainMapper.toDto(domainService.create(book));
     }
 
     @Override
@@ -74,34 +53,16 @@ public class BookFacadeImpl extends DomainFacadeImpl<Book, BookDto, BookDto> imp
     }
 
     @Override
-    public BookDto update(String id, BookDto dto) {
+    public BookDto update(String id, BookCreateDto dto) {
         Book book = domainService.find(id);
         book.setTitle(dto.getTitle());
-        List<Author> newAuthors = new ArrayList<>();
-        for (AuthorDto authorFromDto : dto.getAuthors()) {
-            try {
-                Author author = authorService.find(authorFromDto.getId());
-                newAuthors.add(author);
-            } catch (Exception ignored) {
-                 ;
-            }
-        }
-        book.setAuthors(newAuthors);
-        if (dto.getInstances() != null) {
-            for (BookInstanceDto instFromDto : dto.getInstances()) {
-                domainService.addInstance(book.getId(), instFromDto.getPages());
-            }
-        }
+        book.setAuthors(dto.getAuthorIds().stream().map(authorService::find).toList());
         return domainMapper.toDto(domainService.update(book));
     }
 
     @Override
     public BookInstanceDto addInstance(String bookId) {
-        try {
-            return instanceMapper.toDto(domainService.addInstance(bookId, 500));
-        } catch (EntityNotFoundException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.toString());
-        }
+        return instanceMapper.toDto(domainService.addInstance(bookId));
     }
 
     @Override
