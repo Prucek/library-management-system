@@ -1,4 +1,4 @@
-package cz.muni.fi.pa165.seminar3.reporting.service;
+package cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.reporting;
 
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.user.UserDto;
 import lombok.Getter;
@@ -6,11 +6,13 @@ import lombok.Setter;
 
 
 /**
- * @brief Represents DTO for book report
+ * Represents DTO for book report.
+ *
+ * @author Peter Rúček
  */
 @Getter
 @Setter
-public class BookReportDto extends ReportDto{
+public class BookReportDto extends ReportDto {
 
     private UserDto user;
 

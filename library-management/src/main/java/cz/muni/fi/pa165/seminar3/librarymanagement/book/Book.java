@@ -34,11 +34,8 @@ public class Book extends DomainObject {
     private String title;
     @Singular
     @ManyToMany()
-    @JoinTable(
-            name = "written_by",
-            joinColumns = @JoinColumn(name = "book_id"),
-            inverseJoinColumns = @JoinColumn(name = "author_id")
-    )
+    @JoinTable(name = "written_by", joinColumns = @JoinColumn(name = "book_id"),
+            inverseJoinColumns = @JoinColumn(name = "author_id"))
     private List<Author> authors;
 
     @Singular

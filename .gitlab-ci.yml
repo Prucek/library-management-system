@@ -39,6 +39,7 @@ style:
   allow_failure: true
   only:
     - merge_requests
+  needs: []
 
 test:
   tags:
@@ -55,6 +56,7 @@ test:
       junit:
         - '**/target/surefire-reports/TEST-*.xml'
         - '**/target/failsafe-reports/TEST-*.xml'
+  needs: []
 
 build:
   tags:

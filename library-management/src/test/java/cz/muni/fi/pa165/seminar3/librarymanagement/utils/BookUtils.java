@@ -4,9 +4,9 @@ import static cz.muni.fi.pa165.seminar3.librarymanagement.utils.AuthorUtils.fake
 import static cz.muni.fi.pa165.seminar3.librarymanagement.utils.AuthorUtils.fakeAuthorDto;
 
 import com.github.javafaker.Faker;
+import cz.muni.fi.pa165.seminar3.librarymanagement.book.Book;
 import cz.muni.fi.pa165.seminar3.librarymanagement.book.BookInstance;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.book.BookDto;
-import cz.muni.fi.pa165.seminar3.librarymanagement.book.Book;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.book.BookInstanceDto;
 
 /**
@@ -16,21 +16,53 @@ import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.book.BookInstanceDt
  */
 public class BookUtils {
 
-    public static Book fakeBook(Faker faker){
+    /**
+     * Generates a fake book instance entity.
+     *
+     * @param faker faker instance
+     * @return fake book instance entity
+     */
+    public static BookInstance fakeBookInstance(Faker faker) {
+        return BookInstance.builder().id(faker.internet().uuid()).build();
+    }
+
+    /**
+     * Generates a fake book instance dto.
+     *
+     * @param faker faker instance
+     * @return fake book instance dto
+     */
+    public static BookInstanceDto fakeBookInstanceDto(Faker faker) {
+        return BookInstanceDto.builder().id(faker.internet().uuid()).build();
+    }
+
+    /**
+     * Generates a fake book entity.
+     *
+     * @param faker faker instance
+     * @return fake book entity
+     */
+    public static Book fakeBook(Faker faker) {
         return Book.builder()
                 .id(faker.internet().uuid())
                 .title(faker.book().title())
                 .author(fakeAuthor(faker))
-                .instance(BookInstance.builder().pages(faker.number().numberBetween(50, 200)).build())
+                .instance(fakeBookInstance(faker))
                 .build();
     }
 
-    public static BookDto fakeBookDto(Faker faker){
+    /**
+     * Generates a fake book dto.
+     *
+     * @param faker faker instance
+     * @return fake book dto
+     */
+    public static BookDto fakeBookDto(Faker faker) {
         return BookDto.builder()
                 .id(faker.internet().uuid())
                 .title(faker.book().title())
                 .author(fakeAuthorDto(faker))
-                .instance(BookInstanceDto.builder().pages(faker.number().numberBetween(50, 200)).build())
+                .instance(fakeBookInstanceDto(faker))
                 .build();
     }
 

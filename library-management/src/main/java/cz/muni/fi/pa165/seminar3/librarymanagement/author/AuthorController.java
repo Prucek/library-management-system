@@ -1,18 +1,13 @@
 package cz.muni.fi.pa165.seminar3.librarymanagement.author;
 
 import cz.muni.fi.pa165.seminar3.librarymanagement.common.ErrorMessage;
+import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.author.AuthorCreateDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.author.AuthorDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.common.Result;
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.info.Contact;
-import io.swagger.v3.oas.annotations.info.Info;
-import io.swagger.v3.oas.annotations.info.License;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.servers.Server;
-import io.swagger.v3.oas.annotations.servers.ServerVariable;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -35,21 +30,6 @@ import org.springframework.web.server.ResponseStatusException;
  * @author MarekFiala
  */
 @RestController
-@OpenAPIDefinition (
-        info = @Info(title = "Authors REST API",
-                version = "1.0",
-                description = """
-                        Simple service for authors REST API
-                        """,
-                contact = @Contact(name = "Marek Fiala", email = "xfiala6@fi.muni.cz"),
-                license = @License(name = "Apache 2.0", url = "https://www.apache.org/licenses/LICENSE-2.0.html")
-        ),
-        servers = @Server(description = "library management server", url = "{scheme}://{server}:{port}", variables = {
-                @ServerVariable(name = "scheme", allowableValues = {"http", "https"}, defaultValue = "http"),
-                @ServerVariable(name = "server", defaultValue = "localhost"),
-                @ServerVariable(name = "port", defaultValue = "8080"),
-        })
-)
 @RequestMapping("/authors")
 public class AuthorController {
 
@@ -63,9 +43,7 @@ public class AuthorController {
     /**
      * REST method returning author with specified id.
      */
-    @Operation(
-            summary = "Returns identified author",
-            description = "Looks up a by by its id.")
+    @Operation(summary = "Returns identified author", description = "Looks up a by by its id.")
     @ApiResponse(responseCode = "200", description = "Author found", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "404", description = "Author not found",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
@@ -81,9 +59,7 @@ public class AuthorController {
     /**
      * REST method returning all authors.
      */
-    @Operation(
-            summary = "Get all authors",
-            description = "Returns all authors with authors as JSON")
+    @Operation(summary = "Get all authors", description = "Returns all authors with authors as JSON")
     @ApiResponse(responseCode = "200", description = "Pages list of all books", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "400", description = "Invalid paging",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
@@ -95,21 +71,15 @@ public class AuthorController {
     /**
      * REST method for creating a new author.
      */
-    @Operation(
-            summary = "Create a new author"
-    )
+    @Operation(summary = "Create a new author")
     @ApiResponse(responseCode = "201", description = "Author created", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "400", description = "Invalid payload",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
-    @PostMapping(
-            consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public AuthorDto create(@RequestBody AuthorDto dto) {
+    public AuthorDto create(@RequestBody AuthorCreateDto dto) {
         try {
             return facade.create(dto);
-        } catch (ResponseStatusException e) {
-            throw new ResponseStatusException(e.getStatusCode(), e.toString());
         } catch (EntityNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.toString());
         }
@@ -139,8 +109,7 @@ public class AuthorController {
     @ApiResponse(responseCode = "404", description = "Author not found",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
     @PutMapping("/{id}")
-    public AuthorDto update(@PathVariable String id,
-                            @RequestBody AuthorDto dto) {
+    public AuthorDto update(@PathVariable String id, @RequestBody AuthorCreateDto dto) {
         try {
             return facade.update(id, dto);
         } catch (EntityNotFoundException e) {
