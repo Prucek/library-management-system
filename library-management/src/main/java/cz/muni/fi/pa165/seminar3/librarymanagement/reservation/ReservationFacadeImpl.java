@@ -60,7 +60,7 @@ public class ReservationFacadeImpl extends DomainFacadeImpl<Reservation, Reserva
                 .book(book)
                 .build();
 
-        return domainMapper.toDto(reservation);
+        return domainMapper.toDto(domainService.create(reservation));
     }
 
     /**
