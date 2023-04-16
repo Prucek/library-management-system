@@ -3,17 +3,18 @@ package cz.muni.fi.pa165.seminar3.reporting.service;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.borrowing.BorrowingDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.common.Result;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.fine.FineDto;
+import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.reporting.BookReportDto;
+import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.reporting.FinanceReportDto;
+import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.reporting.UserReportDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.user.UserDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.user.UserType;
+import cz.muni.fi.pa165.seminar3.reporting.LibraryManagementApi;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
 
 /**
  * Represents report service which implements reports of users, books and fines.
@@ -23,11 +24,16 @@ import org.springframework.web.reactive.function.client.WebClient;
 @Service
 public class ReportService {
 
-    public final WebClient client;
+    private final LibraryManagementApi libraryManagementApi;
 
+    /**
+     * Creates a new Report service instance.
+     *
+     * @param libraryManagementApi Library management API client instance
+     */
     @Autowired
-    public ReportService(WebClient client) {
-        this.client = client;
+    public ReportService(LibraryManagementApi libraryManagementApi) {
+        this.libraryManagementApi = libraryManagementApi;
     }
 
     /**
@@ -39,9 +45,9 @@ public class ReportService {
     public BookReportDto generateBookReport(String userId) {
         BookReportDto report = new BookReportDto();
 
-        UserDto user = getUserDto(userId);
+        UserDto user = libraryManagementApi.getUserDto(userId);
 
-        List<BorrowingDto> borrowings = getUserBorrowings(userId);
+        List<BorrowingDto> borrowings = getBorrowings();
         int returnedBookCounter = 0;
         int borrowedBookCounter = 0;
 
@@ -61,16 +67,16 @@ public class ReportService {
     }
 
     /**
-     * Generates report with number of fines and total paid fines of specific user.
+     * Generates report with number of fines and total paid fines.
      *
      * @param userId Specifies user for whom the report is generated
-     * @return ReportDto object with number of fines and total paid fines of specific user
+     * @return ReportDto object with number of fines and total paid fines
      */
     public FinanceReportDto generateFinanceReport(String userId) {
         FinanceReportDto report = new FinanceReportDto();
-        UserDto user = getUserDto(userId);
+        UserDto user = libraryManagementApi.getUserDto(userId);
 
-        List<FineDto> fines = getUserFines(userId);
+        List<FineDto> fines = getFines();
         double totalPaid = 0.0;
 
         for (var fine : fines) {
@@ -116,7 +122,7 @@ public class ReportService {
         while (true) {
             int finalPage = page;
 
-            usersPage = getUserPage(finalPage);
+            usersPage = libraryManagementApi.getUsers(finalPage);
 
             if (noMoreUsers(usersPage)) {
                 break;
@@ -129,41 +135,11 @@ public class ReportService {
     }
 
     /**
-     * Returns page of users.
+     * Returns all fines.
      *
-     * @param page page number
-     * @return page of users
+     * @return List of fines
      */
-    private Result<UserDto> getUserPage(int page) {
-        return client.get()
-                .uri(uriBuilder -> uriBuilder.path("/users").queryParam("page", page).build())
-                .retrieve()
-                .bodyToMono(new ParameterizedTypeReference<Result<UserDto>>() {
-                })
-                .block();
-    }
-
-    /**
-     * Returns user with id.
-     *
-     * @param id id of user
-     * @return found user
-     */
-    public UserDto getUserDto(String id) {
-        return client.get()
-                .uri(uriBuilder -> uriBuilder.pathSegment("users", id).build())
-                .retrieve()
-                .bodyToMono(UserDto.class)
-                .block();
-    }
-
-    /**
-     * Returns all fines of specific user.
-     *
-     * @param userId Specifies user for whom the fines are returned
-     * @return List of fines for specific user
-     */
-    public List<FineDto> getUserFines(String userId) {
+    public List<FineDto> getFines() {
         List<FineDto> fines = new ArrayList<>();
         Result<FineDto> finesPage;
         int page = 0;
@@ -171,21 +147,13 @@ public class ReportService {
         while (true) {
             int finalPage = page;
 
-            finesPage = client
-                    .get()
-                    .uri(uriBuilder -> uriBuilder.path("/fines").queryParam("page", finalPage).build())
-                    .retrieve()
-                    .bodyToMono(new ParameterizedTypeReference<Result<FineDto>>() {})
-                    .block();
+            finesPage = libraryManagementApi.getFines(finalPage);
 
             if (noMoreFines(finesPage)) {
                 break;
             }
 
-            fines.addAll(finesPage.getItems()
-                    .stream()
-                    .filter(r -> r.getIssuer().getId().equals(userId))
-                    .collect(Collectors.toList()));
+            fines.addAll(finesPage.getItems());
 
             page++;
         }
@@ -194,12 +162,11 @@ public class ReportService {
     }
 
     /**
-     * Returns all borrowings of specific user.
+     * Returns all borrowings.
      *
-     * @param userId Specifies user for whom the borrowings are returned
-     * @return List of borrowings for specific user
+     * @return List of borrowings
      */
-    public List<BorrowingDto> getUserBorrowings(String userId) {
+    public List<BorrowingDto> getBorrowings() {
         List<BorrowingDto> borrowings = new ArrayList<>();
         Result<BorrowingDto> borrowingsPage;
         int page = 0;
@@ -207,21 +174,13 @@ public class ReportService {
         while (true) {
             int finalPage = page;
 
-            borrowingsPage = client
-                    .get()
-                    .uri(uriBuilder -> uriBuilder.path("/borrowings").queryParam("page", finalPage).build())
-                    .retrieve()
-                    .bodyToMono(new ParameterizedTypeReference<Result<BorrowingDto>>() {})
-                    .block();
+            borrowingsPage = libraryManagementApi.getBorrowings(finalPage);
 
             if (noMoreBorrowings(borrowingsPage)) {
                 break;
             }
 
-            borrowings.addAll(borrowingsPage.getItems()
-                    .stream()
-                    .filter(r -> r.getUser().getId().equals(userId))
-                    .collect(Collectors.toList()));
+            borrowings.addAll(borrowingsPage.getItems());
 
             page++;
         }
@@ -233,7 +192,7 @@ public class ReportService {
      * Checks if there left some fines on specific page.
      *
      * @param finesPage Actual page which is checked
-     * @return          Flag which represent whether there left some more fines
+     * @return Flag which represent whether there left some more fines
      */
     private boolean noMoreFines(Result<FineDto> finesPage) {
         return finesPage == null || finesPage.getItems() == null || finesPage.getItems().isEmpty();
@@ -244,7 +203,7 @@ public class ReportService {
      *
      * @param usersPage Actual page which is checked
      * @return Flag which represent whether there left some more users
-    */
+     */
     private boolean noMoreUsers(Result<UserDto> usersPage) {
         return usersPage == null || usersPage.getItems() == null || usersPage.getItems().isEmpty();
     }
@@ -263,7 +222,7 @@ public class ReportService {
      * Counts number of users (clients not librarians) in system.
      *
      * @param users List of all users in system
-     * @return      Count of clients in system
+     * @return Count of clients in system
      */
     private int getUsersCount(List<UserDto> users) {
         int userCounter = 0;
@@ -272,14 +231,14 @@ public class ReportService {
                 userCounter++;
             }
         }
-        return  userCounter;
+        return userCounter;
     }
 
     /**
      * Counts number of new users in system (account is not older than 3 days).
      *
      * @param users List of all users in system
-     * @return      Count of new users in system
+     * @return Count of new users in system
      */
     private int getNewUsersCount(List<UserDto> users) {
         int newUserCounter = 0;
@@ -288,6 +247,6 @@ public class ReportService {
                 newUserCounter++;
             }
         }
-        return  newUserCounter;
+        return newUserCounter;
     }
 }

@@ -1,4 +1,4 @@
-package cz.muni.fi.pa165.seminar3.reporting.service;
+package cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.reporting;
 
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.user.UserDto;
 import lombok.Getter;
