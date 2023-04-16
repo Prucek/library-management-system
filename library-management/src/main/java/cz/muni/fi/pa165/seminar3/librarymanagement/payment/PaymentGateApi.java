@@ -1,5 +1,6 @@
 package cz.muni.fi.pa165.seminar3.librarymanagement.payment;
 
+import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.paymentgate.TransactionCreateDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.paymentgate.TransactionDto;
 import jakarta.validation.constraints.NotBlank;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,7 +16,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 @Service
 public class PaymentGateApi {
 
-    @Value("${paymentgateurl}")
+    @Value("${payment-gate.url}")
     @NotBlank
     private String paymentGateUrl;
 
@@ -33,7 +34,7 @@ public class PaymentGateApi {
     public TransactionDto createTransaction(Double amount, String callbackUrl) {
         return getWebClient().post()
                 .uri(uriBuilder -> uriBuilder.path("/transaction").build())
-                .bodyValue(TransactionDto.builder().amount(amount).callbackUrl(callbackUrl).build())
+                .bodyValue(TransactionCreateDto.builder().amount(amount).callbackUrl(callbackUrl).build())
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .bodyToMono(TransactionDto.class)
