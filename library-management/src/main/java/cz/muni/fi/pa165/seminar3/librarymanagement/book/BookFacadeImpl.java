@@ -83,7 +83,7 @@ public class BookFacadeImpl extends DomainFacadeImpl<Book, BookDto, BookDto> imp
                 Author author = authorService.find(authorFromDto.getId());
                 newAuthors.add(author);
             } catch (Exception ignored) {
-                ;
+                 ;
             }
         }
         book.setAuthors(newAuthors);
