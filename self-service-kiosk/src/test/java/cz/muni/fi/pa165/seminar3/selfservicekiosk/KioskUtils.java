@@ -20,11 +20,8 @@ public class KioskUtils {
      * @param faker faker instance
      * @return kiosk borrowing dto
      */
-    public static KioskBorrowDto fakeKioskBorrowingDto(Faker faker){
-        return KioskBorrowDto.builder()
-                .bookInstanceId(faker.internet().uuid())
-                .userId(faker.internet().uuid())
-                .build();
+    public static KioskBorrowDto fakeKioskBorrowingDto(Faker faker) {
+        return KioskBorrowDto.builder().bookInstanceId(faker.internet().uuid()).userId(faker.internet().uuid()).build();
     }
 
     /**
@@ -69,9 +66,6 @@ public class KioskUtils {
      * @return book instance dto
      */
     public static BookInstanceDto fakeBookInstanceDto(Faker faker) {
-        return BookInstanceDto.builder()
-                .id(faker.internet().uuid())
-                .pages(250)
-                .build();
+        return BookInstanceDto.builder().id(faker.internet().uuid()).build();
     }
 }
