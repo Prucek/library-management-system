@@ -3,6 +3,7 @@ package cz.muni.fi.pa165.seminar3.selfservicekiosk;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.borrowing.BorrowingCreateDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.borrowing.BorrowingDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.settings.SettingsDto;
+import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.user.UserDto;
 import jakarta.validation.constraints.NotBlank;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
@@ -33,7 +34,7 @@ public class LibraryManagementApi {
      */
     public BorrowingDto createBorrowing(BorrowingCreateDto createDto) {
         return getWebClient().post()
-                .uri(uriBuilder -> uriBuilder.path("/borrowing").build())
+                .uri(uriBuilder -> uriBuilder.path("/borrowings").build())
                 .bodyValue(createDto)
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
@@ -79,7 +80,7 @@ public class LibraryManagementApi {
      */
     public BorrowingDto updateBorrowing(String id, BorrowingCreateDto dto) {
         return getWebClient().put()
-                .uri(uriBuilder -> uriBuilder.path("/borrowing/{id}").build(id))
+                .uri(uriBuilder -> uriBuilder.path("/borrowings/{id}").build(id))
                 .bodyValue(dto)
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
