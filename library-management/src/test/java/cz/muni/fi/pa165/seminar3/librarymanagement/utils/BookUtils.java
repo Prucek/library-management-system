@@ -65,12 +65,4 @@ public class BookUtils {
                 .instance(fakeBookInstanceDto(faker))
                 .build();
     }
-
-    public static BookInstance fakeBookInstance(Faker faker){
-        return BookInstance.builder()
-                .id(faker.internet().uuid())
-                .pages(faker.number().numberBetween(50, 200))
-                .bookAssigned(fakeBook(faker))
-                .build();
-    }
 }

@@ -28,10 +28,14 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * Tests for borrowing facade.
+ *
+ * @author Marek Fiala
+ */
 @RunWith(SpringRunner.class)
 @ActiveProfiles("test")
 @SpringBootTest
-@Transactional
 public class BorrowingFacadeImplTest {
 
     @Autowired
@@ -98,14 +102,13 @@ public class BorrowingFacadeImplTest {
     @Transactional
     public void updateBorrowingSuccessful() {
         Borrowing borrowing = createBorrowing();
-        BorrowingCreateDto updatedBorrowingCreateDto = BorrowingCreateDto.builder()
-                .to(LocalDateTime.now())
-                .build();
+        BorrowingCreateDto updatedBorrowingCreateDto = BorrowingCreateDto.builder().to(LocalDateTime.now()).build();
 
         given(userService.find(any(String.class))).willReturn(borrowing.getUser());
         given(bookService.getInstance(any(String.class))).willReturn(borrowing.getBookInstance());
 
-        BorrowingDto updatedBorrowingDto = borrowingFacade.updateBorrowing(borrowing.getId(), updatedBorrowingCreateDto);
+        BorrowingDto updatedBorrowingDto =
+                borrowingFacade.updateBorrowing(borrowing.getId(), updatedBorrowingCreateDto);
         assertThat(domainRepository.findById(updatedBorrowingDto.getId())).isPresent();
         assertThat(updatedBorrowingCreateDto.getTo()).isEqualTo(updatedBorrowingDto.getTo());
     }
@@ -128,8 +131,8 @@ public class BorrowingFacadeImplTest {
     @Test
     public void updateBorrowingNullId() {
         BorrowingCreateDto borrowingCreateDto = BorrowingCreateDto.builder().build();
-        assertThrows(
-                InvalidDataAccessApiUsageException.class, () -> borrowingFacade.updateBorrowing(null, borrowingCreateDto));
+        assertThrows(InvalidDataAccessApiUsageException.class,
+                () -> borrowingFacade.updateBorrowing(null, borrowingCreateDto));
     }
 
     @Test
@@ -137,7 +140,8 @@ public class BorrowingFacadeImplTest {
         Borrowing borrowing = createBorrowing();
         BorrowingCreateDto borrowingCreateDto = null;
 
-        assertThrows(NullPointerException.class, () -> borrowingFacade.updateBorrowing(borrowing.getId(), borrowingCreateDto));
+        assertThrows(NullPointerException.class,
+                () -> borrowingFacade.updateBorrowing(borrowing.getId(), borrowingCreateDto));
     }
 
     @Test
@@ -160,7 +164,7 @@ public class BorrowingFacadeImplTest {
         assertThrows(EntityNotFoundException.class, () -> borrowingFacade.deleteBorrowing("non-existing"));
     }
 
-    Borrowing createBorrowing(){
+    Borrowing createBorrowing() {
         User fakeUser = fakeUser(faker, UserType.CLIENT);
         BookInstance fakeBookInsance = fakeBookInstance(faker);
         Borrowing fakeBorrowing = fakeBorrowing(faker);
