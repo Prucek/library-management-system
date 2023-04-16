@@ -4,7 +4,6 @@ import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.common.Result;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.paymentgate.CardDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.paymentgate.TransactionCreateDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.paymentgate.TransactionDto;
-import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.paymentgate.TransactionStatus;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -33,11 +32,9 @@ public class TransactionController {
 
     private final TransactionService service;
 
-    private final TransactionMapper mapper;
 
-    public TransactionController(TransactionService transactionService, TransactionMapper transactionMapper) {
+    public TransactionController(TransactionService transactionService) {
         this.service = transactionService;
-        this.mapper = transactionMapper;
     }
 
     /**
@@ -54,10 +51,7 @@ public class TransactionController {
         if (dto.getAmount() <= 0) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "amount must be positive");
         }
-        Transaction transaction =  service.create(mapper.fromCreateDto(dto));
-        transaction.setStatus(TransactionStatus.WAITING);
-        transaction.setCallbackUrl("/transactions/" + transaction.getId());
-        return mapper.toDto(transaction);
+        return service.create(dto);
     }
 
     /**
@@ -69,7 +63,7 @@ public class TransactionController {
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
     @GetMapping
     public Result<TransactionDto> findAll(Pageable pageable) {
-        return mapper.toResult(service.findAll(pageable));
+        return service.findAll(pageable);
     }
 
     /**
@@ -81,14 +75,11 @@ public class TransactionController {
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
     @GetMapping("/{id}")
     public TransactionDto find(@PathVariable String id) {
-
-        Transaction transaction;
         try {
-            transaction = service.find(id);
+            return service.find(id);
         } catch (EntityNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "transaction with id=" + id + " not found");
         }
-        return mapper.toDto(transaction);
     }
 
     /**
@@ -102,21 +93,11 @@ public class TransactionController {
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
     @PostMapping("/{id}")
     public TransactionDto pay(@PathVariable String id, @RequestBody CardDto cardDto) {
+        try {
+            return service.pay(id, cardDto);
 
-        // To check error
-        find(id);
-        Transaction transaction = service.find(id);
-
-        if (transaction.getStatus() != TransactionStatus.APPROVED) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "transaction with id=" + id + " is not waiting");
+        } catch (EntityNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "transaction with id=" + id + " not found");
         }
-
-        if (cardDto.getCardNumber() != null && cardDto.getExpiration() != null && cardDto.getCvv2() != null) {
-            transaction.setStatus(TransactionStatus.APPROVED);
-        } else {
-            transaction.setStatus(TransactionStatus.DECLINED);
-        }
-
-        return mapper.toDto(service.update(transaction));
     }
 }

@@ -1,10 +1,13 @@
 package cz.muni.fi.pa165.seminar3.paymentgate.transaction;
 
+import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.common.Result;
+import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.paymentgate.CardDto;
+import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.paymentgate.TransactionCreateDto;
+import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.paymentgate.TransactionDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.paymentgate.TransactionStatus;
+import cz.muni.fi.pa165.seminar3.paymentgate.BankApi;
 import jakarta.persistence.EntityNotFoundException;
-import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -16,47 +19,64 @@ import org.springframework.stereotype.Service;
 @Service
 public class TransactionService {
 
-    @Getter
+    private final TransactionMapper mapper;
+
     private final TransactionRepository repository;
 
+    private final BankApi bankApi;
+
+    /**
+     * Creates a new transaction service.
+     *
+     * @param mapper     transaction mapper instance
+     * @param repository transaction repository instance
+     * @param bankApi    bank api instance
+     */
     @Autowired
-    public TransactionService(TransactionRepository repository) {
+    public TransactionService(TransactionMapper mapper, TransactionRepository repository, BankApi bankApi) {
+        this.mapper = mapper;
         this.repository = repository;
+        this.bankApi = bankApi;
     }
 
     /**
      * Creates a new Transaction entity.
      *
-     * @param entity Transaction to create
+     * @param createDto transaction data
      * @return new Transaction
      */
-    public Transaction create(Transaction entity) {
-        entity.setStatus(TransactionStatus.WAITING);
-        Transaction transaction = repository.save(entity);
-        transaction.setCallbackUrl("/transactions/" + transaction.getId());
-        return repository.save(transaction);
+    public TransactionDto create(TransactionCreateDto createDto) {
+        return mapper.toDto(repository.save(Transaction.builder()
+                .amount(createDto.getAmount())
+                .callbackUrl(createDto.getCallbackUrl())
+                .status(TransactionStatus.WAITING)
+                .build()));
     }
 
     /**
-     * Updates a Transaction entity.
+     * Pays the transaction using card.
      *
-     * @param entity Transaction entity to update
-     * @return updated Transaction entity
+     * @param id      transaction to pay
+     * @param cardDto card to pay with
+     * @return updated transaction
      */
-    public Transaction update(Transaction entity) {
-        return repository.save(entity);
+    public TransactionDto pay(String id, CardDto cardDto) {
+        Transaction transaction = repository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(String.format("ID %s not found", id)));
+        transaction.setStatus(bankApi.transferFrom(cardDto) ? TransactionStatus.APPROVED : TransactionStatus.DECLINED);
+        return mapper.toDto(repository.save(transaction));
     }
 
     /**
-     * Finds a Transaction entity with id.
+     * Finds a Transaction with id.
      *
      * @param id id to search for
      * @return found Transaction entity
      * @throws EntityNotFoundException if the id was not found
      */
-    public Transaction find(String id) throws EntityNotFoundException {
-        return repository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(String.format("ID %s not found", id)));
+    public TransactionDto find(String id) throws EntityNotFoundException {
+        return mapper.toDto(repository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(String.format("ID %s not found", id))));
     }
 
     /**
@@ -65,7 +85,7 @@ public class TransactionService {
      * @param pageable pagination information
      * @return page of found Transactions
      */
-    public Page<Transaction> findAll(Pageable pageable) {
-        return repository.findAll(pageable);
+    public Result<TransactionDto> findAll(Pageable pageable) {
+        return mapper.toResult(repository.findAll(pageable));
     }
 }

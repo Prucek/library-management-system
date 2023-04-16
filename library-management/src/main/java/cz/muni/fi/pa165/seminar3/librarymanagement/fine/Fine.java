@@ -8,6 +8,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import java.util.Objects;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -41,4 +42,17 @@ public class Fine extends DomainObject {
 
     @ManyToOne
     private Payment resolvingPayment;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Fine fine)) {
+            return false;
+        }
+        return Objects.equals(amount, fine.amount) && Objects.equals(issuer, fine.issuer) && Objects.equals(
+                outstandingBorrowing, fine.outstandingBorrowing) && Objects.equals(resolvingPayment,
+                fine.resolvingPayment);
+    }
 }

@@ -4,6 +4,11 @@ import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * Class representing paged result.
+ *
+ * @param <T> result type
+ */
 @Getter
 @Setter
 public class Result<T extends DomainObjectDto> {
@@ -13,13 +18,31 @@ public class Result<T extends DomainObjectDto> {
     private int pageSize;
     private List<T> items;
 
+    /**
+     * Creates a paged result from elements.
+     *
+     * @param elements elements
+     * @param <T>      result type
+     * @return paged result
+     */
     @SafeVarargs
     public static <T extends DomainObjectDto> Result<T> of(T... elements) {
+        return of(List.of(elements));
+    }
+
+    /**
+     * Creates a paged result from list.
+     *
+     * @param elements list of elements
+     * @param <T>      result type
+     * @return paged result
+     */
+    public static <T extends DomainObjectDto> Result<T> of(List<T> elements) {
         Result<T> result = new Result<>();
-        result.total = elements.length;
+        result.total = elements.size();
         result.page = 0;
-        result.pageSize = elements.length;
-        result.items = List.of(elements);
+        result.pageSize = elements.size();
+        result.items = elements;
         return result;
     }
 }
