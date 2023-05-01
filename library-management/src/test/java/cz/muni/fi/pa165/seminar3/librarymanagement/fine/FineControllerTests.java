@@ -2,6 +2,7 @@ package cz.muni.fi.pa165.seminar3.librarymanagement.fine;
 
 import static cz.muni.fi.pa165.seminar3.librarymanagement.utils.FineUtils.fakeFineDto;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
@@ -24,7 +25,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -83,7 +83,7 @@ public class FineControllerTests {
     public void findAll() throws Exception {
         Result<FineDto> fineDtoResult = Result.of(fakeFineDto(faker), fakeFineDto(faker), fakeFineDto(faker));
         // mock facade
-        given(fineFacade.findAll(any(Pageable.class))).willReturn(fineDtoResult);
+        given(fineFacade.findAll(eq(0), anyInt())).willReturn(fineDtoResult);
 
         // perform test
         mockMvc.perform(get("/fines"))

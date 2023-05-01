@@ -3,6 +3,7 @@ package cz.muni.fi.pa165.seminar3.paymentgate;
 import static cz.muni.fi.pa165.seminar3.paymentgate.TransactionUtils.fakeCardDto;
 import static cz.muni.fi.pa165.seminar3.paymentgate.TransactionUtils.fakeTransactionDto;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -24,7 +25,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -70,7 +70,7 @@ public class TransactionControllerTests {
         Result<TransactionDto> transactionDtoResult =
                 Result.of(fakeTransactionDto(faker), fakeTransactionDto(faker), fakeTransactionDto(faker));
         // mock service
-        given(transactionService.findAll(any(Pageable.class))).willReturn(transactionDtoResult);
+        given(transactionService.findAll(eq(0), anyInt())).willReturn(transactionDtoResult);
 
         // perform test
         mockMvc.perform(get("/transactions"))

@@ -82,10 +82,12 @@ public class TransactionService {
     /**
      * Finds all Transactions.
      *
-     * @param pageable pagination information
+     * @param page     page number
+     * @param pageSize size of the page
      * @return page of found Transactions
      */
-    public Result<TransactionDto> findAll(Pageable pageable) {
-        return mapper.toResult(repository.findAll(pageable));
+    public Result<TransactionDto> findAll(int page, int pageSize) {
+        return mapper.toResult(repository.findAll(
+                page >= 0 && pageSize > 0 ? Pageable.ofSize(pageSize).withPage(page) : Pageable.unpaged()));
     }
 }

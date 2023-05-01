@@ -154,7 +154,7 @@ public class TransactionServiceTests {
         given(transactionRepository.findAll(any(Pageable.class))).willReturn(transactionsPage);
 
         // perform test
-        Result<TransactionDto> transactionDtoResult = transactionService.findAll(Pageable.ofSize(10).withPage(0));
+        Result<TransactionDto> transactionDtoResult = transactionService.findAll(0, 10);
 
         assertThat(transactionDtoResult.getTotal()).isEqualTo(3);
         assertThat(transactionDtoResult.getPage()).isEqualTo(0);

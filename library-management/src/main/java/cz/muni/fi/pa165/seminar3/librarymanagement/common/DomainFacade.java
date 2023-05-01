@@ -2,7 +2,6 @@ package cz.muni.fi.pa165.seminar3.librarymanagement.common;
 
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.common.DomainObjectDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.common.Result;
-import org.springframework.data.domain.Pageable;
 
 /**
  * Interface representing a generic facade.
@@ -24,10 +23,11 @@ public interface DomainFacade<DtoT extends DomainObjectDto, CreateDtoT> {
     /**
      * Find all objects.
      *
-     * @param pageable paging request
+     * @param page     page number
+     * @param pageSize size of the page
      * @return paged objects
      */
-    Result<DtoT> findAll(Pageable pageable);
+    Result<DtoT> findAll(int page, int pageSize);
 
 
     /**

@@ -1,5 +1,7 @@
 package cz.muni.fi.pa165.seminar3.librarymanagement.fine;
 
+import static cz.muni.fi.pa165.seminar3.librarymanagement.Config.DEFAULT_PAGE_SIZE;
+
 import cz.muni.fi.pa165.seminar3.librarymanagement.common.ErrorMessage;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.common.Result;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.fine.FineCreateDto;
@@ -9,7 +11,6 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.persistence.EntityNotFoundException;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
@@ -68,7 +70,8 @@ public class FineController {
     /**
      * Finds all fines.
      *
-     * @param pageable page request
+     * @param page     page number
+     * @param pageSize size of the page
      * @return paged fines
      */
     @Operation(summary = "List all fines")
@@ -76,8 +79,9 @@ public class FineController {
     @ApiResponse(responseCode = "400", description = "Invalid paging",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
     @GetMapping
-    public Result<FineDto> findAll(Pageable pageable) {
-        return fineFacade.findAll(pageable);
+    public Result<FineDto> findAll(@RequestParam(defaultValue = "0") int page,
+                                   @RequestParam(defaultValue = DEFAULT_PAGE_SIZE) int pageSize) {
+        return fineFacade.findAll(page, pageSize);
     }
 
     /**
