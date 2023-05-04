@@ -111,6 +111,7 @@
         <module>model</module>
         <module>reporting</module>
         <module>self-service-kiosk</module>
+        <module>oauth2-client</module>
     </modules>
 
     <build>
