@@ -10,6 +10,7 @@ spring:
     console.enabled: true
 payment-gate:
   url: http://localhost:8081/
-  callback: http://localhost:8080/payments/
+  callback: http://localhost:8090/payments/
+
 server:
-  port: 8080
+  port: 8090
