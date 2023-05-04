@@ -9,7 +9,7 @@ services:
     command:
       - "library-management.jar"
     ports:
-      - "8080:8080"
+      - "8090:8080"
     networks:
       - library-net
   payment-gate:
@@ -44,6 +44,16 @@ services:
       - "self-service-kiosk.jar"
     ports:
       - "8083:8080"
+    networks:
+      - library-net
+  oauth2-client:
+    restart: on-failure
+    image: quay.io/juraj_marcin/pa165-library-management-system:latest
+    build: .
+    command:
+      - "oauth2-client.jar"
+    ports:
+      - "8084:8080"
     networks:
       - library-net
 networks:

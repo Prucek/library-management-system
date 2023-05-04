@@ -30,6 +30,7 @@ books without having an account.
 - payment-gate
 - reporting
 - self-service-kiosk
+- oauth2-client
 
 ## Running with Podman Compose
 
@@ -60,10 +61,11 @@ detached).
 
 |                    | Port |
 |--------------------|------|
-| library-management | 8080 |
+| library-management | 8090 |
 | payment-gate       | 8081 |
 | reporting          | 8082 |
 | self-service-kiosk | 8083 |
+| oauth2-client      | 8084 |
 
 ## Use Case Diagram
 
