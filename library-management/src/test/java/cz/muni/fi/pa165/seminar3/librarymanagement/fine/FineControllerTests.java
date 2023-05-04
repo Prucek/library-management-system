@@ -6,6 +6,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -26,6 +27,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 /**
@@ -51,7 +53,7 @@ public class FineControllerTests {
         given(fineFacade.create(any(FineCreateDto.class))).willReturn(fineDto);
 
         // perform test
-        mockMvc.perform(post("/fines").contentType(MediaType.APPLICATION_JSON)
+        mockMvc.perform(post("/fines").contentType(MediaType.APPLICATION_JSON).with(csrf())
                         .content(objectMapper.writeValueAsString(FineCreateDto.builder()
                                 .amount(fineDto.getAmount())
                                 .issuerId(fineDto.getIssuer().getId())
@@ -71,7 +73,7 @@ public class FineControllerTests {
         given(fineFacade.create(any(FineCreateDto.class))).willThrow(EntityNotFoundException.class);
 
         // perform test
-        mockMvc.perform(post("/fines").contentType(MediaType.APPLICATION_JSON)
+        mockMvc.perform(post("/fines").contentType(MediaType.APPLICATION_JSON).with(csrf())
                 .content(objectMapper.writeValueAsString(FineCreateDto.builder()
                         .amount(fineDto.getAmount())
                         .issuerId(fineDto.getIssuer().getId())
@@ -86,7 +88,7 @@ public class FineControllerTests {
         given(fineFacade.findAll(any(Pageable.class))).willReturn(fineDtoResult);
 
         // perform test
-        mockMvc.perform(get("/fines"))
+        mockMvc.perform(get("/fines").with(csrf()))
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(jsonPath("$.total").value(fineDtoResult.getTotal()))
                 .andExpect(jsonPath("$.page").value(fineDtoResult.getPage()))
@@ -102,7 +104,7 @@ public class FineControllerTests {
         given(fineFacade.find(fineDto.getId())).willReturn(fineDto);
 
         // perform test
-        mockMvc.perform(get("/fines/" + fineDto.getId()))
+        mockMvc.perform(get("/fines/" + fineDto.getId()).with(csrf()))
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(jsonPath("$.id").value(fineDto.getId()))
                 .andExpect(jsonPath("$.amount").value(fineDto.getAmount()))
@@ -117,7 +119,7 @@ public class FineControllerTests {
         given(fineFacade.find(fineId)).willThrow(EntityNotFoundException.class);
 
         // perform test
-        mockMvc.perform(get("/fines/" + fineId)).andExpect(status().isNotFound());
+        mockMvc.perform(get("/fines/" + fineId).with(csrf())).andExpect(status().isNotFound());
     }
 
     @Test
@@ -129,7 +131,7 @@ public class FineControllerTests {
         given(fineFacade.update(eq(fineDto.getId()), any())).willReturn(newFineDto);
 
         // perform test
-        mockMvc.perform(put("/fines/" + fineDto.getId()).contentType(MediaType.APPLICATION_JSON)
+        mockMvc.perform(put("/fines/" + fineDto.getId()).contentType(MediaType.APPLICATION_JSON).with(csrf())
                         .content(objectMapper.writeValueAsString(FineCreateDto.builder()
                                 .amount(newFineDto.getAmount())
                                 .issuerId(newFineDto.getIssuer().getId())
@@ -149,7 +151,7 @@ public class FineControllerTests {
         given(fineFacade.update(eq(fineDto.getId()), any())).willThrow(EntityNotFoundException.class);
 
         // perform test
-        mockMvc.perform(put("/fines/" + fineDto.getId()).contentType(MediaType.APPLICATION_JSON)
+        mockMvc.perform(put("/fines/" + fineDto.getId()).contentType(MediaType.APPLICATION_JSON).with(csrf())
                 .content(objectMapper.writeValueAsString(FineCreateDto.builder()
                         .amount(fineDto.getAmount())
                         .issuerId(fineDto.getIssuer().getId())
@@ -164,7 +166,7 @@ public class FineControllerTests {
         doNothing().when(fineFacade).delete(fineDto.getId());
 
         // perform test
-        mockMvc.perform(delete("/fines/" + fineDto.getId())).andExpect(status().is2xxSuccessful());
+        mockMvc.perform(delete("/fines/" + fineDto.getId()).with(csrf())).andExpect(status().is2xxSuccessful());
     }
 
     @Test
@@ -173,6 +175,6 @@ public class FineControllerTests {
         doThrow(EntityNotFoundException.class).when(fineFacade).delete(any());
 
         // perform test
-        mockMvc.perform(delete("/fines/" + UUID.randomUUID())).andExpect(status().isNotFound());
+        mockMvc.perform(delete("/fines/" + UUID.randomUUID()).with(csrf())).andExpect(status().isNotFound());
     }
 }

@@ -4,6 +4,7 @@ import static cz.muni.fi.pa165.seminar3.librarymanagement.utils.PaymentUtils.fak
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -23,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 /**
@@ -48,7 +50,7 @@ public class PaymentControllerTests {
         given(paymentFacade.create(any())).willReturn(paymentDto);
 
         // perform test
-        mockMvc.perform(post("/payments").contentType(MediaType.APPLICATION_JSON)
+        mockMvc.perform(post("/payments").contentType(MediaType.APPLICATION_JSON).with(csrf())
                         .content(objectMapper.writeValueAsString(PaymentCreateDto.builder()
                                 .fines(paymentDto.getPaidFines().stream().map(DomainObjectDto::getId).toList())
                                 .build())))
@@ -65,7 +67,7 @@ public class PaymentControllerTests {
         given(paymentFacade.create(any())).willThrow(EntityNotFoundException.class);
 
         // perform test
-        mockMvc.perform(post("/payments").contentType(MediaType.APPLICATION_JSON)
+        mockMvc.perform(post("/payments").contentType(MediaType.APPLICATION_JSON).with(csrf())
                         .content(objectMapper.writeValueAsString(
                                 PaymentCreateDto.builder().fines(List.of(UUID.randomUUID().toString())).build())))
                 .andExpect(status().isNotFound());
@@ -78,7 +80,7 @@ public class PaymentControllerTests {
         given(paymentFacade.finalizePayment(eq(paymentDto.getId()))).willReturn(paymentDto);
 
         // perform test
-        mockMvc.perform(post("/payments/" + paymentDto.getId()))
+        mockMvc.perform(post("/payments/" + paymentDto.getId()).with(csrf()))
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(jsonPath("$.id").value(paymentDto.getId()))
                 .andExpect(jsonPath("$.transactionId").value(paymentDto.getTransactionId()))
@@ -92,7 +94,7 @@ public class PaymentControllerTests {
         given(paymentFacade.finalizePayment(any())).willThrow(EntityNotFoundException.class);
 
         // perform test
-        mockMvc.perform(post("/payments/" + UUID.randomUUID())).andExpect(status().isNotFound());
+        mockMvc.perform(post("/payments/" + UUID.randomUUID()).with(csrf())).andExpect(status().isNotFound());
     }
 
     @Test
@@ -103,7 +105,7 @@ public class PaymentControllerTests {
         given(paymentFacade.findAll(any())).willReturn(paymentDtoResult);
 
         // perform test
-        mockMvc.perform(get("/payments"))
+        mockMvc.perform(get("/payments").with(csrf()))
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(jsonPath("$.total").value(paymentDtoResult.getTotal()))
                 .andExpect(jsonPath("$.page").value(paymentDtoResult.getPage()))
@@ -119,7 +121,7 @@ public class PaymentControllerTests {
         given(paymentFacade.find(eq(paymentDto.getId()))).willReturn(paymentDto);
 
         // perform test
-        mockMvc.perform(get("/payments/" + paymentDto.getId()))
+        mockMvc.perform(get("/payments/" + paymentDto.getId()).with(csrf()))
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(jsonPath("$.id").value(paymentDto.getId()))
                 .andExpect(jsonPath("$.transactionId").value(paymentDto.getTransactionId()))
@@ -133,6 +135,6 @@ public class PaymentControllerTests {
         given(paymentFacade.find(any())).willThrow(EntityNotFoundException.class);
 
         // perform test
-        mockMvc.perform(get("/payments/" + UUID.randomUUID())).andExpect(status().isNotFound());
+        mockMvc.perform(get("/payments/" + UUID.randomUUID()).with(csrf())).andExpect(status().isNotFound());
     }
 }

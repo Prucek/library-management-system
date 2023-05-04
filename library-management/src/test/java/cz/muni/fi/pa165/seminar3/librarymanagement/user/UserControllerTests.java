@@ -13,12 +13,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import static cz.muni.fi.pa165.seminar3.librarymanagement.utils.UserUtils.fakeUserDto;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doThrow;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -47,7 +49,7 @@ public class UserControllerTests {
 
         given(userFacade.create(any())).willReturn(user);
 
-        mockMvc.perform(post("/users").contentType(MediaType.APPLICATION_JSON)
+        mockMvc.perform(post("/users").contentType(MediaType.APPLICATION_JSON).with(csrf())
                         .content(objectMapper.writeValueAsString(UserCreateDto.builder()
                                 .username(user.getUsername())
                                 .firstName(user.getFirstName())
@@ -76,7 +78,7 @@ public class UserControllerTests {
         given(userFacade.create(any(UserCreateDto.class))).willThrow(EntityNotFoundException.class);
 
         // perform test
-        mockMvc.perform(post("/users").contentType(MediaType.APPLICATION_JSON)
+        mockMvc.perform(post("/users").contentType(MediaType.APPLICATION_JSON).with(csrf())
                 .content(objectMapper.writeValueAsString(UserCreateDto.builder()
                         .firstName(userDto.getFirstName())
                         .email(userDto.getEmail())
@@ -89,7 +91,7 @@ public class UserControllerTests {
 
         given(userFacade.findAll(any())).willReturn(userDtoResult);
 
-        mockMvc.perform(get("/users"))
+        mockMvc.perform(get("/users").with(csrf()))
                 .andDo(print())
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(jsonPath("$.total").value(userDtoResult.getTotal()))
@@ -119,7 +121,7 @@ public class UserControllerTests {
 
         given(userFacade.find(user.getId())).willReturn(user);
 
-        mockMvc.perform(get("/users/"+user.getId()))
+        mockMvc.perform(get("/users/"+user.getId()).with(csrf()))
                 .andDo(print())
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(jsonPath("$.username").value(user.getUsername()))
@@ -140,7 +142,7 @@ public class UserControllerTests {
         given(userFacade.find(userId)).willThrow(EntityNotFoundException.class);
 
         // perform test
-        mockMvc.perform(get("/users/" + userId)).andExpect(status().isNotFound());
+        mockMvc.perform(get("/users/" + userId).with(csrf())).andExpect(status().isNotFound());
     }
 
     @Test
@@ -152,7 +154,7 @@ public class UserControllerTests {
         given(userFacade.find(user.getId())).willReturn(user);
         given(userFacade.update(eq(user.getId()), any())).willReturn(updatedUser);
 
-        mockMvc.perform(put("/users/" + user.getId()).contentType(MediaType.APPLICATION_JSON)
+        mockMvc.perform(put("/users/" + user.getId()).contentType(MediaType.APPLICATION_JSON).with(csrf())
                         .content(objectMapper.writeValueAsString(updatedUser)))
                 .andDo(print())
                 .andExpect(status().is2xxSuccessful())
@@ -174,7 +176,7 @@ public class UserControllerTests {
         given(userFacade.update(eq(user.getId()), any())).willThrow(EntityNotFoundException.class);
 
         // perform test
-        mockMvc.perform(put("/users/" + user.getId()).contentType(MediaType.APPLICATION_JSON)
+        mockMvc.perform(put("/users/" + user.getId()).contentType(MediaType.APPLICATION_JSON).with(csrf())
                 .content(objectMapper.writeValueAsString(UserCreateDto.builder()
                         .firstName(user.getFirstName())
                         .email(user.getEmail())
@@ -187,7 +189,7 @@ public class UserControllerTests {
 
         given(userFacade.find("/users/" + user.getId())).willReturn(user);
 
-        mockMvc.perform(delete("/users/" + user.getId()))
+        mockMvc.perform(delete("/users/" + user.getId()).with(csrf()))
                 .andExpect(status().is2xxSuccessful());
     }
 
@@ -197,6 +199,6 @@ public class UserControllerTests {
         doThrow(EntityNotFoundException.class).when(userFacade).delete(any());
 
         // perform test
-        mockMvc.perform(delete("/users/" + UUID.randomUUID())).andExpect(status().isNotFound());
+        mockMvc.perform(delete("/users/" + UUID.randomUUID()).with(csrf())).andExpect(status().isNotFound());
     }
 }

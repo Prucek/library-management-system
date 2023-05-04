@@ -5,6 +5,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doThrow;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -27,6 +28,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 /**
@@ -54,7 +56,7 @@ public class ReservationControllerTests {
         given(reservationFacade.find(reservationDto.getId())).willReturn(reservationDto);
 
         // perform test
-        mockMvc.perform(get("/reservations/" + reservationDto.getId()))
+        mockMvc.perform(get("/reservations/" + reservationDto.getId()).with(csrf()))
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(jsonPath("$.id").value(reservationDto.getId()));
     }
@@ -65,7 +67,7 @@ public class ReservationControllerTests {
         given(reservationFacade.find(any())).willThrow(EntityNotFoundException.class);
 
         // perform test
-        mockMvc.perform(get("/reservations/" + UUID.randomUUID())).andExpect(status().isNotFound());
+        mockMvc.perform(get("/reservations/" + UUID.randomUUID()).with(csrf())).andExpect(status().isNotFound());
     }
 
     @Test
@@ -75,7 +77,7 @@ public class ReservationControllerTests {
         given(reservationFacade.create(any())).willReturn(reservationDto);
 
         // perform test
-        mockMvc.perform(post("/reservations").contentType(MediaType.APPLICATION_JSON)
+        mockMvc.perform(post("/reservations").contentType(MediaType.APPLICATION_JSON).with(csrf())
                         .content(objectMapper.writeValueAsString(BorrowingDto.builder()
                                 .from(reservationDto.getFrom())
                                 .to(reservationDto.getTo())
@@ -96,7 +98,7 @@ public class ReservationControllerTests {
         given(reservationFacade.updateReservation(eq(reservationDto.getId()), any())).willReturn(newReservationDto);
 
         // perform test
-        mockMvc.perform(put("/reservations/" + reservationDto.getId()).contentType(MediaType.APPLICATION_JSON)
+        mockMvc.perform(put("/reservations/" + reservationDto.getId()).contentType(MediaType.APPLICATION_JSON).with(csrf())
                         .content(objectMapper.writeValueAsString(BorrowingCreateDto.builder()
                                 .from(newReservationDto.getFrom())
                                 .to(newReservationDto.getTo())
@@ -114,7 +116,7 @@ public class ReservationControllerTests {
         given(reservationFacade.find(reservationDto.getId())).willReturn(reservationDto);
 
         // perform test
-        mockMvc.perform(delete("/reservations/" + reservationDto.getId())).andExpect(status().is2xxSuccessful());
+        mockMvc.perform(delete("/reservations/" + reservationDto.getId()).with(csrf())).andExpect(status().is2xxSuccessful());
     }
 
     @Test
@@ -123,7 +125,7 @@ public class ReservationControllerTests {
         doThrow(EntityNotFoundException.class).when(reservationFacade).deleteReservation(any());
 
         // perform test
-        mockMvc.perform(delete("/reservations/" + UUID.randomUUID())).andExpect(status().isNotFound());
+        mockMvc.perform(delete("/reservations/" + UUID.randomUUID()).with(csrf())).andExpect(status().isNotFound());
     }
 
     @Test
@@ -134,7 +136,7 @@ public class ReservationControllerTests {
         given(reservationFacade.findAll(any(Pageable.class))).willReturn(reservationDtoResult);
 
         // perform test
-        mockMvc.perform(get("/reservations"))
+        mockMvc.perform(get("/reservations").with(csrf()))
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(jsonPath("$.total").value(reservationDtoResult.getTotal()))
                 .andExpect(jsonPath("$.page").value(0))

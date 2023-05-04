@@ -5,6 +5,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doThrow;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -26,6 +27,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 /**
@@ -53,7 +55,7 @@ public class BorrowingControllerTests {
         given(borrowingFacade.find(borrowingDto.getId())).willReturn(borrowingDto);
 
         // perform test
-        mockMvc.perform(get("/borrowings/" + borrowingDto.getId()))
+        mockMvc.perform(get("/borrowings/" + borrowingDto.getId()).with(csrf()))
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(jsonPath("$.id").value(borrowingDto.getId()));
     }
@@ -64,7 +66,7 @@ public class BorrowingControllerTests {
         given(borrowingFacade.find(any())).willThrow(EntityNotFoundException.class);
 
         // perform test
-        mockMvc.perform(get("/borrowings/" + UUID.randomUUID())).andExpect(status().isNotFound());
+        mockMvc.perform(get("/borrowings/" + UUID.randomUUID()).with(csrf())).andExpect(status().isNotFound());
     }
 
     @Test
@@ -74,7 +76,7 @@ public class BorrowingControllerTests {
         given(borrowingFacade.create(any())).willReturn(borrowingDto);
 
         // perform test
-        mockMvc.perform(post("/borrowings").contentType(MediaType.APPLICATION_JSON)
+        mockMvc.perform(post("/borrowings").contentType(MediaType.APPLICATION_JSON).with(csrf())
                         .content(objectMapper.writeValueAsString(BorrowingDto.builder()
                                 .from(borrowingDto.getFrom())
                                 .to(borrowingDto.getTo())
@@ -95,7 +97,7 @@ public class BorrowingControllerTests {
         given(borrowingFacade.updateBorrowing(eq(borrowingDto.getId()), any())).willReturn(newBorrowingDto);
 
         // perform test
-        mockMvc.perform(put("/borrowings/" + borrowingDto.getId()).contentType(MediaType.APPLICATION_JSON)
+        mockMvc.perform(put("/borrowings/" + borrowingDto.getId()).contentType(MediaType.APPLICATION_JSON).with(csrf())
                         .content(objectMapper.writeValueAsString(BorrowingCreateDto.builder()
                                 .from(newBorrowingDto.getFrom())
                                 .to(newBorrowingDto.getTo())
@@ -113,7 +115,7 @@ public class BorrowingControllerTests {
         given(borrowingFacade.find(borrowing.getId())).willReturn(borrowing);
 
         // perform test
-        mockMvc.perform(delete("/borrowings/" + borrowing.getId())).andExpect(status().is2xxSuccessful());
+        mockMvc.perform(delete("/borrowings/" + borrowing.getId()).with(csrf())).andExpect(status().is2xxSuccessful());
     }
 
     @Test
@@ -122,7 +124,7 @@ public class BorrowingControllerTests {
         doThrow(EntityNotFoundException.class).when(borrowingFacade).deleteBorrowing(any());
 
         // perform test
-        mockMvc.perform(delete("/borrowings/" + UUID.randomUUID())).andExpect(status().isNotFound());
+        mockMvc.perform(delete("/borrowings/" + UUID.randomUUID()).with(csrf())).andExpect(status().isNotFound());
     }
 
     @Test
@@ -133,7 +135,7 @@ public class BorrowingControllerTests {
         given(borrowingFacade.findAll(any(Pageable.class))).willReturn(borrowingDtoResult);
 
         // perform test
-        mockMvc.perform(get("/borrowings"))
+        mockMvc.perform(get("/borrowings").with(csrf()))
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(jsonPath("$.total").value(borrowingDtoResult.getTotal()))
                 .andExpect(jsonPath("$.page").value(0))

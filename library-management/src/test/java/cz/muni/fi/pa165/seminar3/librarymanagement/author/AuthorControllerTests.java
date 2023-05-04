@@ -6,6 +6,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -27,6 +28,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.security.test.context.support.WithMockUser;
+
 
 /**
  * Tests for AuthorController.
@@ -47,6 +50,7 @@ public class AuthorControllerTests {
     private final Faker faker = new Faker();
 
     @Test
+    @WithMockUser()
     void createAuthorSuccessful() throws Exception {
         AuthorDto authorDto = fakeAuthorDto(faker);
 
@@ -55,7 +59,7 @@ public class AuthorControllerTests {
 
         // perform test
         mockMvc.perform(post("/authors").accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON).with(csrf())
                         .content(objectMapper.writeValueAsString(authorDto)))
                 .andDo(print())
                 .andExpect(status().isCreated())
@@ -65,6 +69,7 @@ public class AuthorControllerTests {
     }
 
     @Test
+    @WithMockUser()
     void findAuthorSuccessful() throws Exception {
         AuthorDto authorDto = fakeAuthorDto(faker);
 
@@ -78,6 +83,7 @@ public class AuthorControllerTests {
     }
 
     @Test
+    @WithMockUser()
     void findAuthorNotFound() throws Exception {
         String authorId = UUID.randomUUID().toString();
 
@@ -87,24 +93,27 @@ public class AuthorControllerTests {
     }
 
     @Test
+    @WithMockUser()
     void deleteAuthor() throws Exception {
         String authorId = UUID.randomUUID().toString();
 
         doNothing().when(authorFacade).delete(authorId);
 
-        mockMvc.perform(delete("/authors/" + authorId)).andExpect(status().is2xxSuccessful());
+        mockMvc.perform(delete("/authors/" + authorId).with(csrf())).andExpect(status().is2xxSuccessful());
     }
 
     @Test
+    @WithMockUser()
     void deleteAuthorNotFound() throws Exception {
         String authorId = UUID.randomUUID().toString();
 
         doThrow(EntityNotFoundException.class).when(authorFacade).delete(any());
 
-        mockMvc.perform(delete("/authors/" + authorId)).andExpect(status().isNotFound());
+        mockMvc.perform(delete("/authors/" + authorId).with(csrf())).andExpect(status().isNotFound());
     }
 
     @Test
+    @WithMockUser()
     void updateAuthor() throws Exception {
         AuthorDto authorDto = fakeAuthorDto(faker);
         AuthorCreateDto createDto =
@@ -112,7 +121,7 @@ public class AuthorControllerTests {
 
         given(authorFacade.update(eq(authorDto.getId()), any())).willReturn(authorDto);
 
-        mockMvc.perform(put("/authors/" + authorDto.getId()).contentType(MediaType.APPLICATION_JSON)
+        mockMvc.perform(put("/authors/" + authorDto.getId()).contentType(MediaType.APPLICATION_JSON).with(csrf())
                         .content(objectMapper.writeValueAsString(createDto)))
                 .andDo(print())
                 .andExpect(status().is2xxSuccessful())
@@ -123,6 +132,7 @@ public class AuthorControllerTests {
     }
 
     @Test
+    @WithMockUser()
     void updateUserNotFound() throws Exception {
         AuthorDto authorDto = fakeAuthorDto(faker);
         AuthorCreateDto createDto =
@@ -130,7 +140,7 @@ public class AuthorControllerTests {
 
         given(authorFacade.update(eq(authorDto.getId()), any())).willThrow(EntityNotFoundException.class);
 
-        mockMvc.perform(put("/authors/" + authorDto.getId()).contentType(MediaType.APPLICATION_JSON)
+        mockMvc.perform(put("/authors/" + authorDto.getId()).contentType(MediaType.APPLICATION_JSON).with(csrf())
                 .content(objectMapper.writeValueAsString(createDto))).andExpect(status().isNotFound());
     }
 }
