@@ -1,5 +1,7 @@
 package cz.muni.fi.pa165.seminar3.librarymanagement.borrowing;
 
+import static cz.muni.fi.pa165.seminar3.librarymanagement.LibraryManagementApplication.LIBRARIAN_SCOPE;
+import static cz.muni.fi.pa165.seminar3.librarymanagement.LibraryManagementApplication.USER_SCOPE;
 import static cz.muni.fi.pa165.seminar3.librarymanagement.utils.BorrowingUtils.fakeBorrowingDto;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -49,6 +51,7 @@ public class BorrowingControllerTests {
     private final Faker faker = new Faker();
 
     @Test
+    @WithMockUser(authorities = "SCOPE_" + USER_SCOPE)
     public void findSuccessful() throws Exception {
         BorrowingDto borrowingDto = fakeBorrowingDto(faker);
         // mock facade
@@ -61,6 +64,7 @@ public class BorrowingControllerTests {
     }
 
     @Test
+    @WithMockUser(authorities = "SCOPE_" + USER_SCOPE)
     public void findNotFound() throws Exception {
         // mock facade
         given(borrowingFacade.find(any())).willThrow(EntityNotFoundException.class);
@@ -70,6 +74,7 @@ public class BorrowingControllerTests {
     }
 
     @Test
+    @WithMockUser(authorities = "SCOPE_" + LIBRARIAN_SCOPE)
     public void createSuccessful() throws Exception {
         BorrowingDto borrowingDto = fakeBorrowingDto(faker);
         // mock facade
@@ -88,6 +93,7 @@ public class BorrowingControllerTests {
     }
 
     @Test
+    @WithMockUser(authorities = "SCOPE_" + LIBRARIAN_SCOPE)
     public void updateSuccessful() throws Exception {
         BorrowingDto borrowingDto = fakeBorrowingDto(faker);
         BorrowingDto newBorrowingDto = fakeBorrowingDto(faker);
@@ -109,6 +115,7 @@ public class BorrowingControllerTests {
     }
 
     @Test
+    @WithMockUser(authorities = "SCOPE_" + LIBRARIAN_SCOPE)
     public void deleteSuccessful() throws Exception {
         BorrowingDto borrowing = fakeBorrowingDto(faker);
         // mock facade
@@ -119,6 +126,7 @@ public class BorrowingControllerTests {
     }
 
     @Test
+    @WithMockUser(authorities = "SCOPE_" + LIBRARIAN_SCOPE)
     public void deleteNotFound() throws Exception {
         // mock facade
         doThrow(EntityNotFoundException.class).when(borrowingFacade).deleteBorrowing(any());
@@ -128,6 +136,7 @@ public class BorrowingControllerTests {
     }
 
     @Test
+    @WithMockUser(authorities = "SCOPE_" + USER_SCOPE)
     public void findAllSuccessful() throws Exception {
         Result<BorrowingDto> borrowingDtoResult =
                 Result.of(fakeBorrowingDto(faker), fakeBorrowingDto(faker), fakeBorrowingDto(faker));

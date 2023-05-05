@@ -15,6 +15,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+
+import static cz.muni.fi.pa165.seminar3.librarymanagement.LibraryManagementApplication.LIBRARIAN_SCOPE;
 import static cz.muni.fi.pa165.seminar3.librarymanagement.utils.UserUtils.fakeUserDto;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -44,6 +46,7 @@ public class UserControllerTests {
     private final Faker faker = new Faker();
 
     @Test
+    @WithMockUser(authorities = "SCOPE_" + LIBRARIAN_SCOPE)
     void createSuccessful() throws Exception {
         UserDto user = fakeUserDto(faker, UserType.CLIENT);
 
@@ -72,6 +75,7 @@ public class UserControllerTests {
     }
 
     @Test
+    @WithMockUser(authorities = "SCOPE_" + LIBRARIAN_SCOPE)
     public void createEntityNotFound() throws Exception {
         UserDto userDto = fakeUserDto(faker, UserType.CLIENT);
         // mock facade
@@ -86,6 +90,7 @@ public class UserControllerTests {
     }
 
     @Test
+    @WithMockUser(authorities = "SCOPE_" + LIBRARIAN_SCOPE)
     void findAll() throws Exception {
         Result<UserDto> userDtoResult = Result.of(fakeUserDto(faker, UserType.CLIENT), fakeUserDto(faker, UserType.CLIENT));
 
@@ -116,6 +121,7 @@ public class UserControllerTests {
     }
 
     @Test
+    @WithMockUser(authorities = "SCOPE_" + LIBRARIAN_SCOPE)
     void findSuccessful() throws Exception {
         UserDto user = fakeUserDto(faker, UserType.CLIENT);
 
@@ -136,6 +142,7 @@ public class UserControllerTests {
     }
 
     @Test
+    @WithMockUser(authorities = "SCOPE_" + LIBRARIAN_SCOPE)
     public void findNotFound() throws Exception {
         String userId = UUID.randomUUID().toString();
         // mock facade
@@ -146,6 +153,7 @@ public class UserControllerTests {
     }
 
     @Test
+    @WithMockUser(authorities = "SCOPE_" + LIBRARIAN_SCOPE)
     public void updateSuccessful() throws Exception{
         UserDto user = fakeUserDto(faker, UserType.CLIENT);
         UserDto updatedUser = fakeUserDto(faker, UserType.CLIENT);
@@ -170,6 +178,7 @@ public class UserControllerTests {
     }
 
     @Test
+    @WithMockUser(authorities = "SCOPE_" + LIBRARIAN_SCOPE)
     public void updateNotFound() throws Exception {
         UserDto user = fakeUserDto(faker, UserType.CLIENT);
         // mock facade
@@ -184,6 +193,7 @@ public class UserControllerTests {
     }
 
     @Test
+    @WithMockUser(authorities = "SCOPE_" + LIBRARIAN_SCOPE)
     public void deleteSuccessful() throws Exception{
         UserDto user = fakeUserDto(faker, UserType.CLIENT);
 
@@ -194,6 +204,7 @@ public class UserControllerTests {
     }
 
     @Test
+    @WithMockUser(authorities = "SCOPE_" + LIBRARIAN_SCOPE)
     public void deleteNotFound() throws Exception {
         // mock services
         doThrow(EntityNotFoundException.class).when(userFacade).delete(any());

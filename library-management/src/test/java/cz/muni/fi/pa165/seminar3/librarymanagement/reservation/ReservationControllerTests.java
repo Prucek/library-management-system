@@ -1,5 +1,7 @@
 package cz.muni.fi.pa165.seminar3.librarymanagement.reservation;
 
+import static cz.muni.fi.pa165.seminar3.librarymanagement.LibraryManagementApplication.LIBRARIAN_SCOPE;
+import static cz.muni.fi.pa165.seminar3.librarymanagement.LibraryManagementApplication.USER_SCOPE;
 import static cz.muni.fi.pa165.seminar3.librarymanagement.utils.ReservationUtils.fakeReservationDto;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -50,6 +52,7 @@ public class ReservationControllerTests {
     private ObjectMapper objectMapper;
 
     @Test
+    @WithMockUser(authorities = "SCOPE_" + USER_SCOPE)
     public void findSuccessful() throws Exception {
         ReservationDto reservationDto = fakeReservationDto(faker);
         // mock facade
@@ -62,6 +65,7 @@ public class ReservationControllerTests {
     }
 
     @Test
+    @WithMockUser(authorities = "SCOPE_" + USER_SCOPE)
     public void findNotFound() throws Exception {
         // mock facade
         given(reservationFacade.find(any())).willThrow(EntityNotFoundException.class);
@@ -71,6 +75,7 @@ public class ReservationControllerTests {
     }
 
     @Test
+    @WithMockUser(authorities = "SCOPE_" + LIBRARIAN_SCOPE)
     public void createSuccessful() throws Exception {
         ReservationDto reservationDto = fakeReservationDto(faker);
         // mock facade
@@ -89,6 +94,7 @@ public class ReservationControllerTests {
     }
 
     @Test
+    @WithMockUser(authorities = "SCOPE_" + LIBRARIAN_SCOPE)
     public void updateSuccessful() throws Exception {
         ReservationDto reservationDto = fakeReservationDto(faker);
         ReservationDto newReservationDto = fakeReservationDto(faker);
@@ -110,6 +116,7 @@ public class ReservationControllerTests {
     }
 
     @Test
+    @WithMockUser(authorities = "SCOPE_" + LIBRARIAN_SCOPE)
     public void deleteSuccessful() throws Exception {
         ReservationDto reservationDto = fakeReservationDto(faker);
         // mock facade
@@ -120,6 +127,7 @@ public class ReservationControllerTests {
     }
 
     @Test
+    @WithMockUser(authorities = "SCOPE_" + LIBRARIAN_SCOPE)
     public void deleteNotFound() throws Exception {
         // mock facade
         doThrow(EntityNotFoundException.class).when(reservationFacade).deleteReservation(any());
@@ -129,6 +137,7 @@ public class ReservationControllerTests {
     }
 
     @Test
+    @WithMockUser(authorities = "SCOPE_" + USER_SCOPE)
     public void findAllSuccessful() throws Exception {
         Result<ReservationDto> reservationDtoResult =
                 Result.of(fakeReservationDto(faker), fakeReservationDto(faker), fakeReservationDto(faker));

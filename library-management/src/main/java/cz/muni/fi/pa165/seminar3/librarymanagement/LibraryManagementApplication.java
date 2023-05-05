@@ -51,6 +51,34 @@ public class LibraryManagementApplication {
                         .requestMatchers(HttpMethod.POST, "/authors/**").hasAuthority("SCOPE_" + LIBRARIAN_SCOPE)
                         .requestMatchers(HttpMethod.PUT, "/authors/**").hasAuthority("SCOPE_" + LIBRARIAN_SCOPE)
                         .requestMatchers(HttpMethod.DELETE, "/authors/**").hasAuthority("SCOPE_" + LIBRARIAN_SCOPE)
+
+                        .requestMatchers(HttpMethod.GET, "/borrowings/**").hasAuthority("SCOPE_" + USER_SCOPE)
+                        .requestMatchers(HttpMethod.POST, "/borrowings/**").hasAuthority("SCOPE_" + LIBRARIAN_SCOPE)
+                        .requestMatchers(HttpMethod.PUT, "/borrowings/**").hasAuthority("SCOPE_" + LIBRARIAN_SCOPE)
+                        .requestMatchers(HttpMethod.DELETE, "/borrowings/**").hasAuthority("SCOPE_" + LIBRARIAN_SCOPE)
+
+                        .requestMatchers(HttpMethod.GET, "/fines/**").hasAuthority("SCOPE_" + LIBRARIAN_SCOPE)
+                        .requestMatchers(HttpMethod.POST, "/fines/**").hasAuthority("SCOPE_" + LIBRARIAN_SCOPE)
+                        .requestMatchers(HttpMethod.PUT, "/fines/**").hasAuthority("SCOPE_" + LIBRARIAN_SCOPE)
+                        .requestMatchers(HttpMethod.DELETE, "/fines/**").hasAuthority("SCOPE_" + LIBRARIAN_SCOPE)
+
+                        .requestMatchers(HttpMethod.GET, "/payments/**").hasAuthority("SCOPE_" + USER_SCOPE)
+                        .requestMatchers(HttpMethod.POST, "/payments/**").hasAuthority("SCOPE_" + LIBRARIAN_SCOPE)
+                        .requestMatchers(HttpMethod.PUT, "/payments/**").hasAuthority("SCOPE_" + LIBRARIAN_SCOPE)
+                        .requestMatchers(HttpMethod.DELETE, "/payments/**").hasAuthority("SCOPE_" + LIBRARIAN_SCOPE)
+
+                        .requestMatchers(HttpMethod.GET, "/reservations/**").hasAuthority("SCOPE_" + USER_SCOPE)
+                        .requestMatchers(HttpMethod.POST, "/reservations/**").hasAuthority("SCOPE_" + LIBRARIAN_SCOPE)
+                        .requestMatchers(HttpMethod.PUT, "/reservations/**").hasAuthority("SCOPE_" + LIBRARIAN_SCOPE)
+                        .requestMatchers(HttpMethod.DELETE, "/reservations/**").hasAuthority("SCOPE_" + LIBRARIAN_SCOPE)
+
+                        .requestMatchers(HttpMethod.GET, "/settings/**").hasAuthority("SCOPE_" + LIBRARIAN_SCOPE)
+                        .requestMatchers(HttpMethod.POST, "/settings/**").hasAuthority("SCOPE_" + LIBRARIAN_SCOPE)
+
+                        .requestMatchers(HttpMethod.GET, "/users/**").hasAuthority("SCOPE_" + LIBRARIAN_SCOPE)
+                        .requestMatchers(HttpMethod.POST, "/users/**").hasAuthority("SCOPE_" + LIBRARIAN_SCOPE)
+                        .requestMatchers(HttpMethod.PUT, "/users/**").hasAuthority("SCOPE_" + LIBRARIAN_SCOPE)
+                        .requestMatchers(HttpMethod.DELETE, "/users/**").hasAuthority("SCOPE_" + LIBRARIAN_SCOPE)
                         .anyRequest().permitAll()
                 )
                 .oauth2ResourceServer(OAuth2ResourceServerConfigurer::opaqueToken)

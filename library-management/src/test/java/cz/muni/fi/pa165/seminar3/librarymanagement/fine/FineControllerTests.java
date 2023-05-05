@@ -1,5 +1,6 @@
 package cz.muni.fi.pa165.seminar3.librarymanagement.fine;
 
+import static cz.muni.fi.pa165.seminar3.librarymanagement.LibraryManagementApplication.LIBRARIAN_SCOPE;
 import static cz.muni.fi.pa165.seminar3.librarymanagement.utils.FineUtils.fakeFineDto;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -47,6 +48,7 @@ public class FineControllerTests {
     private final Faker faker = new Faker();
 
     @Test
+    @WithMockUser(authorities = "SCOPE_" + LIBRARIAN_SCOPE)
     public void createFineSuccessful() throws Exception {
         FineDto fineDto = fakeFineDto(faker);
         // mock facade
@@ -67,6 +69,7 @@ public class FineControllerTests {
     }
 
     @Test
+    @WithMockUser(authorities = "SCOPE_" + LIBRARIAN_SCOPE)
     public void createFineEntityNotFound() throws Exception {
         FineDto fineDto = fakeFineDto(faker);
         // mock facade
@@ -82,6 +85,7 @@ public class FineControllerTests {
     }
 
     @Test
+    @WithMockUser(authorities = "SCOPE_" + LIBRARIAN_SCOPE)
     public void findAll() throws Exception {
         Result<FineDto> fineDtoResult = Result.of(fakeFineDto(faker), fakeFineDto(faker), fakeFineDto(faker));
         // mock facade
@@ -98,6 +102,7 @@ public class FineControllerTests {
     }
 
     @Test
+    @WithMockUser(authorities = "SCOPE_" + LIBRARIAN_SCOPE)
     public void findSuccessful() throws Exception {
         FineDto fineDto = fakeFineDto(faker);
         // mock facade
@@ -113,6 +118,7 @@ public class FineControllerTests {
     }
 
     @Test
+    @WithMockUser(authorities = "SCOPE_" + LIBRARIAN_SCOPE)
     public void findNotFound() throws Exception {
         String fineId = UUID.randomUUID().toString();
         // mock facade
@@ -123,6 +129,7 @@ public class FineControllerTests {
     }
 
     @Test
+    @WithMockUser(authorities = "SCOPE_" + LIBRARIAN_SCOPE)
     public void updateSuccessful() throws Exception {
         FineDto fineDto = fakeFineDto(faker);
         FineDto newFineDto = fakeFineDto(faker);
@@ -145,6 +152,7 @@ public class FineControllerTests {
     }
 
     @Test
+    @WithMockUser(authorities = "SCOPE_" + LIBRARIAN_SCOPE)
     public void updateNotFound() throws Exception {
         FineDto fineDto = fakeFineDto(faker);
         // mock facade
@@ -160,6 +168,7 @@ public class FineControllerTests {
     }
 
     @Test
+    @WithMockUser(authorities = "SCOPE_" + LIBRARIAN_SCOPE)
     public void deleteSuccessful() throws Exception {
         FineDto fineDto = fakeFineDto(faker);
         // mock facade
@@ -170,6 +179,7 @@ public class FineControllerTests {
     }
 
     @Test
+    @WithMockUser(authorities = "SCOPE_" + LIBRARIAN_SCOPE)
     public void deleteNotFound() throws Exception {
         // mock services
         doThrow(EntityNotFoundException.class).when(fineFacade).delete(any());
