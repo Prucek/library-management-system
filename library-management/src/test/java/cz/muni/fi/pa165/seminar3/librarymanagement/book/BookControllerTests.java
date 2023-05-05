@@ -1,5 +1,7 @@
 package cz.muni.fi.pa165.seminar3.librarymanagement.book;
 
+import static cz.muni.fi.pa165.seminar3.librarymanagement.LibraryManagementApplication.LIBRARIAN_SCOPE;
+import static cz.muni.fi.pa165.seminar3.librarymanagement.LibraryManagementApplication.USER_SCOPE;
 import static cz.muni.fi.pa165.seminar3.librarymanagement.utils.BookUtils.fakeBookDto;
 import static cz.muni.fi.pa165.seminar3.librarymanagement.utils.BookUtils.fakeBookInstanceDto;
 import static org.mockito.ArgumentMatchers.any;
@@ -50,6 +52,7 @@ public class BookControllerTests {
     private final Faker faker = new Faker();
 
     @Test
+    @WithMockUser(authorities = "SCOPE_" + LIBRARIAN_SCOPE)
     public void createBookSuccessful() throws Exception {
         BookDto bookDto = fakeBookDto(faker);
         // mock facades
@@ -65,6 +68,7 @@ public class BookControllerTests {
     }
 
     @Test
+    @WithMockUser(authorities = "SCOPE_" + LIBRARIAN_SCOPE)
     public void createBookNotFound() throws Exception {
         BookDto bookDto = fakeBookDto(faker);
 
@@ -77,6 +81,7 @@ public class BookControllerTests {
     }
 
     @Test
+    @WithMockUser(authorities = "SCOPE_" + USER_SCOPE)
     public void findBookSuccessful() throws Exception {
         BookDto bookDto = fakeBookDto(faker);
 
@@ -92,6 +97,7 @@ public class BookControllerTests {
     }
 
     @Test
+    @WithMockUser(authorities = "SCOPE_" + USER_SCOPE)
     public void findBookNotFound() throws Exception {
         // mock facades
         String bookId = UUID.randomUUID().toString();
@@ -102,6 +108,7 @@ public class BookControllerTests {
     }
 
     @Test
+    @WithMockUser(authorities = "SCOPE_" + LIBRARIAN_SCOPE)
     public void deleteBookSuccessful() throws Exception {
         BookDto bookDto = fakeBookDto(faker);
         // mock facades
@@ -112,6 +119,7 @@ public class BookControllerTests {
     }
 
     @Test
+    @WithMockUser(authorities = "SCOPE_" + LIBRARIAN_SCOPE)
     public void deleteBookNotFound() throws Exception {
         // mock facades
         doThrow(EntityNotFoundException.class).when(bookFacade).delete(any());
@@ -121,6 +129,7 @@ public class BookControllerTests {
     }
 
     @Test
+    @WithMockUser(authorities = "SCOPE_" + LIBRARIAN_SCOPE)
     public void updateBookSuccessful() throws Exception {
         BookDto bookDto = fakeBookDto(faker);
         BookDto bookDtoNew = fakeBookDto(faker);
@@ -138,6 +147,7 @@ public class BookControllerTests {
     }
 
     @Test
+    @WithMockUser(authorities = "SCOPE_" + LIBRARIAN_SCOPE)
     public void updateBookNotFound() throws Exception {
         BookDto bookDto = fakeBookDto(faker);
 
@@ -148,6 +158,7 @@ public class BookControllerTests {
     }
 
     @Test
+    @WithMockUser(authorities = "SCOPE_" + LIBRARIAN_SCOPE)
     public void addBookInstance() throws Exception {
         BookDto bookDto = fakeBookDto(faker);
         BookInstanceDto bookInstanceDto = fakeBookInstanceDto(faker);
@@ -160,6 +171,7 @@ public class BookControllerTests {
     }
 
     @Test
+    @WithMockUser(authorities = "SCOPE_" + LIBRARIAN_SCOPE)
     public void removeBookInstance() throws Exception {
         String bookInstanceId = UUID.randomUUID().toString();
         // mock facades
