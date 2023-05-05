@@ -1,5 +1,10 @@
 package cz.muni.fi.pa165.seminar3.librarymanagement.author;
 
+import static cz.muni.fi.pa165.seminar3.librarymanagement.LibraryManagementApplication.LIBRARIAN_SCOPE;
+import static cz.muni.fi.pa165.seminar3.librarymanagement.LibraryManagementApplication.SECURITY_SCHEME_BEARER;
+import static cz.muni.fi.pa165.seminar3.librarymanagement.LibraryManagementApplication.SECURITY_SCHEME_OAUTH2;
+import static cz.muni.fi.pa165.seminar3.librarymanagement.LibraryManagementApplication.USER_SCOPE;
+
 import cz.muni.fi.pa165.seminar3.librarymanagement.common.ErrorMessage;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.author.AuthorCreateDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.author.AuthorDto;
@@ -8,6 +13,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -43,10 +49,15 @@ public class AuthorController {
     /**
      * REST method returning author with specified id.
      */
-    @Operation(summary = "Returns identified author", description = "Looks up a by by its id.")
+    @Operation(summary = "Returns identified author", description = "Looks up a by by its id.", security = {
+            @SecurityRequirement(name = SECURITY_SCHEME_BEARER, scopes = {USER_SCOPE}),
+            @SecurityRequirement(name = SECURITY_SCHEME_OAUTH2, scopes = {USER_SCOPE})
+    })
     @ApiResponse(responseCode = "200", description = "Author found", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "404", description = "Author not found",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
+    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have scope test_1",
+            content = @Content())
     @GetMapping("/{id}")
     public AuthorDto find(@PathVariable String id) {
         try {
@@ -59,10 +70,15 @@ public class AuthorController {
     /**
      * REST method returning all authors.
      */
-    @Operation(summary = "Get all authors", description = "Returns all authors with authors as JSON")
+    @Operation(summary = "Get all authors", description = "Returns all authors with authors as JSON", security = {
+            @SecurityRequirement(name = SECURITY_SCHEME_BEARER, scopes = {USER_SCOPE}),
+            @SecurityRequirement(name = SECURITY_SCHEME_OAUTH2, scopes = {USER_SCOPE})
+    })
     @ApiResponse(responseCode = "200", description = "Pages list of all books", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "400", description = "Invalid paging",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
+    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have scope test_1",
+            content = @Content())
     @GetMapping
     public Result<AuthorDto> findAll(Pageable pageable) {
         return facade.findAll(pageable);
@@ -71,10 +87,15 @@ public class AuthorController {
     /**
      * REST method for creating a new author.
      */
-    @Operation(summary = "Create a new author")
+    @Operation(summary = "Create a new author", security = {
+            @SecurityRequirement(name = SECURITY_SCHEME_BEARER, scopes = {LIBRARIAN_SCOPE}),
+            @SecurityRequirement(name = SECURITY_SCHEME_OAUTH2, scopes = {LIBRARIAN_SCOPE})
+    })
     @ApiResponse(responseCode = "201", description = "Author created", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "400", description = "Invalid payload",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
+    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have scope test_2",
+            content = @Content())
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     public AuthorDto create(@RequestBody AuthorCreateDto dto) {
@@ -88,10 +109,15 @@ public class AuthorController {
     /**
      * REST method deleting specific author.
      */
-    @Operation(summary = "Delete author by its ID")
+    @Operation(summary = "Delete author by its ID", security = {
+            @SecurityRequirement(name = SECURITY_SCHEME_BEARER, scopes = {LIBRARIAN_SCOPE}),
+            @SecurityRequirement(name = SECURITY_SCHEME_OAUTH2, scopes = {LIBRARIAN_SCOPE})
+    })
     @ApiResponse(responseCode = "200", description = "Author deleted", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "404", description = "Author not found",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
+    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have scope test_2",
+            content = @Content())
     @DeleteMapping("/{id}")
     public void delete(@PathVariable String id) {
         try {
@@ -104,10 +130,15 @@ public class AuthorController {
     /**
      * REST method updating specific book.
      */
-    @Operation(summary = "Update author by its ID")
+    @Operation(summary = "Update author by its ID", security = {
+            @SecurityRequirement(name = SECURITY_SCHEME_BEARER, scopes = {LIBRARIAN_SCOPE}),
+            @SecurityRequirement(name = SECURITY_SCHEME_OAUTH2, scopes = {LIBRARIAN_SCOPE})
+    })
     @ApiResponse(responseCode = "200", description = "Author updated", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "404", description = "Author not found",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
+    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have scope test_2",
+            content = @Content())
     @PutMapping("/{id}")
     public AuthorDto update(@PathVariable String id, @RequestBody AuthorCreateDto dto) {
         try {

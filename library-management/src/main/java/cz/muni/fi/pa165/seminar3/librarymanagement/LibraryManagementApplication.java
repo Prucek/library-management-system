@@ -26,6 +26,8 @@ public class LibraryManagementApplication {
     private static final Logger log = LoggerFactory.getLogger(LibraryManagementApplication.class);
     public static final String SECURITY_SCHEME_OAUTH2 = "OAuth2";
     public static final String SECURITY_SCHEME_BEARER = "Bearer";
+    public static  final String USER_SCOPE = "test_1";
+    public static  final String LIBRARIAN_SCOPE = "test_2";
 
 
     public static void main(String[] args) {
@@ -40,7 +42,15 @@ public class LibraryManagementApplication {
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(x -> x
-                        .requestMatchers(HttpMethod.GET, "/books").hasAuthority("SCOPE_test_1")
+                        .requestMatchers(HttpMethod.GET, "/books/**").hasAuthority("SCOPE_" + USER_SCOPE)
+                        .requestMatchers(HttpMethod.POST, "/books/**").hasAuthority("SCOPE_" + LIBRARIAN_SCOPE)
+                        .requestMatchers(HttpMethod.PUT, "/books/**").hasAuthority("SCOPE_" + LIBRARIAN_SCOPE)
+                        .requestMatchers(HttpMethod.DELETE, "/books/**").hasAuthority("SCOPE_" + LIBRARIAN_SCOPE)
+
+                        .requestMatchers(HttpMethod.GET, "/authors/**").hasAuthority("SCOPE_" + USER_SCOPE)
+                        .requestMatchers(HttpMethod.POST, "/authors/**").hasAuthority("SCOPE_" + LIBRARIAN_SCOPE)
+                        .requestMatchers(HttpMethod.PUT, "/authors/**").hasAuthority("SCOPE_" + LIBRARIAN_SCOPE)
+                        .requestMatchers(HttpMethod.DELETE, "/authors/**").hasAuthority("SCOPE_" + LIBRARIAN_SCOPE)
                         .anyRequest().permitAll()
                 )
                 .oauth2ResourceServer(OAuth2ResourceServerConfigurer::opaqueToken)
