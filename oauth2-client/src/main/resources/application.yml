@@ -16,9 +16,6 @@ spring:
               - openid
               - test_1
               - test_2
-              - test_3
-              - test_4
-              - test_5
             redirect-uri: "http://localhost:8084/login/oauth2/code/muni"
         provider:
           muni:
