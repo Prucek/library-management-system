@@ -27,11 +27,14 @@ server:
   error:
     include-message: always
 
-  springdoc:
-    api-docs:
-      path: /openapi
-    swagger-ui:
-      path: /swagger-ui.html
+springdoc:
+  api-docs:
+    path: /openapi
+  swagger-ui:
+    path: /swagger-ui.html
+    oauth:
+      clientId: 7e02a0a9-446a-412d-ad2b-90add47b0fdd
+      clientSecret: 48a2b2e3-4b2b-471e-b7b7-b81a85b6eeef22f347f2-3fc9-4e16-8698-3e2492701a89
 
   logging:
     pattern:
