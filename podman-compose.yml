@@ -46,5 +46,35 @@ services:
       - "8083:8080"
     networks:
       - library-net
+  prometheus:
+    restart: on-failure
+    image: prom/prometheus:latest
+    depends_on:
+      - library-management
+      - payment-gate
+      - reporting
+      - self-service-kiosk
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+    networks:
+      - library-net
+  grafana:
+    restart: on-failure
+    image: grafana/grafana-enterprise:latest
+    depends_on:
+      - prometheus
+    ports:
+      - "3000:3000"
+    networks:
+      - library-net
+    volumes:
+      - ./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
+      - ./grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
+    environment:
+      GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH: "/etc/grafana/provisioning/dashboards/grafana-dashboard.json"
 networks:
   library-net:
