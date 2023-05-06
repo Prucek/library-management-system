@@ -1,33 +1,32 @@
-global:
-  scrape_interval: 10s
-  evaluation_interval: 10s
 
 scrape_configs:
-  - job_name: 'prometheus'
-    static_configs:
-      - targets: ['localhost:9090']
 
   - job_name: 'library-management'
     metrics_path: '/actuator/prometheus'
-    scrape_interval: 5s
+    scrape_interval: 15s
     static_configs:
-      - targets: ['localhost:8080']
+      - targets:
+          - library-management:8080
 
   - job_name: 'payment-gate'
     metrics_path: '/actuator/prometheus'
-    scrape_interval: 5s
+    scrape_interval: 15s
     static_configs:
-      - targets: ['localhost:8081']
+      - targets:
+          - payment-gate:8080
 
   - job_name: 'reporting'
     metrics_path: '/actuator/prometheus'
-    scrape_interval: 5s
+    scrape_interval: 15s
     static_configs:
-      - targets: ['localhost:8082']
+      - targets:
+          - reporting:8080
+#          - fff7069de261
 
   - job_name: 'self-service-kiosk'
     metrics_path: '/actuator/prometheus'
-    scrape_interval: 5s
+    scrape_interval: 15s
     static_configs:
-      - targets: ['localhost:8083']
+      - targets:
+          - self-service-kiosk:8080
 

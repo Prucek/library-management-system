@@ -1,6 +1,7 @@
 version: "3.9"
 services:
   library-management:
+    container_name: library-management
     restart: on-failure
     image: quay.io/juraj_marcin/pa165-library-management-system:latest
     build: .
@@ -13,6 +14,7 @@ services:
     networks:
       - library-net
   payment-gate:
+    container_name: payment-gate
     restart: on-failure
     image: quay.io/juraj_marcin/pa165-library-management-system:latest
     build: .
@@ -23,6 +25,7 @@ services:
     networks:
       - library-net
   reporting:
+    container_name: reporting
     restart: on-failure
     image: quay.io/juraj_marcin/pa165-library-management-system:latest
     build: .
@@ -35,6 +38,7 @@ services:
     networks:
       - library-net
   self-service-kiosk:
+    container_name: self-service-kiosk
     restart: on-failure
     image: quay.io/juraj_marcin/pa165-library-management-system:latest
     build: .
@@ -47,6 +51,7 @@ services:
     networks:
       - library-net
   prometheus:
+    container_name: prometheus
     restart: on-failure
     image: prom/prometheus:latest
     depends_on:
@@ -63,18 +68,20 @@ services:
     networks:
       - library-net
   grafana:
+    container_name: grafana
     restart: on-failure
     image: grafana/grafana-enterprise:latest
     depends_on:
       - prometheus
     ports:
       - "3000:3000"
-    networks:
-      - library-net
     volumes:
-      - ./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
-      - ./grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
+      - ./grafana/provisioning/datasources/prometheus-datasource.yml:/etc/grafana/provisioning/datasources/prometheus-datasource.yml
+      - ./grafana/provisioning/dashboards/grafana-dashboard.json:/etc/grafana/provisioning/dashboards/grafana-dashboard.json
+      - ./grafana/provisioning/dashboards/grafana-dashboard.yml:/etc/grafana/provisioning/dashboards/grafana-dashboard.yml
     environment:
       GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH: "/etc/grafana/provisioning/dashboards/grafana-dashboard.json"
+    networks:
+      - library-net
 networks:
   library-net:
