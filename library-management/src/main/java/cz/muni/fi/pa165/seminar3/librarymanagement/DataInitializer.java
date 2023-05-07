@@ -4,6 +4,7 @@ import cz.muni.fi.pa165.seminar3.librarymanagement.address.Address;
 import cz.muni.fi.pa165.seminar3.librarymanagement.author.Author;
 import cz.muni.fi.pa165.seminar3.librarymanagement.author.AuthorService;
 import cz.muni.fi.pa165.seminar3.librarymanagement.book.Book;
+import cz.muni.fi.pa165.seminar3.librarymanagement.book.BookInstance;
 import cz.muni.fi.pa165.seminar3.librarymanagement.book.BookService;
 import cz.muni.fi.pa165.seminar3.librarymanagement.borrowing.Borrowing;
 import cz.muni.fi.pa165.seminar3.librarymanagement.borrowing.BorrowingService;
@@ -89,10 +90,36 @@ public class DataInitializer implements ApplicationRunner {
 
         userService.create(user);
 
+        Author author = Author.builder().name("John").surname("Wick").build();
+        Author author2 = Author.builder().name("Stephan").surname("Hawking").build();
+        Author author3 = Author.builder().name("Janis").surname("Smith").build();
+        Author author4 = Author.builder().name("Alois").surname("Jirasek").build();
+
+        authorService.create(author);
+        authorService.create(author2);
+        authorService.create(author3);
+        authorService.create(author4);
+
+        Book book1 = Book.builder().title("Sloni žerou medvědy").author(author).author(author2).build();
+        Book book2 = Book.builder().title("Povidky Malostranske").author(author3).build();
+        Book book3 = Book.builder().title("Outcast").author(author4).build();
+
+        bookService.create(book1);
+        bookService.create(book2);
+        bookService.create(book3);
+
+        BookInstance book1instance = bookService.addInstance(book1.getId());
+        bookService.addInstance(book1.getId());
+        bookService.addInstance(book2.getId());
+        bookService.addInstance(book2.getId());
+        bookService.addInstance(book3.getId());
+
         Borrowing borrowing = Borrowing.builder()
-                .from(LocalDateTime.now().minusDays(60))
-                .to(LocalDateTime.now().minusDays(30))
+                .from(LocalDateTime.now().minusDays(40))
+                .to(LocalDateTime.now().minusDays(10))
+                .returned(LocalDateTime.now())
                 .user(user)
+                .bookInstance(book1instance)
                 .build();
 
         borrowingService.create(borrowing);
@@ -101,6 +128,7 @@ public class DataInitializer implements ApplicationRunner {
                 .from(LocalDateTime.now())
                 .to(LocalDateTime.now().plus(10, ChronoUnit.DAYS))
                 .user(user)
+                .book(book2)
                 .build();
 
         reservationService.create(reservation);
