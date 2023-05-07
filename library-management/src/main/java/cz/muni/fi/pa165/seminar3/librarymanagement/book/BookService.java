@@ -1,7 +1,7 @@
 package cz.muni.fi.pa165.seminar3.librarymanagement.book;
 
 import cz.muni.fi.pa165.seminar3.librarymanagement.common.DomainService;
-import jakarta.persistence.EntityNotFoundException;
+import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.exceptions.NotFoundException;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -35,7 +35,7 @@ public class BookService extends DomainService<Book> {
 
     public BookInstance getInstance(String instanceId) {
         return instanceRepository.findById(instanceId)
-                .orElseThrow(() -> new EntityNotFoundException("Book instance not found"));
+                .orElseThrow(() -> new NotFoundException("Book instance not found"));
     }
 
     public void removeInstance(BookInstance bookInstance) {

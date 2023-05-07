@@ -1,5 +1,6 @@
 package cz.muni.fi.pa165.seminar3.reporting.service;
 
+import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.ErrorMessage;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.reporting.BookReportDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.reporting.FinanceReportDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.reporting.UserReportDto;

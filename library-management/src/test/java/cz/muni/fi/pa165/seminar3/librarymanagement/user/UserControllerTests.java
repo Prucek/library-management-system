@@ -18,10 +18,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.javafaker.Faker;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.common.Result;
+import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.exceptions.NotFoundException;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.user.UserCreateDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.user.UserDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.user.UserType;
-import jakarta.persistence.EntityNotFoundException;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -86,7 +86,7 @@ public class UserControllerTests {
     public void createEntityNotFound() throws Exception {
         UserDto userDto = fakeUserDto(faker, null);
         // mock facade
-        given(userFacade.create(any(UserCreateDto.class))).willThrow(EntityNotFoundException.class);
+        given(userFacade.create(any(UserCreateDto.class))).willThrow(NotFoundException.class);
 
         // perform test
         mockMvc.perform(post("/users").contentType(MediaType.APPLICATION_JSON)
@@ -165,7 +165,7 @@ public class UserControllerTests {
     public void findNotFound() throws Exception {
         String userId = UUID.randomUUID().toString();
         // mock facade
-        given(userFacade.find(userId)).willThrow(EntityNotFoundException.class);
+        given(userFacade.find(userId)).willThrow(NotFoundException.class);
 
         // perform test
         mockMvc.perform(get("/users/" + userId).with(csrf())).andExpect(status().isNotFound());
@@ -202,7 +202,7 @@ public class UserControllerTests {
     public void updateNotFound() throws Exception {
         UserDto user = fakeUserDto(faker, UserType.CLIENT);
         // mock facade
-        given(userFacade.update(eq(user.getId()), any())).willThrow(EntityNotFoundException.class);
+        given(userFacade.update(eq(user.getId()), any())).willThrow(NotFoundException.class);
 
         // perform test
         mockMvc.perform(put("/users/" + user.getId()).contentType(MediaType.APPLICATION_JSON).with(csrf())
@@ -224,7 +224,7 @@ public class UserControllerTests {
     @WithMockUser(authorities = "SCOPE_" + USER_SCOPE)
     public void deleteNotFound() throws Exception {
         // mock services
-        doThrow(EntityNotFoundException.class).when(userFacade).delete(any());
+        doThrow(NotFoundException.class).when(userFacade).delete(any());
 
         // perform test
         mockMvc.perform(delete("/users/" + UUID.randomUUID()).with(csrf())).andExpect(status().isNotFound());

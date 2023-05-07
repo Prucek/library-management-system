@@ -6,9 +6,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.github.javafaker.Faker;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.address.AddressDto;
+import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.exceptions.NotFoundException;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.user.UserCreateDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.user.UserDto;
-import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -123,7 +123,7 @@ public class UserFacadeImplTests {
     public void updateFineNonExistentId() {
 
         UserCreateDto fineCreateDto = UserCreateDto.builder().build();
-        assertThrows(EntityNotFoundException.class, () -> userFacade.update("non-existent", fineCreateDto));
+        assertThrows(NotFoundException.class, () -> userFacade.update("non-existent", fineCreateDto));
     }
 
     @Test
@@ -146,7 +146,7 @@ public class UserFacadeImplTests {
     @Test
     public void deleteFineNonExistentId() {
 
-        assertThrows(EntityNotFoundException.class, () -> userFacade.delete("non-existent"));
+        assertThrows(NotFoundException.class, () -> userFacade.delete("non-existent"));
     }
 
     private UserDto createUser() {

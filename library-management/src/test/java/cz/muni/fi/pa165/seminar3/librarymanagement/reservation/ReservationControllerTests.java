@@ -20,9 +20,9 @@ import com.github.javafaker.Faker;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.borrowing.BorrowingCreateDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.borrowing.BorrowingDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.common.Result;
+import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.exceptions.NotFoundException;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.reservation.ReservationDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.user.UserDto;
-import jakarta.persistence.EntityNotFoundException;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,7 +67,7 @@ public class ReservationControllerTests {
     @WithMockUser(authorities = "SCOPE_" + USER_SCOPE)
     public void findNotFound() throws Exception {
         // mock facade
-        given(reservationFacade.find(any())).willThrow(EntityNotFoundException.class);
+        given(reservationFacade.find(any())).willThrow(NotFoundException.class);
 
         // perform test
         mockMvc.perform(get("/reservations/" + UUID.randomUUID()).with(csrf())).andExpect(status().isNotFound());
@@ -129,7 +129,7 @@ public class ReservationControllerTests {
     @WithMockUser(authorities = "SCOPE_" + USER_SCOPE)
     public void deleteNotFound() throws Exception {
         // mock facade
-        doThrow(EntityNotFoundException.class).when(reservationFacade).deleteReservation(any());
+        doThrow(NotFoundException.class).when(reservationFacade).deleteReservation(any());
 
         // perform test
         mockMvc.perform(delete("/reservations/" + UUID.randomUUID()).with(csrf())).andExpect(status().isNotFound());

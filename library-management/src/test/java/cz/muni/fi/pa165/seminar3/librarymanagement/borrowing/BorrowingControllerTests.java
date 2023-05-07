@@ -21,8 +21,8 @@ import com.github.javafaker.Faker;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.borrowing.BorrowingCreateDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.borrowing.BorrowingDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.common.Result;
+import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.exceptions.NotFoundException;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.user.UserDto;
-import jakarta.persistence.EntityNotFoundException;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,7 +67,7 @@ public class BorrowingControllerTests {
     @WithMockUser(authorities = "SCOPE_" + USER_SCOPE)
     public void findNotFound() throws Exception {
         // mock facade
-        given(borrowingFacade.find(any())).willThrow(EntityNotFoundException.class);
+        given(borrowingFacade.find(any())).willThrow(NotFoundException.class);
 
         // perform test
         mockMvc.perform(get("/borrowings/" + UUID.randomUUID()).with(csrf())).andExpect(status().isNotFound());
@@ -129,7 +129,7 @@ public class BorrowingControllerTests {
     @WithMockUser(authorities = "SCOPE_" + LIBRARIAN_SCOPE)
     public void deleteNotFound() throws Exception {
         // mock facade
-        doThrow(EntityNotFoundException.class).when(borrowingFacade).deleteBorrowing(any());
+        doThrow(NotFoundException.class).when(borrowingFacade).deleteBorrowing(any());
 
         // perform test
         mockMvc.perform(delete("/borrowings/" + UUID.randomUUID()).with(csrf())).andExpect(status().isNotFound());

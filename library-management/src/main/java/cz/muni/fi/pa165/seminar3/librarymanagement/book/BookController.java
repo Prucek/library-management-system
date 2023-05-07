@@ -6,7 +6,7 @@ import static cz.muni.fi.pa165.seminar3.librarymanagement.LibraryManagementAppli
 import static cz.muni.fi.pa165.seminar3.librarymanagement.LibraryManagementApplication.SECURITY_SCHEME_BEARER;
 import static cz.muni.fi.pa165.seminar3.librarymanagement.LibraryManagementApplication.SECURITY_SCHEME_OAUTH2;
 
-import cz.muni.fi.pa165.seminar3.librarymanagement.common.ErrorMessage;
+import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.ErrorMessage;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.book.BookCreateDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.book.BookDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.book.BookInstanceDto;
@@ -16,7 +16,6 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -30,7 +29,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
 
 /**
  * Spring REST Controller for books.
@@ -60,11 +58,7 @@ public class BookController {
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
     @GetMapping("/{id}")
     public BookDto find(@PathVariable String id) {
-        try {
-            return facade.find(id);
-        } catch (EntityNotFoundException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "book with id=" + id + " not found");
-        }
+        return facade.find(id);
     }
 
     /**
@@ -97,13 +91,7 @@ public class BookController {
             content = @Content())
     @ResponseStatus(HttpStatus.CREATED)
     public BookDto create(@RequestBody BookCreateDto dto) {
-        try {
-            return facade.create(dto);
-        } catch (ResponseStatusException e) {
-            throw new ResponseStatusException(e.getStatusCode(), e.toString());
-        } catch (EntityNotFoundException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.toString());
-        }
+        return facade.create(dto);
     }
 
     /**
@@ -120,11 +108,7 @@ public class BookController {
             content = @Content())
     @DeleteMapping("/{id}")
     public void delete(@PathVariable String id) {
-        try {
-            facade.delete(id);
-        } catch (EntityNotFoundException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.toString());
-        }
+        facade.delete(id);
     }
 
     /**
@@ -138,11 +122,7 @@ public class BookController {
             content = @Content())
     @PutMapping("/{id}")
     public BookDto update(@PathVariable String id, @RequestBody BookCreateDto dto) {
-        try {
-            return facade.update(id, dto);
-        } catch (EntityNotFoundException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.toString());
-        }
+        return facade.update(id, dto);
     }
 
     /**
@@ -158,11 +138,7 @@ public class BookController {
             content = @Content())
     @PostMapping("/{bookId}/instances")
     public BookInstanceDto addInstance(@PathVariable String bookId) {
-        try {
-            return facade.addInstance(bookId);
-        } catch (EntityNotFoundException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.toString());
-        }
+        return facade.addInstance(bookId);
     }
 
     /**
@@ -178,11 +154,7 @@ public class BookController {
             content = @Content())
     @DeleteMapping("/instances/{id}")
     public void removeInstance(@PathVariable String id) {
-        try {
-            facade.removeInstance(id);
-        } catch (EntityNotFoundException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.toString());
-        }
+        facade.removeInstance(id);
     }
 
     /**
@@ -194,10 +166,6 @@ public class BookController {
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
     @GetMapping("/instances/{id}")
     public BookInstanceDto getInstance(@PathVariable String id) {
-        try {
-            return facade.getInstance(id);
-        } catch (EntityNotFoundException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "book instance with id=" + id + " not found");
-        }
+        return facade.getInstance(id);
     }
 }

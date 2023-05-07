@@ -17,9 +17,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.javafaker.Faker;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.common.DomainObjectDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.common.Result;
+import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.exceptions.NotFoundException;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.payment.PaymentCreateDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.payment.PaymentDto;
-import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
@@ -69,7 +69,7 @@ public class PaymentControllerTests {
     @WithMockUser(authorities = "SCOPE_" + USER_SCOPE)
     public void createNotFound() throws Exception {
         // mock facade
-        given(paymentFacade.create(any())).willThrow(EntityNotFoundException.class);
+        given(paymentFacade.create(any())).willThrow(NotFoundException.class);
 
         // perform test
         mockMvc.perform(post("/payments").contentType(MediaType.APPLICATION_JSON).with(csrf())
@@ -98,7 +98,7 @@ public class PaymentControllerTests {
     @WithMockUser(authorities = "SCOPE_" + USER_SCOPE)
     public void paymentGateCallbackNotFound() throws Exception {
         // mock facade
-        given(paymentFacade.finalizePayment(any())).willThrow(EntityNotFoundException.class);
+        given(paymentFacade.finalizePayment(any())).willThrow(NotFoundException.class);
 
         // perform test
         mockMvc.perform(post("/payments/" + UUID.randomUUID()).with(csrf())).andExpect(status().isNotFound());
@@ -142,7 +142,7 @@ public class PaymentControllerTests {
     @WithMockUser(authorities = "SCOPE_" + USER_SCOPE)
     public void findNotFound() throws Exception {
         // mock facade
-        given(paymentFacade.find(any())).willThrow(EntityNotFoundException.class);
+        given(paymentFacade.find(any())).willThrow(NotFoundException.class);
 
         // perform test
         mockMvc.perform(get("/payments/" + UUID.randomUUID()).with(csrf())).andExpect(status().isNotFound());

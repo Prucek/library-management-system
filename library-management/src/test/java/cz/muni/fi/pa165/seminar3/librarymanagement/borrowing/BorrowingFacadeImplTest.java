@@ -13,10 +13,10 @@ import cz.muni.fi.pa165.seminar3.librarymanagement.book.BookInstance;
 import cz.muni.fi.pa165.seminar3.librarymanagement.book.BookService;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.borrowing.BorrowingCreateDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.borrowing.BorrowingDto;
+import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.exceptions.NotFoundException;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.user.UserType;
 import cz.muni.fi.pa165.seminar3.librarymanagement.user.User;
 import cz.muni.fi.pa165.seminar3.librarymanagement.user.UserService;
-import jakarta.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -161,7 +161,7 @@ public class BorrowingFacadeImplTest {
 
     @Test
     public void deleteBorrowingNotFound() {
-        assertThrows(EntityNotFoundException.class, () -> borrowingFacade.deleteBorrowing("non-existing"));
+        assertThrows(NotFoundException.class, () -> borrowingFacade.deleteBorrowing("non-existing"));
     }
 
     Borrowing createBorrowing() {

@@ -1,5 +1,6 @@
 package cz.muni.fi.pa165.seminar3.paymentgate.transaction;
 
+import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.ErrorMessage;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.common.Result;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.paymentgate.CardDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.paymentgate.TransactionCreateDto;
@@ -8,7 +9,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -76,11 +76,7 @@ public class TransactionController {
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
     @GetMapping("/{id}")
     public TransactionDto find(@PathVariable String id) {
-        try {
-            return service.find(id);
-        } catch (EntityNotFoundException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "transaction with id=" + id + " not found");
-        }
+        return service.find(id);
     }
 
     /**
@@ -94,11 +90,6 @@ public class TransactionController {
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
     @PostMapping("/{id}")
     public TransactionDto pay(@PathVariable String id, @RequestBody CardDto cardDto) {
-        try {
-            return service.pay(id, cardDto);
-
-        } catch (EntityNotFoundException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "transaction with id=" + id + " not found");
-        }
+        return service.pay(id, cardDto);
     }
 }
