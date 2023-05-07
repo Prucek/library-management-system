@@ -1,7 +1,6 @@
 version: "3.9"
 services:
   library-management:
-    container_name: library-management
     restart: on-failure
     image: quay.io/juraj_marcin/pa165-library-management-system:latest
     build: .
@@ -14,7 +13,6 @@ services:
     networks:
       - library-net
   payment-gate:
-    container_name: payment-gate
     restart: on-failure
     image: quay.io/juraj_marcin/pa165-library-management-system:latest
     build: .
@@ -25,7 +23,6 @@ services:
     networks:
       - library-net
   reporting:
-    container_name: reporting
     restart: on-failure
     image: quay.io/juraj_marcin/pa165-library-management-system:latest
     build: .
@@ -38,7 +35,6 @@ services:
     networks:
       - library-net
   self-service-kiosk:
-    container_name: self-service-kiosk
     restart: on-failure
     image: quay.io/juraj_marcin/pa165-library-management-system:latest
     build: .
@@ -51,7 +47,6 @@ services:
     networks:
       - library-net
   prometheus:
-    container_name: prometheus
     restart: on-failure
     image: prom/prometheus:latest
     depends_on:
@@ -60,7 +55,7 @@ services:
       - reporting
       - self-service-kiosk
     volumes:
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:Z
     command:
       - --config.file=/etc/prometheus/prometheus.yml
     ports:
@@ -68,7 +63,6 @@ services:
     networks:
       - library-net
   grafana:
-    container_name: grafana
     restart: on-failure
     image: grafana/grafana-enterprise:latest
     depends_on:
@@ -76,9 +70,9 @@ services:
     ports:
       - "3000:3000"
     volumes:
-      - ./grafana/provisioning/datasources/prometheus-datasource.yml:/etc/grafana/provisioning/datasources/prometheus-datasource.yml
-      - ./grafana/provisioning/dashboards/grafana-dashboard.json:/etc/grafana/provisioning/dashboards/grafana-dashboard.json
-      - ./grafana/provisioning/dashboards/grafana-dashboard.yml:/etc/grafana/provisioning/dashboards/grafana-dashboard.yml
+      - ./grafana/provisioning/datasources/prometheus-datasource.yml:/etc/grafana/provisioning/datasources/prometheus-datasource.yml:Z
+      - ./grafana/provisioning/dashboards/grafana-dashboard.json:/etc/grafana/provisioning/dashboards/grafana-dashboard.json:Z
+      - ./grafana/provisioning/dashboards/grafana-dashboard.yml:/etc/grafana/provisioning/dashboards/grafana-dashboard.yml:Z
     environment:
       GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH: "/etc/grafana/provisioning/dashboards/grafana-dashboard.json"
     networks:
