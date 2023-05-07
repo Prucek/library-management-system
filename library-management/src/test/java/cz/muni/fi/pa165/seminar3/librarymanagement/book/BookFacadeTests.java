@@ -16,7 +16,7 @@ import cz.muni.fi.pa165.seminar3.librarymanagement.author.AuthorService;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.book.BookCreateDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.book.BookDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.book.BookInstanceDto;
-import jakarta.persistence.EntityNotFoundException;
+import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.exceptions.NotFoundException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -77,10 +77,10 @@ public class BookFacadeTests {
         Book book = fakeBook(faker);
 
         // mock services
-        given(bookService.find(eq(book.getId()))).willThrow(EntityNotFoundException.class);
+        given(bookService.find(eq(book.getId()))).willThrow(NotFoundException.class);
 
         // perform test
-        assertThrows(EntityNotFoundException.class, () -> bookFacade.delete(book.getId()));
+        assertThrows(NotFoundException.class, () -> bookFacade.delete(book.getId()));
     }
 
     @Test
@@ -111,10 +111,10 @@ public class BookFacadeTests {
         newBook.setId(book.getId());
 
         // mock services
-        given(bookService.find(eq(book.getId()))).willThrow(EntityNotFoundException.class);
+        given(bookService.find(eq(book.getId()))).willThrow(NotFoundException.class);
 
         // perform test
-        assertThrows(EntityNotFoundException.class, () -> bookFacade.delete(book.getId()));
+        assertThrows(NotFoundException.class, () -> bookFacade.delete(book.getId()));
     }
 
     @Test

@@ -18,7 +18,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.javafaker.Faker;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.author.AuthorCreateDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.author.AuthorDto;
-import jakarta.persistence.EntityNotFoundException;
+import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.exceptions.NotFoundException;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,7 +81,7 @@ public class AuthorControllerTests {
     void findAuthorNotFound() throws Exception {
         String authorId = UUID.randomUUID().toString();
 
-        given(authorFacade.find(authorId)).willThrow(EntityNotFoundException.class);
+        given(authorFacade.find(authorId)).willThrow(NotFoundException.class);
 
         mockMvc.perform(get("/authors/" + authorId)).andExpect(status().isNotFound());
     }
@@ -99,7 +99,7 @@ public class AuthorControllerTests {
     void deleteAuthorNotFound() throws Exception {
         String authorId = UUID.randomUUID().toString();
 
-        doThrow(EntityNotFoundException.class).when(authorFacade).delete(any());
+        doThrow(NotFoundException.class).when(authorFacade).delete(any());
 
         mockMvc.perform(delete("/authors/" + authorId)).andExpect(status().isNotFound());
     }
@@ -128,7 +128,7 @@ public class AuthorControllerTests {
         AuthorCreateDto createDto =
                 AuthorCreateDto.builder().name(authorDto.getName()).surname(authorDto.getSurname()).build();
 
-        given(authorFacade.update(eq(authorDto.getId()), any())).willThrow(EntityNotFoundException.class);
+        given(authorFacade.update(eq(authorDto.getId()), any())).willThrow(NotFoundException.class);
 
         mockMvc.perform(put("/authors/" + authorDto.getId()).contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(createDto))).andExpect(status().isNotFound());

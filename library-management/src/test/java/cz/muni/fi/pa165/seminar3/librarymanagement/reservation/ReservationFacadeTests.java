@@ -14,12 +14,12 @@ import static org.mockito.Mockito.verify;
 import com.github.javafaker.Faker;
 import cz.muni.fi.pa165.seminar3.librarymanagement.book.Book;
 import cz.muni.fi.pa165.seminar3.librarymanagement.book.BookService;
+import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.exceptions.NotFoundException;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.reservation.ReservationCreateDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.reservation.ReservationDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.user.UserType;
 import cz.muni.fi.pa165.seminar3.librarymanagement.user.User;
 import cz.muni.fi.pa165.seminar3.librarymanagement.user.UserService;
-import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -76,10 +76,10 @@ public class ReservationFacadeTests {
 
         // mock services
         given(userService.find(eq(user.getId()))).willReturn(user);
-        given(bookService.find(eq(book.getId()))).willThrow(EntityNotFoundException.class);
+        given(bookService.find(eq(book.getId()))).willThrow(NotFoundException.class);
 
         // perform test
-        assertThrows(EntityNotFoundException.class, () -> reservationFacade.create(ReservationCreateDto.builder()
+        assertThrows(NotFoundException.class, () -> reservationFacade.create(ReservationCreateDto.builder()
                 .from(reservation.getFrom())
                 .to(reservation.getTo())
                 .issuerId(user.getId())
@@ -94,11 +94,11 @@ public class ReservationFacadeTests {
         Reservation reservation = fakeReservation(faker);
 
         // mock services
-        given(userService.find(eq(user.getId()))).willThrow(EntityNotFoundException.class);
+        given(userService.find(eq(user.getId()))).willThrow(NotFoundException.class);
         given(bookService.find(eq(book.getId()))).willReturn(book);
 
         // perform test
-        assertThrows(EntityNotFoundException.class, () -> reservationFacade.create(ReservationCreateDto.builder()
+        assertThrows(NotFoundException.class, () -> reservationFacade.create(ReservationCreateDto.builder()
                 .from(reservation.getFrom())
                 .to(reservation.getTo())
                 .issuerId(user.getId())
@@ -140,11 +140,11 @@ public class ReservationFacadeTests {
 
         // mock services
         given(userService.find(eq(user.getId()))).willReturn(user);
-        given(bookService.find(eq(book.getId()))).willThrow(EntityNotFoundException.class);
+        given(bookService.find(eq(book.getId()))).willThrow(NotFoundException.class);
         given(reservationService.find(eq(reservation.getId()))).willReturn(reservation);
 
         // perform test
-        assertThrows(EntityNotFoundException.class, () -> reservationFacade.updateReservation(reservation.getId(),
+        assertThrows(NotFoundException.class, () -> reservationFacade.updateReservation(reservation.getId(),
                 ReservationCreateDto.builder()
                         .from(reservation.getFrom())
                         .to(reservation.getTo())
@@ -160,12 +160,12 @@ public class ReservationFacadeTests {
         Reservation reservation = fakeReservation(faker);
 
         // mock services
-        given(userService.find(eq(user.getId()))).willThrow(EntityNotFoundException.class);
+        given(userService.find(eq(user.getId()))).willThrow(NotFoundException.class);
         given(bookService.find(eq(book.getId()))).willReturn(book);
         given(reservationService.find(eq(reservation.getId()))).willReturn(reservation);
 
         // perform test
-        assertThrows(EntityNotFoundException.class, () -> reservationFacade.updateReservation(reservation.getId(),
+        assertThrows(NotFoundException.class, () -> reservationFacade.updateReservation(reservation.getId(),
                 ReservationCreateDto.builder()
                         .from(reservation.getFrom())
                         .to(reservation.getTo())
@@ -183,10 +183,10 @@ public class ReservationFacadeTests {
         // mock services
         given(userService.find(eq(user.getId()))).willReturn(user);
         given(bookService.find(eq(book.getId()))).willReturn(book);
-        given(reservationService.find(eq(reservation.getId()))).willThrow(EntityNotFoundException.class);
+        given(reservationService.find(eq(reservation.getId()))).willThrow(NotFoundException.class);
 
         // perform test
-        assertThrows(EntityNotFoundException.class, () -> reservationFacade.updateReservation(reservation.getId(),
+        assertThrows(NotFoundException.class, () -> reservationFacade.updateReservation(reservation.getId(),
                 ReservationCreateDto.builder()
                         .from(reservation.getFrom())
                         .to(reservation.getTo())
@@ -212,9 +212,9 @@ public class ReservationFacadeTests {
         Reservation reservation = fakeReservation(faker);
 
         // mock services
-        given(reservationService.find(eq(reservation.getId()))).willThrow(EntityNotFoundException.class);
+        given(reservationService.find(eq(reservation.getId()))).willThrow(NotFoundException.class);
 
         // perform test
-        assertThrows(EntityNotFoundException.class, () -> reservationFacade.deleteReservation(reservation.getId()));
+        assertThrows(NotFoundException.class, () -> reservationFacade.deleteReservation(reservation.getId()));
     }
 }

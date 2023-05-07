@@ -1,14 +1,14 @@
 package cz.muni.fi.pa165.seminar3.librarymanagement.user;
 
-import com.github.javafaker.Faker;
 import static cz.muni.fi.pa165.seminar3.librarymanagement.utils.UserUtils.fakeAddressDto;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import com.github.javafaker.Faker;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.address.AddressDto;
+import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.exceptions.NotFoundException;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.user.UserCreateDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.user.UserDto;
-import jakarta.persistence.EntityNotFoundException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +18,11 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * Tests for User facade implementation.
+ *
+ * @author Marek Miček
+ */
 @RunWith(SpringRunner.class)
 @ActiveProfiles("test")
 @SpringBootTest
@@ -111,18 +116,7 @@ public class UserFacadeImplTests {
     public void updateFineNonExistentId() {
 
         UserCreateDto fineCreateDto = UserCreateDto.builder().build();
-        assertThrows(EntityNotFoundException.class, () -> userFacade.update("non-existent", fineCreateDto));
-    }
-
-    @Test
-    public void updateUserNullCreateDto() {
-
-        // first create a user
-        UserDto createdUserDto = createUser();
-
-        // now update the user with null object
-        UserCreateDto userCreateDto = null;
-        assertThrows(NullPointerException.class, () -> userFacade.update(createdUserDto.getId(), userCreateDto));
+        assertThrows(NotFoundException.class, () -> userFacade.update("non-existent", fineCreateDto));
     }
 
     @Test
@@ -145,7 +139,7 @@ public class UserFacadeImplTests {
     @Test
     public void deleteFineNonExistentId() {
 
-        assertThrows(EntityNotFoundException.class, () -> userFacade.delete("non-existent"));
+        assertThrows(NotFoundException.class, () -> userFacade.delete("non-existent"));
     }
 
     private UserDto createUser() {

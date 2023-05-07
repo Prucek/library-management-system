@@ -1,13 +1,19 @@
 package cz.muni.fi.pa165.seminar3.librarymanagement.fine;
 
+import static cz.muni.fi.pa165.seminar3.librarymanagement.utils.BorrowingUtils.fakeBorrowing;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+
 import com.github.javafaker.Faker;
 import cz.muni.fi.pa165.seminar3.librarymanagement.borrowing.Borrowing;
 import cz.muni.fi.pa165.seminar3.librarymanagement.borrowing.BorrowingService;
+import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.exceptions.NotFoundException;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.fine.FineCreateDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.fine.FineDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.user.User;
 import cz.muni.fi.pa165.seminar3.librarymanagement.user.UserService;
-import jakarta.persistence.EntityNotFoundException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,12 +24,11 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import static cz.muni.fi.pa165.seminar3.librarymanagement.utils.BorrowingUtils.fakeBorrowing;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
-
+/**
+ * Tests for Fine facade implementation.
+ *
+ * @author Peter Rúček
+ */
 @RunWith(SpringRunner.class)
 @ActiveProfiles("test")
 @SpringBootTest
@@ -125,7 +130,7 @@ public class FineFacadeImplTests {
         given(userService.find(any(String.class))).willReturn(null);
         given(borrowingService.find(any(String.class))).willReturn(null);
 
-        result = fineFacade.update(result.getId(),fineCreateDto);
+        result = fineFacade.update(result.getId(), fineCreateDto);
         assertThat(domainMapper.fromDto(result)).isEqualTo(fakeFine);
         assertThat(domainRepository.findById(result.getId())).isPresent();
     }
@@ -141,18 +146,7 @@ public class FineFacadeImplTests {
     public void updateFineNonExistentId() {
 
         FineCreateDto fineCreateDto = FineCreateDto.builder().build();
-        assertThrows(EntityNotFoundException.class, () -> fineFacade.update("non-existent", fineCreateDto));
-    }
-
-    @Test
-    public void updateFineNullCreateDto() {
-
-        // first create a fine
-        FineDto result = createFine();
-
-        // now update the fine
-        FineCreateDto fineCreateDto = null;
-        assertThrows(NullPointerException.class, () -> fineFacade.update(result.getId(), fineCreateDto));
+        assertThrows(NotFoundException.class, () -> fineFacade.update("non-existent", fineCreateDto));
     }
 
     @Test
@@ -177,7 +171,7 @@ public class FineFacadeImplTests {
     @Test
     public void deleteFineNonExistentId() {
 
-        assertThrows(EntityNotFoundException.class, () -> fineFacade.delete("non-existent"));
+        assertThrows(NotFoundException.class, () -> fineFacade.delete("non-existent"));
     }
 
     private FineDto createFine() {

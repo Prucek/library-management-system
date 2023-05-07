@@ -1,6 +1,6 @@
 package cz.muni.fi.pa165.seminar3.librarymanagement.fine;
 
-import cz.muni.fi.pa165.seminar3.librarymanagement.common.ErrorMessage;
+import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.ErrorMessage;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.common.Result;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.fine.FineCreateDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.fine.FineDto;
@@ -8,7 +8,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -20,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
 
 /**
  * Fines REST controller.
@@ -58,11 +56,7 @@ public class FineController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public FineDto create(@RequestBody FineCreateDto fineCreateDto) {
-        try {
-            return fineFacade.create(fineCreateDto);
-        } catch (EntityNotFoundException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.toString());
-        }
+        return fineFacade.create(fineCreateDto);
     }
 
     /**
@@ -92,11 +86,7 @@ public class FineController {
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
     @GetMapping(path = "{id}")
     public FineDto find(@PathVariable String id) {
-        try {
-            return fineFacade.find(id);
-        } catch (EntityNotFoundException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("Fine %s not found", id));
-        }
+        return fineFacade.find(id);
     }
 
     /**
@@ -114,11 +104,7 @@ public class FineController {
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
     @PutMapping(path = "{id}")
     public FineDto update(@PathVariable String id, @RequestBody FineCreateDto fineCreateDto) {
-        try {
-            return fineFacade.update(id, fineCreateDto);
-        } catch (EntityNotFoundException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.toString());
-        }
+        return fineFacade.update(id, fineCreateDto);
     }
 
     /**
@@ -133,10 +119,6 @@ public class FineController {
     @DeleteMapping(path = "{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable String id) {
-        try {
-            fineFacade.delete(id);
-        } catch (EntityNotFoundException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.toString());
-        }
+        fineFacade.delete(id);
     }
 }

@@ -1,6 +1,6 @@
 package cz.muni.fi.pa165.seminar3.librarymanagement.common;
 
-import jakarta.persistence.EntityNotFoundException;
+import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.exceptions.NotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -54,11 +54,11 @@ public abstract class DomainService<T extends DomainObject> {
      *
      * @param id id to search for
      * @return found entity
-     * @throws EntityNotFoundException if the id was not found
+     * @throws NotFoundException if the id was not found
      */
-    public T find(String id) throws EntityNotFoundException {
+    public T find(String id) throws NotFoundException {
         return getRepository().findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(String.format("ID %s not found", id)));
+                .orElseThrow(() -> new NotFoundException(String.format("ID %s not found", id)));
     }
 
     public Page<T> findAll(Pageable pageable) {

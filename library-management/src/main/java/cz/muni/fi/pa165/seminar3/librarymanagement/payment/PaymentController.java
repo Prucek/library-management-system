@@ -1,6 +1,6 @@
 package cz.muni.fi.pa165.seminar3.librarymanagement.payment;
 
-import cz.muni.fi.pa165.seminar3.librarymanagement.common.ErrorMessage;
+import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.ErrorMessage;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.common.Result;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.payment.PaymentCreateDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.payment.PaymentDto;
@@ -8,7 +8,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -19,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
 
 /**
  * Class representing payment controller.
@@ -58,11 +56,7 @@ public class PaymentController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public PaymentDto create(@RequestBody PaymentCreateDto paymentCreateDto) {
-        try {
-            return paymentFacade.create(paymentCreateDto);
-        } catch (EntityNotFoundException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.toString());
-        }
+        return paymentFacade.create(paymentCreateDto);
     }
 
     /**
@@ -78,11 +72,7 @@ public class PaymentController {
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
     @PostMapping(path = "{id}")
     public PaymentDto paymentGateCallback(@PathVariable String id) {
-        try {
-            return paymentFacade.finalizePayment(id);
-        } catch (EntityNotFoundException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.toString());
-        }
+        return paymentFacade.finalizePayment(id);
     }
 
     /**
@@ -112,10 +102,6 @@ public class PaymentController {
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
     @GetMapping(path = "{id}")
     public PaymentDto find(@PathVariable String id) {
-        try {
-            return paymentFacade.find(id);
-        } catch (EntityNotFoundException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.toString());
-        }
+        return paymentFacade.find(id);
     }
 }

@@ -16,9 +16,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.javafaker.Faker;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.common.Result;
+import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.exceptions.NotFoundException;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.fine.FineCreateDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.fine.FineDto;
-import jakarta.persistence.EntityNotFoundException;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,7 +68,7 @@ public class FineControllerTests {
     public void createFineEntityNotFound() throws Exception {
         FineDto fineDto = fakeFineDto(faker);
         // mock facade
-        given(fineFacade.create(any(FineCreateDto.class))).willThrow(EntityNotFoundException.class);
+        given(fineFacade.create(any(FineCreateDto.class))).willThrow(NotFoundException.class);
 
         // perform test
         mockMvc.perform(post("/fines").contentType(MediaType.APPLICATION_JSON)
@@ -114,7 +114,7 @@ public class FineControllerTests {
     public void findNotFound() throws Exception {
         String fineId = UUID.randomUUID().toString();
         // mock facade
-        given(fineFacade.find(fineId)).willThrow(EntityNotFoundException.class);
+        given(fineFacade.find(fineId)).willThrow(NotFoundException.class);
 
         // perform test
         mockMvc.perform(get("/fines/" + fineId)).andExpect(status().isNotFound());
@@ -146,7 +146,7 @@ public class FineControllerTests {
     public void updateNotFound() throws Exception {
         FineDto fineDto = fakeFineDto(faker);
         // mock facade
-        given(fineFacade.update(eq(fineDto.getId()), any())).willThrow(EntityNotFoundException.class);
+        given(fineFacade.update(eq(fineDto.getId()), any())).willThrow(NotFoundException.class);
 
         // perform test
         mockMvc.perform(put("/fines/" + fineDto.getId()).contentType(MediaType.APPLICATION_JSON)
@@ -170,7 +170,7 @@ public class FineControllerTests {
     @Test
     public void deleteNotFound() throws Exception {
         // mock services
-        doThrow(EntityNotFoundException.class).when(fineFacade).delete(any());
+        doThrow(NotFoundException.class).when(fineFacade).delete(any());
 
         // perform test
         mockMvc.perform(delete("/fines/" + UUID.randomUUID())).andExpect(status().isNotFound());
