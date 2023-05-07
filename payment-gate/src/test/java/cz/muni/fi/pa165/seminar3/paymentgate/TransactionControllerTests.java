@@ -13,12 +13,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.javafaker.Faker;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.common.Result;
+import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.exceptions.NotFoundException;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.paymentgate.CardDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.paymentgate.TransactionCreateDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.paymentgate.TransactionDto;
 import cz.muni.fi.pa165.seminar3.paymentgate.transaction.TransactionController;
 import cz.muni.fi.pa165.seminar3.paymentgate.transaction.TransactionService;
-import jakarta.persistence.EntityNotFoundException;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -101,7 +101,7 @@ public class TransactionControllerTests {
     public void findNotFound() throws Exception {
         String transactionId = UUID.randomUUID().toString();
         // mock facade
-        given(transactionService.find(eq(transactionId))).willThrow(EntityNotFoundException.class);
+        given(transactionService.find(eq(transactionId))).willThrow(NotFoundException.class);
 
         // perform test
         mockMvc.perform(get("/transactions/" + transactionId)).andExpect(status().isNotFound());
@@ -130,7 +130,7 @@ public class TransactionControllerTests {
         String transactionId = UUID.randomUUID().toString();
         CardDto cardDto = fakeCardDto(faker);
         // mock service
-        given(transactionService.pay(eq(transactionId), any(CardDto.class))).willThrow(EntityNotFoundException.class);
+        given(transactionService.pay(eq(transactionId), any(CardDto.class))).willThrow(NotFoundException.class);
 
         // perform test
         mockMvc.perform(post("/transactions/" + transactionId).contentType(MediaType.APPLICATION_JSON)

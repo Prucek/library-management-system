@@ -1,12 +1,12 @@
 package cz.muni.fi.pa165.seminar3.paymentgate.transaction;
 
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.common.Result;
+import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.exceptions.NotFoundException;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.paymentgate.CardDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.paymentgate.TransactionCreateDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.paymentgate.TransactionDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.paymentgate.TransactionStatus;
 import cz.muni.fi.pa165.seminar3.paymentgate.BankApi;
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -61,8 +61,8 @@ public class TransactionService {
      * @return updated transaction
      */
     public TransactionDto pay(String id, CardDto cardDto) {
-        Transaction transaction = repository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(String.format("ID %s not found", id)));
+        Transaction transaction =
+                repository.findById(id).orElseThrow(() -> new NotFoundException(String.format("ID %s not found", id)));
         transaction.setStatus(bankApi.transferFrom(cardDto) ? TransactionStatus.APPROVED : TransactionStatus.DECLINED);
         return mapper.toDto(repository.save(transaction));
     }
@@ -72,11 +72,11 @@ public class TransactionService {
      *
      * @param id id to search for
      * @return found Transaction entity
-     * @throws EntityNotFoundException if the id was not found
+     * @throws NotFoundException if the id was not found
      */
-    public TransactionDto find(String id) throws EntityNotFoundException {
-        return mapper.toDto(repository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(String.format("ID %s not found", id))));
+    public TransactionDto find(String id) throws NotFoundException {
+        return mapper.toDto(
+                repository.findById(id).orElseThrow(() -> new NotFoundException(String.format("ID %s not found", id))));
     }
 
     /**
