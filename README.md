@@ -69,7 +69,9 @@ to username and password fields in login page (admin:admin).
 | payment-gate       | 8081 |
 | reporting          | 8082 |
 | self-service-kiosk | 8083 |
-| oauth2-client      | 8084 |
+| oauth2-client      | 8080 |
+| Prometheu          | 9090 |
+| Grafana            | 3000 |
 
 ## Use Case Diagram
 

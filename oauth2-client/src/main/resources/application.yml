@@ -1,5 +1,5 @@
 server:
-  port: 8084
+  port: 8080
 
 # OAuth client config
 spring:
@@ -16,7 +16,7 @@ spring:
               - openid
               - test_1
               - test_2
-            redirect-uri: "http://localhost:8084/login/oauth2/code/muni"
+            redirect-uri: "http://localhost:8080/login/oauth2/code/muni"
         provider:
           muni:
             issuer-uri: https://oidc.muni.cz/oidc/

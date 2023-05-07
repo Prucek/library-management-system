@@ -21,7 +21,6 @@ scrape_configs:
     static_configs:
       - targets:
           - reporting:8080
-#          - fff7069de261
 
   - job_name: 'self-service-kiosk'
     metrics_path: '/actuator/prometheus'
@@ -29,4 +28,3 @@ scrape_configs:
     static_configs:
       - targets:
           - self-service-kiosk:8080
-
