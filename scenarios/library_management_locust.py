@@ -4,14 +4,14 @@ import random
 import datetime
 import random
 import logging
-from scenarios_script.create_dtos import user_dto, reservation_create_dto, borrowing_create_dto, fake_author_dto, book_create_dto, book_update_dto, fince_create_dto, transaction_create_dto, payment_card_dto
+from scenarios.create_dtos import user_dto, reservation_create_dto, borrowing_create_dto, fake_author_dto, book_create_dto, book_update_dto, fince_create_dto, transaction_create_dto, payment_card_dto
 from ids_storage_model import ids_storage
 from taks_sets import FindConcreteTaskSet, DeleteInvalidTaskSet, GetAllTaskSet, BorrowingsTaskSet, ReservationsTaskSet, AuthorsTaskSet, BookTaskSet, FineTaskSet
 
 authorization_token = ''
 
 class FetchExistingDataAndAuthorization(HttpUser):
-    host = 'http://127.0.0.1:8080'
+    host = 'http://127.0.0.1:8090'
     wait_time = between(0.1, 0.5)
     fixed_count = 1  # Only one admin will be spawned
     executed = False
@@ -74,7 +74,7 @@ class FetchExistingDataAndAuthorization(HttpUser):
 
 
 class CommonUser(HttpUser):
-    host = 'http://127.0.0.1:8080'
+    host = 'http://127.0.0.1:8090'
     wait_time = between(1, 2)
     fixed_count = 2
     
@@ -97,7 +97,7 @@ class CommonUser(HttpUser):
 
 
 class Librarian(HttpUser):
-    host = 'http://127.0.0.1:8080'
+    host = 'http://127.0.0.1:8090'
 
     def on_start(self):
         self.client.headers = {'content-type': 'application/json',

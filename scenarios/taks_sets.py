@@ -4,7 +4,7 @@ import logging
 import datetime
 import random
 from ids_storage_model import ids_storage
-from scenarios_script.create_dtos import reservation_create_dto, borrowing_create_dto, fake_author_dto, book_create_dto, book_update_dto, fince_create_dto
+from scenarios.create_dtos import reservation_create_dto, borrowing_create_dto, fake_author_dto, book_create_dto, book_update_dto, fince_create_dto
 
 class FindConcreteTaskSet(TaskSet):
     @task
