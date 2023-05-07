@@ -20,8 +20,9 @@ public abstract class DomainFacadeImpl<T extends DomainObject, DtoT extends Doma
     protected abstract DomainMapper<T, DtoT> getDomainMapper();
 
     @Override
-    public Result<DtoT> findAll(Pageable pageable) {
-        return getDomainMapper().toResult(getDomainService().findAll(pageable));
+    public Result<DtoT> findAll(int page, int pageSize) {
+        return getDomainMapper().toResult(getDomainService().findAll(
+                page >= 0 && pageSize > 0 ? Pageable.ofSize(pageSize).withPage(page) : Pageable.unpaged()));
     }
 
     @Override

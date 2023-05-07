@@ -4,6 +4,7 @@ import static cz.muni.fi.pa165.seminar3.librarymanagement.LibraryManagementAppli
 import static cz.muni.fi.pa165.seminar3.librarymanagement.LibraryManagementApplication.USER_SCOPE;
 import static cz.muni.fi.pa165.seminar3.librarymanagement.utils.BorrowingUtils.fakeBorrowingDto;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doThrow;
@@ -27,7 +28,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
@@ -141,7 +141,7 @@ public class BorrowingControllerTests {
         Result<BorrowingDto> borrowingDtoResult =
                 Result.of(fakeBorrowingDto(faker), fakeBorrowingDto(faker), fakeBorrowingDto(faker));
         // mock facade
-        given(borrowingFacade.findAll(any(Pageable.class))).willReturn(borrowingDtoResult);
+        given(borrowingFacade.findAll(eq(0), anyInt())).willReturn(borrowingDtoResult);
 
         // perform test
         mockMvc.perform(get("/borrowings").with(csrf()))

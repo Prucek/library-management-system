@@ -57,6 +57,10 @@ podman-compose down
 or by sending a `SIGINT` signal to the services running in foreground (not
 detached).
 
+## Access monitoring metrics of all services with Grafana dashboard
+Monitoring dashboard can be accessed using this address: http://localhost:3000/. To access grafana dashboard fill admin
+to username and password fields in login page (admin:admin).
+
 ### Default ports
 
 |                    | Port |

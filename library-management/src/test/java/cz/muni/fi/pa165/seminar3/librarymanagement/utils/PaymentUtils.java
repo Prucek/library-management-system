@@ -7,6 +7,7 @@ import com.github.javafaker.Faker;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.payment.PaymentDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.payment.PaymentStatus;
 import cz.muni.fi.pa165.seminar3.librarymanagement.payment.Payment;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -28,7 +29,7 @@ public class PaymentUtils {
                 .id(faker.internet().uuid())
                 .transactionId(faker.internet().uuid())
                 .status(PaymentStatus.PAID)
-                .paidFines(List.of(fakeFine(faker)))
+                .paidFines(new ArrayList<>(List.of(fakeFine(faker))))
                 .build();
     }
 
@@ -44,7 +45,7 @@ public class PaymentUtils {
                 .id(faker.internet().uuid())
                 .transactionId(faker.internet().uuid())
                 .status(PaymentStatus.PAID)
-                .paidFines(List.of(fakeFineDto(faker)))
+                .paidFines(new ArrayList<>(List.of(fakeFineDto(faker))))
                 .build();
     }
 }

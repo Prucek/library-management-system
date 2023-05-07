@@ -15,7 +15,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.Singular;
 import lombok.experimental.SuperBuilder;
 
 
@@ -32,13 +31,13 @@ import lombok.experimental.SuperBuilder;
 public class Book extends DomainObject {
 
     private String title;
-    @Singular
+
+
     @ManyToMany()
     @JoinTable(name = "written_by", joinColumns = @JoinColumn(name = "book_id"),
             inverseJoinColumns = @JoinColumn(name = "author_id"))
     private List<Author> authors;
 
-    @Singular
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "bookAssigned", orphanRemoval = true)
     private List<BookInstance> instances;
 }

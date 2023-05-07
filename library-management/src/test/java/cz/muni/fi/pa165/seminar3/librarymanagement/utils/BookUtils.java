@@ -8,6 +8,8 @@ import cz.muni.fi.pa165.seminar3.librarymanagement.book.Book;
 import cz.muni.fi.pa165.seminar3.librarymanagement.book.BookInstance;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.book.BookDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.book.BookInstanceDto;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Class containing Book test utility methods.
@@ -46,8 +48,8 @@ public class BookUtils {
         return Book.builder()
                 .id(faker.internet().uuid())
                 .title(faker.book().title())
-                .author(fakeAuthor(faker))
-                .instance(fakeBookInstance(faker))
+                .authors(new ArrayList<>(List.of(fakeAuthor(faker))))
+                .instances(new ArrayList<>(List.of(fakeBookInstance(faker))))
                 .build();
     }
 
@@ -61,8 +63,8 @@ public class BookUtils {
         return BookDto.builder()
                 .id(faker.internet().uuid())
                 .title(faker.book().title())
-                .author(fakeAuthorDto(faker))
-                .instance(fakeBookInstanceDto(faker))
+                .authors(new ArrayList<>(List.of(fakeAuthorDto(faker))))
+                .instances(new ArrayList<>(List.of(fakeBookInstanceDto(faker))))
                 .build();
     }
 }

@@ -15,7 +15,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.Singular;
 import lombok.experimental.SuperBuilder;
 
 
@@ -46,7 +45,7 @@ public class User extends DomainObject {
 
     private String lastName;
 
-    @Singular
+
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
     private List<Address> addresses;
 }

@@ -1,5 +1,6 @@
 package cz.muni.fi.pa165.seminar3.librarymanagement.fine;
 
+import static cz.muni.fi.pa165.seminar3.librarymanagement.Config.DEFAULT_PAGE_SIZE;
 import static cz.muni.fi.pa165.seminar3.librarymanagement.LibraryManagementApplication.LIBRARIAN_SCOPE;
 import static cz.muni.fi.pa165.seminar3.librarymanagement.LibraryManagementApplication.SECURITY_SCHEME_BEARER;
 import static cz.muni.fi.pa165.seminar3.librarymanagement.LibraryManagementApplication.SECURITY_SCHEME_OAUTH2;
@@ -14,7 +15,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.persistence.EntityNotFoundException;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
@@ -78,7 +79,8 @@ public class FineController {
     /**
      * Finds all fines.
      *
-     * @param pageable page request
+     * @param page     page number
+     * @param pageSize size of the page
      * @return paged fines
      */
     @Operation(summary = "List all fines", security = {
@@ -91,8 +93,9 @@ public class FineController {
     @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have scope test_2",
             content = @Content())
     @GetMapping
-    public Result<FineDto> findAll(Pageable pageable) {
-        return fineFacade.findAll(pageable);
+    public Result<FineDto> findAll(@RequestParam(defaultValue = "0") int page,
+                                   @RequestParam(defaultValue = DEFAULT_PAGE_SIZE) int pageSize) {
+        return fineFacade.findAll(page, pageSize);
     }
 
     /**

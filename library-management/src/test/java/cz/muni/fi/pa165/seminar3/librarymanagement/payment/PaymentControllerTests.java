@@ -4,6 +4,7 @@ import static cz.muni.fi.pa165.seminar3.librarymanagement.LibraryManagementAppli
 import static cz.muni.fi.pa165.seminar3.librarymanagement.LibraryManagementApplication.USER_SCOPE;
 import static cz.muni.fi.pa165.seminar3.librarymanagement.utils.PaymentUtils.fakePaymentDto;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -109,7 +110,7 @@ public class PaymentControllerTests {
         Result<PaymentDto> paymentDtoResult =
                 Result.of(fakePaymentDto(faker), fakePaymentDto(faker), fakePaymentDto(faker));
         // mock facade
-        given(paymentFacade.findAll(any())).willReturn(paymentDtoResult);
+        given(paymentFacade.findAll(eq(0), anyInt())).willReturn(paymentDtoResult);
 
         // perform test
         mockMvc.perform(get("/payments").with(csrf()))
