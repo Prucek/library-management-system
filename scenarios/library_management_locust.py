@@ -12,7 +12,8 @@ from taks_sets import FindConcreteTaskSet, DeleteInvalidTaskSet, GetAllTaskSet, 
 
 authorization_token = os.environ.get("LOCUST_TOKEN")
 if not authorization_token:
-    raise EnvironmentError("Authorization token is not passed as an environment variable")
+    raise EnvironmentError(
+        "Authorization token is not passed as an environment variable")
 
 
 class FetchExistingDataAndAuthorization(HttpUser):
@@ -59,7 +60,8 @@ class FetchExistingDataAndAuthorization(HttpUser):
     @task
     def find_user(self):
         if not self.executed:
-            self.client.get(f'/users/{random.choice(ids_storage.instances_ids)}')
+            self.client.get(
+                f'/users/{random.choice(ids_storage.instances_ids)}')
 
 
 class CommonUser(HttpUser):
@@ -121,12 +123,15 @@ class PaymentGateUser(HttpUser):
     @task(2)
     def pay_transaction(self):
         if ids_storage.transactions_unpaid_ids:
-            task_selected_transaction_id = random.choice(ids_storage.transactions_unpaid_ids)
+            task_selected_transaction_id = random.choice(
+                ids_storage.transactions_unpaid_ids)
             new_card_dto = payment_card_dto()
             with self.client.post(f'/transactions/{task_selected_transaction_id}', json=new_card_dto) as response:
                 if response.json()['status'] == 'APPROVED':
-                    ids_storage.transactions_unpaid_ids.remove(task_selected_transaction_id)
-                    logging.info(f'Transaction {task_selected_transaction_id} was succeesfully paid')
+                    ids_storage.transactions_unpaid_ids.remove(
+                        task_selected_transaction_id)
+                    logging.info(
+                        f'Transaction {task_selected_transaction_id} was succeesfully paid')
                 else:
-                    logging.info(f'Transaction {task_selected_transaction_id} was declined, try pay later.')
-
+                    logging.info(
+                        f'Transaction {task_selected_transaction_id} was declined, try pay later.')

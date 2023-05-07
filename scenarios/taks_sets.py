@@ -23,19 +23,22 @@ class FindConcreteTaskSet(TaskSet):
     @task
     def find_author(self):
         if ids_storage.authors_ids:
-            self.client.get(f'/authors/{random.choice(ids_storage.authors_ids)}')
+            self.client.get(
+                f'/authors/{random.choice(ids_storage.authors_ids)}')
             logging.info('Finding author')
 
     @task
     def find_borrowing(self):
         if ids_storage.borrowings_ids:
-            self.client.get(f'/borrowings/{random.choice(ids_storage.borrowings_ids)}')
+            self.client.get(
+                f'/borrowings/{random.choice(ids_storage.borrowings_ids)}')
             logging.info('Finding borrowing')
 
     @task
     def find_reservations(self):
         if ids_storage.reservations_ids:
-            self.client.get(f'/reservations/{random.choice(ids_storage.reservations_ids)}')
+            self.client.get(
+                f'/reservations/{random.choice(ids_storage.reservations_ids)}')
             logging.info('Finding reservation')
 
     @task
@@ -47,7 +50,8 @@ class FindConcreteTaskSet(TaskSet):
     @task
     def find_payment(self):
         if ids_storage.payments_ids:
-            self.client.get(f'/payments/{random.choice(ids_storage.payments_ids)}')
+            self.client.get(
+                f'/payments/{random.choice(ids_storage.payments_ids)}')
             logging.info('Finding payment')
 
 
@@ -137,16 +141,20 @@ class BorrowingsTaskSet(TaskSet):
     def make_borrowing(self):
         if ids_storage.user_ids and ids_storage.instances_ids:
             task_selected_user_id = random.choice(ids_storage.user_ids)
-            task_selected_book_instance_id = random.choice(ids_storage.instances_ids)
+            task_selected_book_instance_id = random.choice(
+                ids_storage.instances_ids)
             with self.client.post(f'/borrowings', json=borrowing_create_dto(task_selected_user_id, task_selected_book_instance_id)) as response:
                 ids_storage.borrowings_ids.append(response.json()['id'])
-                logging.info(f'Making borrowing for user {task_selected_user_id} on book instance {task_selected_book_instance_id}')
+                logging.info(
+                    f'Making borrowing for user {task_selected_user_id} on book instance {task_selected_book_instance_id}')
 
     @task(2)
     def update_borrowing(self):
         if ids_storage.borrowings_ids:
-            task_selected_borrowing_id = random.choice(ids_storage.borrowings_ids)
-            response = self.client.get(f'/borrowings/{task_selected_borrowing_id}')
+            task_selected_borrowing_id = random.choice(
+                ids_storage.borrowings_ids)
+            response = self.client.get(
+                f'/borrowings/{task_selected_borrowing_id}')
             borrowing_update_dto = {
                 "from": response.json()['from'],
                 "to": str(datetime.datetime.now() + datetime.timedelta(days=random.randint(1, 20))).replace(' ', 'T'),
@@ -155,7 +163,8 @@ class BorrowingsTaskSet(TaskSet):
                 "fine": response.json().get('fine', {}),
                 "returned": response.json()['returned']
             }
-            self.client.put(f'/borrowings/{task_selected_borrowing_id}', json=borrowing_update_dto)
+            self.client.put(
+                f'/borrowings/{task_selected_borrowing_id}', json=borrowing_update_dto)
             logging.info(f'Updating borrowing {task_selected_borrowing_id}')
 
 
@@ -163,16 +172,20 @@ class ReservationsTaskSet(TaskSet):
     @task(2)
     def update_reservation(self):
         if ids_storage.reservations_ids:
-            task_selected_reservation_id = random.choice(ids_storage.reservations_ids)
-            response = self.client.get(f'/reservations/{task_selected_reservation_id}')
+            task_selected_reservation_id = random.choice(
+                ids_storage.reservations_ids)
+            response = self.client.get(
+                f'/reservations/{task_selected_reservation_id}')
             reservation_update_dto = {
                 "issuerId": response.json()['user']['id'],
                 "bookId": response.json()['book']['id'],
                 "from": response.json()['from'],
-                "to": str(datetime.datetime.now() + datetime.timedelta(days=random.randint(1,20))).replace(' ', 'T')
+                "to": str(datetime.datetime.now() + datetime.timedelta(days=random.randint(1, 20))).replace(' ', 'T')
             }
-            self.client.put(f'/reservations/{task_selected_reservation_id}', json=reservation_update_dto)
-            logging.info(f'Updating reservation for {task_selected_reservation_id}')
+            self.client.put(
+                f'/reservations/{task_selected_reservation_id}', json=reservation_update_dto)
+            logging.info(
+                f'Updating reservation for {task_selected_reservation_id}')
 
     @task(1)
     def make_reservation(self):
@@ -181,15 +194,18 @@ class ReservationsTaskSet(TaskSet):
             task_selected_book_id = random.choice(ids_storage.book_ids)
             with self.client.post(f'/reservations', json=reservation_create_dto(task_selected_user_id, task_selected_book_id)) as response:
                 ids_storage.reservations_ids.append(response.json()['id'])
-                logging.info(f'Making reservation for user {task_selected_user_id} on book {task_selected_book_id}')
+                logging.info(
+                    f'Making reservation for user {task_selected_user_id} on book {task_selected_book_id}')
 
     @task(1)
     def delete_reservation(self):
         if ids_storage.reservations_ids:
-            task_selected_reservation_id = random.choice(ids_storage.reservations_ids)
+            task_selected_reservation_id = random.choice(
+                ids_storage.reservations_ids)
             self.client.delete(f'/reservations/{task_selected_reservation_id}')
             ids_storage.reservations_ids.remove(task_selected_reservation_id)
-            logging.info(f'Deleting reservation for {task_selected_reservation_id}')
+            logging.info(
+                f'Deleting reservation for {task_selected_reservation_id}')
 
 
 class AuthorsTaskSet(TaskSet):
@@ -198,7 +214,8 @@ class AuthorsTaskSet(TaskSet):
         new_author_dto = fake_author_dto()
         with self.client.post('/authors', json=new_author_dto) as response:
             ids_storage.authors_ids.append(response.json()['id'])
-            logging.info(f'Creating author {new_author_dto["name"]} {new_author_dto["surname"]}')
+            logging.info(
+                f'Creating author {new_author_dto["name"]} {new_author_dto["surname"]}')
 
     @task(2)
     def update_author(self):
@@ -210,7 +227,8 @@ class AuthorsTaskSet(TaskSet):
                 "name": response.json()['name'],
                 "surname": new_author_dto['surname']
             }
-            self.client.put(f'/authors/{task_selected_author_id}', json=author_update_dto)
+            self.client.put(
+                f'/authors/{task_selected_author_id}', json=author_update_dto)
             logging.info(f'Updating author {task_selected_author_id}')
 
 
@@ -220,7 +238,7 @@ class BookTaskSet(TaskSet):
         if ids_storage.authors_ids:
             author_ids = []
             # assign 1 - 2 random authors
-            for _ in range(random.randint(1,2)):
+            for _ in range(random.randint(1, 2)):
                 random_author_id = random.choice(ids_storage.authors_ids)
                 if random_author_id not in author_ids:
                     author_ids.append(random_author_id)
@@ -230,10 +248,12 @@ class BookTaskSet(TaskSet):
                 ids_storage.book_ids.append(response.json()['id'])
                 logging.info(f'Creating book {new_create_dto["title"]}')
                 # add 1 - 2 instances
-                for _ in range(random.randint(1,2)):
+                for _ in range(random.randint(1, 2)):
                     with self.client.post(f'/books/{response.json()["id"]}/instances') as responseInstance:
-                        ids_storage.instances_ids.append(responseInstance.json()['id'])
-                        logging.info(f'Creating instance {responseInstance.json()["id"]} for book {new_create_dto["title"]}')
+                        ids_storage.instances_ids.append(
+                            responseInstance.json()['id'])
+                        logging.info(
+                            f'Creating instance {responseInstance.json()["id"]} for book {new_create_dto["title"]}')
 
     @task(2)
     def update_book(self):
@@ -241,26 +261,34 @@ class BookTaskSet(TaskSet):
             task_selected_book_id = random.choice(ids_storage.book_ids)
             with self.client.get(f'/books/{task_selected_book_id}') as response:
                 updated_book_dto = book_update_dto(response.json())
-                self.client.put(f'/books/{task_selected_book_id}', json=updated_book_dto)
-                logging.info(f'Updating book title from {response.json()["title"]} to {updated_book_dto["title"]}')
+                self.client.put(
+                    f'/books/{task_selected_book_id}', json=updated_book_dto)
+                logging.info(
+                    f'Updating book title from {response.json()["title"]} to {updated_book_dto["title"]}')
 
 
 class FineTaskSet(TaskSet):
     @task(1)
     def make_fine(self):
         if ids_storage.borrowings_ids:
-            task_selected_borrowing_id = random.choice(ids_storage.borrowings_ids)
-            response = self.client.get(f'/borrowings/{task_selected_borrowing_id}')
-            new_borrowing = fince_create_dto(response.json()['id'], response.json()['user']['id'])
+            task_selected_borrowing_id = random.choice(
+                ids_storage.borrowings_ids)
+            response = self.client.get(
+                f'/borrowings/{task_selected_borrowing_id}')
+            new_borrowing = fince_create_dto(
+                response.json()['id'], response.json()['user']['id'])
             with self.client.post('/fines', json=new_borrowing) as response:
                 ids_storage.fines_ids.append(response.json()['id'])
-                logging.info(f'Creating fine for borrowing {task_selected_borrowing_id}')
+                logging.info(
+                    f'Creating fine for borrowing {task_selected_borrowing_id}')
 
     @task(2)
     def update_fine(self):
         if ids_storage.fines_ids:
             task_selected_fine_id = random.choice(ids_storage.fines_ids)
             response = self.client.get(f'/fines/{task_selected_fine_id}')
-            updated_fine_dto = fince_create_dto(response.json()['outstandingBorrowing']['id'], response.json()['issuer']['id'])
-            self.client.put(f'/fines/{task_selected_fine_id}', json=updated_fine_dto)
+            updated_fine_dto = fince_create_dto(
+                response.json()['outstandingBorrowing']['id'], response.json()['issuer']['id'])
+            self.client.put(
+                f'/fines/{task_selected_fine_id}', json=updated_fine_dto)
             logging.info(f'Updating fine {task_selected_fine_id}')
