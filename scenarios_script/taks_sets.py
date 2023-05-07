@@ -133,14 +133,6 @@ class BorrowingsTaskSet(TaskSet):
                 ids_storage.borrowings_ids.append(response.json()['id'])
                 logging.info(f'Making borrowing for user {task_selected_user_id} on book instance {task_selected_book_instance_id}')
 
-    # @task(2)
-    # def delete_borrowing(self):
-    #     if ids_storage.borrowings_ids:
-    #         task_selected_borrowing_id = random.choice(ids_storage.borrowings_ids)
-    #         self.client.delete(f'/borrowings/{task_selected_borrowing_id}')
-    #         ids_storage.borrowings_ids.remove(task_selected_borrowing_id)
-    #         logging.info(f'Deleting borrowing {task_selected_borrowing_id}')
-
     @task(2)
     def update_borrowing(self):
         if ids_storage.borrowings_ids:
@@ -255,14 +247,14 @@ class BookTaskSet(TaskSet):
                         ids_storage.instances_ids.append(responseInstance.json()['id'])
                         logging.info(f'Creating instance {responseInstance.json()["id"]} for book {new_create_dto["title"]}')
 
-    # @task(2)
-    # def update_book(self):
-    #     if ids_storage.book_ids:
-    #         task_selected_book_id = random.choice(ids_storage.book_ids)
-    #         with self.client.get(f'/books/{task_selected_book_id}') as response:
-    #             updated_book_dto = book_update_dto(response.json())
-    #             self.client.put(f'/books/{task_selected_book_id}', json=updated_book_dto)
-    #             logging.info(f'Updating book title from {response.json()["title"]} to {updated_book_dto["title"]}')
+    @task(2)
+    def update_book(self):
+        if ids_storage.book_ids:
+            task_selected_book_id = random.choice(ids_storage.book_ids)
+            with self.client.get(f'/books/{task_selected_book_id}') as response:
+                updated_book_dto = book_update_dto(response.json())
+                self.client.put(f'/books/{task_selected_book_id}', json=updated_book_dto)
+                logging.info(f'Updating book title from {response.json()["title"]} to {updated_book_dto["title"]}')
 
     @task(2)
     def delete_book(self):

@@ -100,9 +100,9 @@ public class DataInitializer implements ApplicationRunner {
         authorService.create(author3);
         authorService.create(author4);
 
-        Book book1 = Book.builder().title("Sloni žerou medvědy").author(author).author(author2).build();
-        Book book2 = Book.builder().title("Povidky Malostranske").author(author3).build();
-        Book book3 = Book.builder().title("Outcast").author(author4).build();
+        Book book1 = Book.builder().title("Sloni žerou medvědy").authors(List.of(author, author2)).build();
+        Book book2 = Book.builder().title("Povidky Malostranske").authors(List.of(author3)).build();
+        Book book3 = Book.builder().title("Outcast").authors(List.of(author4)).build();
 
         bookService.create(book1);
         bookService.create(book2);
@@ -144,20 +144,5 @@ public class DataInitializer implements ApplicationRunner {
                 .build();
 
         paymentService.create(payment);
-
-        Author author = Author.builder().name("John").surname("Wick").build();
-
-        authorService.create(author);
-
-        Author author2 = Author.builder().name("Stephan").surname("Hawking").build();
-
-        authorService.create(author2);
-
-        Book book = Book.builder().title("Sloni žerou medvědy").authors(List.of(author, author2)).build();
-
-        bookService.create(book);
-
-        bookService.addInstance(book.getId());
-        bookService.addInstance(book.getId());
     }
 }
