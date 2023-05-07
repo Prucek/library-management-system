@@ -69,6 +69,10 @@ to username and password fields in login page (admin:admin).
 | reporting          | 8082 |
 | self-service-kiosk | 8083 |
 
+## Demo Scenarios
+
+See [scenarios/README.md](scenarios/README.md).
+
 ## Use Case Diagram
 
 ![Use Case Diagram](docs/UseCaseDiagram.png)
