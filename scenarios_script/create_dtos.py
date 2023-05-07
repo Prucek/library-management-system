@@ -67,3 +67,15 @@ def fince_create_dto(borrowing_id, issuer_id):
         "issuerId": issuer_id
     }
 
+def transaction_create_dto():
+    return {
+        "amount": random.randint(50,300),
+        "callbackUrl": fake.hostname()
+    }
+
+def payment_card_dto():
+    return {
+        "cardNumber": fake.credit_card_number(),
+        "expiration": fake.credit_card_expire(),
+        "cvv2": fake.credit_card_security_code()
+    }

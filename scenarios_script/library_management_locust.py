@@ -4,17 +4,26 @@ import random
 import datetime
 import random
 import logging
-from scenarios_script.create_dtos import user_dto, reservation_create_dto, borrowing_create_dto, fake_author_dto, book_create_dto, book_update_dto, fince_create_dto
+from scenarios_script.create_dtos import user_dto, reservation_create_dto, borrowing_create_dto, fake_author_dto, book_create_dto, book_update_dto, fince_create_dto, transaction_create_dto, payment_card_dto
 from ids_storage_model import ids_storage
 from taks_sets import FindConcreteTaskSet, DeleteInvalidTaskSet, GetAllTaskSet, BorrowingsTaskSet, ReservationsTaskSet, AuthorsTaskSet, BookTaskSet, FineTaskSet
 
+authorization_token = ''
 
-class FetchExistingData(HttpUser):
+class FetchExistingDataAndAuthorization(HttpUser):
+    host = 'http://127.0.0.1:8080'
     wait_time = between(0.1, 0.5)
     fixed_count = 1  # Only one admin will be spawned
     executed = False
 
+    @events.init.add_listener
+    def on_locust_init(environment, **_kwargs):
+        authorization_token = input("Please enter authorization token: ")
+        print(f'Your token is: {authorization_token}')
+
     def on_start(self):
+        self.client.headers = {'content-type': 'application/json',
+                               'Authorization': f'Bearer {authorization_token}'}
         with self.client.get('/users') as response:
             for usr in response.json()['items']:
                 ids_storage.user_ids.append(usr['id'])
@@ -64,16 +73,21 @@ class FetchExistingData(HttpUser):
             self.client.get(f'/users/{random.choice(ids_storage.instances_ids)}')
 
 
-class LibraryUser(HttpUser):
+class CommonUser(HttpUser):
+    host = 'http://127.0.0.1:8080'
     wait_time = between(1, 2)
     fixed_count = 2
+    
+    def on_start(self):
+        self.client.headers = {'content-type': 'application/json',
+                               'Authorization': f'Bearer {authorization_token}'}
+
     tasks = [FindConcreteTaskSet,
              GetAllTaskSet, 
              BorrowingsTaskSet,
              BorrowingsTaskSet,
              ReservationsTaskSet,
              ReservationsTaskSet]
-    # tasks = [GetAllTaskSet]
 
     # Every new testing user creates new user in system
     def on_start(self):
@@ -82,8 +96,13 @@ class LibraryUser(HttpUser):
 
 
 
+class Librarian(HttpUser):
+    host = 'http://127.0.0.1:8080'
 
-class AdminUser(HttpUser):
+    def on_start(self):
+        self.client.headers = {'content-type': 'application/json',
+                               'Authorization': f'Bearer {authorization_token}'}
+
     wait_time = between(1, 4)
     fixed_count = 2
     tasks = [DeleteInvalidTaskSet,
@@ -95,6 +114,36 @@ class AdminUser(HttpUser):
              FineTaskSet]
 
 
+class PaymentGateUser(HttpUser):
+    host = 'http://127.0.0.1:8081'
+    wait_time = between(1, 4)
+    fixed_count = 1
+    
+    def on_start(self):
+        self.client.headers = {'content-type': 'application/json',
+                               'Authorization': f'Bearer {authorization_token}'}
 
+    @task(1)
+    def list_payments(self):
+        self.client.get(f'/transactions')
+        logging.info('Listing all payments')
 
+    @task(2)
+    def create_payment(self):
+        new_transaction_dto = transaction_create_dto()
+        with self.client.post('/transactions', json=new_transaction_dto) as response:
+            ids_storage.transactions_unpaid_ids.append(response.json()['id'])
+            logging.info(f'Creating transaction {response.json()["id"]}')
+
+    @task(2)
+    def pay_transaction(self):
+        if ids_storage.transactions_unpaid_ids:
+            task_selected_transaction_id = random.choice(ids_storage.transactions_unpaid_ids)
+            new_card_dto = payment_card_dto()
+            with self.client.post(f'/transactions/{task_selected_transaction_id}', json=new_card_dto) as response:
+                if response.json()['status'] == 'APPROVED':
+                    ids_storage.transactions_unpaid_ids.remove(task_selected_transaction_id)
+                    logging.info(f'Transaction {task_selected_transaction_id} was succeesfully paid')
+                else:
+                    logging.info(f'Transaction {task_selected_transaction_id} was declined, try pay later.')
 

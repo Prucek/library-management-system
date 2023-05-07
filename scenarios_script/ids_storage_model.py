@@ -8,6 +8,7 @@ class IdsStorage:
     instances_ids = []
     fines_ids = []
     payments_ids = []
+    transactions_unpaid_ids = []
 
 # Singleton instance
 ids_storage = IdsStorage()
