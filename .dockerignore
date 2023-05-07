@@ -11,3 +11,5 @@
 !reporting/src/*
 !self-service-kiosk/pom.xml
 !self-service-kiosk/src/*
+!oauth2-client/pom.xml
+!oauth2-client/src/*
