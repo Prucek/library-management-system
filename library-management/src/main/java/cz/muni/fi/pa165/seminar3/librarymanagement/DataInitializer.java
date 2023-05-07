@@ -125,7 +125,7 @@ public class DataInitializer implements ApplicationRunner {
 
         authorService.create(author2);
 
-        Book book = Book.builder().title("Sloni žerou medvědy").author(author).author(author).build();
+        Book book = Book.builder().title("Sloni žerou medvědy").author(author).author(author2).build();
 
         bookService.create(book);
 

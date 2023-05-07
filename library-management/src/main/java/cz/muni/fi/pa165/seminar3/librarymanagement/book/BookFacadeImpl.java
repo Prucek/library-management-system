@@ -56,7 +56,15 @@ public class BookFacadeImpl extends DomainFacadeImpl<Book, BookDto, BookCreateDt
     public BookDto update(String id, BookCreateDto dto) {
         Book book = domainService.find(id);
         book.setTitle(dto.getTitle());
-        book.setAuthors(dto.getAuthorIds().stream().map(authorService::find).toList());
+        book.getAuthors().removeIf(author -> !dto.getAuthorIds().contains(author.getId()));
+        book.getAuthors()
+                .addAll(dto.getAuthorIds()
+                        .stream()
+                        .filter(authorId -> book.getAuthors()
+                                .stream()
+                                .noneMatch(author -> author.getId().equals(authorId)))
+                        .map(authorService::find)
+                        .toList());
         return domainMapper.toDto(domainService.update(book));
     }
 
