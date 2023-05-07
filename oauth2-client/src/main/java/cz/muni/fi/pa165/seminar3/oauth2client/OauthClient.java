@@ -1,4 +1,4 @@
-package cz.muni.fi.pa165.seminar3;
+package cz.muni.fi.pa165.seminar3.oauth2client;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

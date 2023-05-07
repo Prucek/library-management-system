@@ -1,5 +1,6 @@
-package cz.muni.fi.pa165.seminar3;
+package cz.muni.fi.pa165.seminar3.oauth2client;
 
+import java.time.Instant;
 import java.time.ZoneId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,8 +32,10 @@ public class MainController {
         // log access token
         log.debug("access token principal: {}", oauth2Client.getPrincipalName());
         log.debug("access token scopes: {}", accessToken.getScopes());
-        log.debug("access token issued: {}", accessToken.getIssuedAt().atZone(ZoneId.systemDefault()));
-        log.debug("access token expires: {}", accessToken.getExpiresAt().atZone(ZoneId.systemDefault()));
+        Instant issuedAt = accessToken.getIssuedAt();
+        log.debug("access token issued: {}", issuedAt != null ? issuedAt.atZone(ZoneId.systemDefault()) : "(nil)");
+        Instant expiresAt = accessToken.getExpiresAt();
+        log.debug("access token expires: {}", expiresAt != null ? expiresAt.atZone(ZoneId.systemDefault()) : "(nil)");
         log.debug("access token value: {}", accessToken.getTokenValue());
 
         return accessToken;
