@@ -25,8 +25,12 @@ podman-compose up [-d]
 
 ## Run Scenarios
 
+Before running, you need an authorization token which you can get from the
+OAuth2 client running on the port 8080 by default. Make sure to get both test
+scopes.
+
 ```sh
-locust -f scenarios/library_management_locust.py --autostart -u 3
+LOCUST_TOKEN=<INSERT_AUTH_TOKEN_HERE> locust -f scenarios/library_management_locust.py --autostart -u 3
 ```
 
 You can see meanwhile results on `http://localhost:8089` where locust provide

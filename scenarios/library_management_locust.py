@@ -4,11 +4,14 @@ import random
 import datetime
 import random
 import logging
+import os
 from scenarios.create_dtos import user_dto, reservation_create_dto, borrowing_create_dto, fake_author_dto, book_create_dto, book_update_dto, fince_create_dto, transaction_create_dto, payment_card_dto
 from ids_storage_model import ids_storage
 from taks_sets import FindConcreteTaskSet, DeleteInvalidTaskSet, GetAllTaskSet, BorrowingsTaskSet, ReservationsTaskSet, AuthorsTaskSet, BookTaskSet, FineTaskSet
 
-authorization_token = ''
+authorization_token = os.environ.get("LOCUST_TOKEN")
+if not authorization_token:
+    raise EnvironmentError("Authorization token is not passed as an environment variable")
 
 class FetchExistingDataAndAuthorization(HttpUser):
     host = 'http://127.0.0.1:8090'
@@ -18,7 +21,6 @@ class FetchExistingDataAndAuthorization(HttpUser):
 
     @events.init.add_listener
     def on_locust_init(environment, **_kwargs):
-        authorization_token = input("Please enter authorization token: ")
         print(f'Your token is: {authorization_token}')
 
     def on_start(self):
