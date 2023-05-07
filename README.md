@@ -57,10 +57,6 @@ podman-compose down
 or by sending a `SIGINT` signal to the services running in foreground (not
 detached).
 
-## Access monitoring metrics of all services with Grafana dashboard
-Monitoring dashboard can be accessed using this address: http://localhost:3000/. To access grafana dashboard fill admin
-to username and password fields in login page (admin:admin).
-
 ### Default ports
 
 |                    | Port |
@@ -72,6 +68,17 @@ to username and password fields in login page (admin:admin).
 | oauth2-client      | 8080 |
 | Prometheu          | 9090 |
 | Grafana            | 3000 |
+
+## Access monitoring metrics of all services with Grafana dashboard
+
+Monitoring dashboard can be accessed using this address: http://localhost:3000/.
+To access grafana dashboard fill use the username `admin` and the password
+`admin`.
+
+## Seeding the database
+
+To seed the in-memory database, send `POST` request with empty body to `/seed`.
+Sending a `DELETE` request to `/seed` will drop the in-memory database.
 
 ## Use Case Diagram
 
