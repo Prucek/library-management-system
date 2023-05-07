@@ -125,11 +125,11 @@ public class FineFacadeImplTests {
 
         // now update the fine
         FineCreateDto fineCreateDto = FineCreateDto.builder().build();
-        Fine fakeFine = Fine.builder().build();
 
         given(userService.find(any(String.class))).willReturn(null);
         given(borrowingService.find(any(String.class))).willReturn(null);
 
+        Fine fakeFine = Fine.builder().build();
         result = fineFacade.update(result.getId(), fineCreateDto);
         assertThat(domainMapper.fromDto(result)).isEqualTo(fakeFine);
         assertThat(domainRepository.findById(result.getId())).isPresent();

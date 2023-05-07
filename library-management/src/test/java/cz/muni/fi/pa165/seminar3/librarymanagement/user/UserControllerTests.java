@@ -1,5 +1,6 @@
 package cz.muni.fi.pa165.seminar3.librarymanagement.user;
 
+import static cz.muni.fi.pa165.seminar3.librarymanagement.LibraryManagementApplication.LIBRARIAN_SCOPE;
 import static cz.muni.fi.pa165.seminar3.librarymanagement.LibraryManagementApplication.USER_SCOPE;
 import static cz.muni.fi.pa165.seminar3.librarymanagement.utils.UserUtils.fakeUserDto;
 import static org.mockito.ArgumentMatchers.any;
@@ -7,6 +8,7 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doThrow;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -31,9 +33,6 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static cz.muni.fi.pa165.seminar3.librarymanagement.LibraryManagementApplication.LIBRARIAN_SCOPE;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-
 /**
  * Tests for user controller.
  *
@@ -54,7 +53,6 @@ public class UserControllerTests {
     private final Faker faker = new Faker();
 
     @Test
-//    @WithMockUser(authorities = "SCOPE_" + LIBRARIAN_SCOPE)
     void createSuccessful() throws Exception {
         UserDto user = fakeUserDto(faker, null);
 
@@ -93,10 +91,8 @@ public class UserControllerTests {
                 .content(objectMapper.writeValueAsString(
                         UserCreateDto.builder().firstName(userDto.getFirstName()).email(userDto.getEmail()).build())));
         mockMvc.perform(post("/users").contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(UserCreateDto.builder()
-                        .firstName(userDto.getFirstName())
-                        .email(userDto.getEmail())
-                        .build())));
+                .content(objectMapper.writeValueAsString(
+                        UserCreateDto.builder().firstName(userDto.getFirstName()).email(userDto.getEmail()).build())));
     }
 
     @Test
@@ -173,7 +169,7 @@ public class UserControllerTests {
 
     @Test
     @WithMockUser(authorities = "SCOPE_" + USER_SCOPE)
-    public void updateSuccessful() throws Exception{
+    public void updateSuccessful() throws Exception {
         UserDto user = fakeUserDto(faker, UserType.CLIENT);
         UserDto updatedUser = fakeUserDto(faker, UserType.CLIENT);
         updatedUser.setUsername("newName");
@@ -181,7 +177,8 @@ public class UserControllerTests {
         given(userFacade.find(user.getId())).willReturn(user);
         given(userFacade.update(eq(user.getId()), any())).willReturn(updatedUser);
 
-        mockMvc.perform(put("/users/" + user.getId()).contentType(MediaType.APPLICATION_JSON).with(csrf())
+        mockMvc.perform(put("/users/" + user.getId()).contentType(MediaType.APPLICATION_JSON)
+                        .with(csrf())
                         .content(objectMapper.writeValueAsString(updatedUser)))
                 .andDo(print())
                 .andExpect(status().is2xxSuccessful())
@@ -205,7 +202,8 @@ public class UserControllerTests {
         given(userFacade.update(eq(user.getId()), any())).willThrow(NotFoundException.class);
 
         // perform test
-        mockMvc.perform(put("/users/" + user.getId()).contentType(MediaType.APPLICATION_JSON).with(csrf())
+        mockMvc.perform(put("/users/" + user.getId()).contentType(MediaType.APPLICATION_JSON)
+                .with(csrf())
                 .content(objectMapper.writeValueAsString(
                         UserCreateDto.builder().firstName(user.getFirstName()).email(user.getEmail()).build())));
     }

@@ -1,5 +1,15 @@
 package cz.muni.fi.pa165.seminar3.selfservicekiosk;
 
+import static cz.muni.fi.pa165.seminar3.selfservicekiosk.KioskUtils.fakeBookInstanceDto;
+import static cz.muni.fi.pa165.seminar3.selfservicekiosk.KioskUtils.fakeKioskBorrowingDto;
+import static cz.muni.fi.pa165.seminar3.selfservicekiosk.KioskUtils.fakeUserDto;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.verify;
+
 import com.github.javafaker.Faker;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.book.BookInstanceDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.borrowing.BorrowingCreateDto;
@@ -18,16 +28,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static cz.muni.fi.pa165.seminar3.selfservicekiosk.KioskUtils.fakeKioskBorrowingDto;
-import static cz.muni.fi.pa165.seminar3.selfservicekiosk.KioskUtils.fakeUserDto;
-import static cz.muni.fi.pa165.seminar3.selfservicekiosk.KioskUtils.fakeBookInstanceDto;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.atLeastOnce;
-import static org.mockito.Mockito.verify;
 
 /**
  * Tests for self-service kiosk facade.
@@ -108,13 +108,13 @@ public class SelfServiceKioskFacadeImplTests {
                 .returned(LocalDateTime.now())
                 .build();
 
-        given(libraryManagementApi.getPendingBorrowing(any(String.class)))
-                .willReturn(borrowingDto);
+        given(libraryManagementApi.getPendingBorrowing(any(String.class))).willReturn(borrowingDto);
 
-        given(libraryManagementApi.updateBorrowing(eq(borrowingDto.getId()), any(BorrowingCreateDto.class)))
-                .willReturn(updatedBorrowingDto);
+        given(libraryManagementApi.updateBorrowing(eq(borrowingDto.getId()), any(BorrowingCreateDto.class))).willReturn(
+                updatedBorrowingDto);
 
         kioskFacade.returnBook(borrowingDto.getBookInstance().getId());
-        verify(libraryManagementApi, atLeastOnce()).updateBorrowing(eq(borrowingDto.getId()), any(BorrowingCreateDto.class));
+        verify(libraryManagementApi, atLeastOnce()).updateBorrowing(eq(borrowingDto.getId()),
+                any(BorrowingCreateDto.class));
     }
 }

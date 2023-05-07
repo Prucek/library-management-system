@@ -27,9 +27,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.springframework.security.test.context.support.WithMockUser;
 
 
 /**
@@ -60,7 +60,8 @@ public class AuthorControllerTests {
 
         // perform test
         mockMvc.perform(post("/authors").accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON).with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .with(csrf())
                         .content(objectMapper.writeValueAsString(authorDto)))
                 .andDo(print())
                 .andExpect(status().isCreated())
@@ -120,7 +121,8 @@ public class AuthorControllerTests {
 
         given(authorFacade.update(eq(authorDto.getId()), any())).willReturn(authorDto);
 
-        mockMvc.perform(put("/authors/" + authorDto.getId()).contentType(MediaType.APPLICATION_JSON).with(csrf())
+        mockMvc.perform(put("/authors/" + authorDto.getId()).contentType(MediaType.APPLICATION_JSON)
+                        .with(csrf())
                         .content(objectMapper.writeValueAsString(createDto)))
                 .andDo(print())
                 .andExpect(status().is2xxSuccessful())
@@ -139,7 +141,8 @@ public class AuthorControllerTests {
 
         given(authorFacade.update(eq(authorDto.getId()), any())).willThrow(NotFoundException.class);
 
-        mockMvc.perform(put("/authors/" + authorDto.getId()).contentType(MediaType.APPLICATION_JSON).with(csrf())
+        mockMvc.perform(put("/authors/" + authorDto.getId()).contentType(MediaType.APPLICATION_JSON)
+                .with(csrf())
                 .content(objectMapper.writeValueAsString(createDto))).andExpect(status().isNotFound());
     }
 }

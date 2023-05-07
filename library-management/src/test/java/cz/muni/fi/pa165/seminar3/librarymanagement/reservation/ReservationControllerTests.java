@@ -81,7 +81,8 @@ public class ReservationControllerTests {
         given(reservationFacade.create(any())).willReturn(reservationDto);
 
         // perform test
-        mockMvc.perform(post("/reservations").contentType(MediaType.APPLICATION_JSON).with(csrf())
+        mockMvc.perform(post("/reservations").contentType(MediaType.APPLICATION_JSON)
+                        .with(csrf())
                         .content(objectMapper.writeValueAsString(BorrowingDto.builder()
                                 .from(reservationDto.getFrom())
                                 .to(reservationDto.getTo())
@@ -103,7 +104,8 @@ public class ReservationControllerTests {
         given(reservationFacade.updateReservation(eq(reservationDto.getId()), any())).willReturn(newReservationDto);
 
         // perform test
-        mockMvc.perform(put("/reservations/" + reservationDto.getId()).contentType(MediaType.APPLICATION_JSON).with(csrf())
+        mockMvc.perform(put("/reservations/" + reservationDto.getId()).contentType(MediaType.APPLICATION_JSON)
+                        .with(csrf())
                         .content(objectMapper.writeValueAsString(BorrowingCreateDto.builder()
                                 .from(newReservationDto.getFrom())
                                 .to(newReservationDto.getTo())
@@ -122,7 +124,8 @@ public class ReservationControllerTests {
         given(reservationFacade.find(reservationDto.getId())).willReturn(reservationDto);
 
         // perform test
-        mockMvc.perform(delete("/reservations/" + reservationDto.getId()).with(csrf())).andExpect(status().is2xxSuccessful());
+        mockMvc.perform(delete("/reservations/" + reservationDto.getId()).with(csrf()))
+                .andExpect(status().is2xxSuccessful());
     }
 
     @Test

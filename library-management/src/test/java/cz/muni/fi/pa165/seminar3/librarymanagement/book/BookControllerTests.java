@@ -58,7 +58,8 @@ public class BookControllerTests {
         given(bookFacade.create(any(BookCreateDto.class))).willReturn(bookDto);
 
         // perform test
-        mockMvc.perform(post("/books").contentType(MediaType.APPLICATION_JSON).with(csrf())
+        mockMvc.perform(post("/books").contentType(MediaType.APPLICATION_JSON)
+                        .with(csrf())
                         .content(objectMapper.writeValueAsString(bookDto)))
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(jsonPath("$.id").value(bookDto.getId()))
@@ -75,7 +76,8 @@ public class BookControllerTests {
         given(bookFacade.create(any(BookCreateDto.class))).willThrow(NotFoundException.class);
 
         // perform test
-        mockMvc.perform(post("/books").contentType(MediaType.APPLICATION_JSON).with(csrf())
+        mockMvc.perform(post("/books").contentType(MediaType.APPLICATION_JSON)
+                .with(csrf())
                 .content(objectMapper.writeValueAsString(bookDto))).andExpect(status().isNotFound());
     }
 
@@ -135,7 +137,8 @@ public class BookControllerTests {
 
         given(bookFacade.update(eq(bookDto.getId()), any())).willReturn(bookDtoNew);
 
-        mockMvc.perform(put("/books/" + bookDto.getId()).contentType(MediaType.APPLICATION_JSON).with(csrf())
+        mockMvc.perform(put("/books/" + bookDto.getId()).contentType(MediaType.APPLICATION_JSON)
+                        .with(csrf())
                         .content(objectMapper.writeValueAsString(bookDtoNew)))
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(jsonPath("$.id").value(bookDto.getId()))
@@ -150,7 +153,8 @@ public class BookControllerTests {
 
         given(bookFacade.update(eq(bookDto.getId()), any())).willThrow(NotFoundException.class);
 
-        mockMvc.perform(put("/books/" + bookDto.getId()).contentType(MediaType.APPLICATION_JSON).with(csrf())
+        mockMvc.perform(put("/books/" + bookDto.getId()).contentType(MediaType.APPLICATION_JSON)
+                .with(csrf())
                 .content(objectMapper.writeValueAsString(bookDto))).andExpect(status().isNotFound());
     }
 
@@ -162,7 +166,8 @@ public class BookControllerTests {
 
         given(bookFacade.addInstance(bookDto.getId())).willReturn(bookInstanceDto);
 
-        mockMvc.perform(post("/books/" + bookDto.getId() + "/instances").contentType(MediaType.APPLICATION_JSON).with(csrf()))
+        mockMvc.perform(post("/books/" + bookDto.getId() + "/instances")
+                        .contentType(MediaType.APPLICATION_JSON).with(csrf()))
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(jsonPath("$.id").value(bookInstanceDto.getId()));
     }
@@ -175,6 +180,7 @@ public class BookControllerTests {
         doNothing().when(bookFacade).delete(bookInstanceId);
 
         // perform test
-        mockMvc.perform(delete("/books/instances/" + bookInstanceId).with(csrf())).andExpect(status().is2xxSuccessful());
+        mockMvc.perform(delete("/books/instances/" + bookInstanceId).with(csrf()))
+                .andExpect(status().is2xxSuccessful());
     }
 }
