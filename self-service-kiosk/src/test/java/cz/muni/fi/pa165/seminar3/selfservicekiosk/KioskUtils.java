@@ -6,6 +6,7 @@ import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.book.BookInstanceDt
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.kiosk.KioskBorrowDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.user.UserDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.user.UserType;
+import java.util.List;
 
 /**
  * Class containing kiosk test utility methods.
@@ -54,7 +55,7 @@ public class KioskUtils {
                 .email(faker.internet().emailAddress())
                 .firstName(faker.name().firstName())
                 .lastName(faker.name().lastName())
-                .address(fakeAddressDto(faker))
+                .addresses(List.of(fakeAddressDto(faker)))
                 .username(faker.name().username())
                 .build();
     }

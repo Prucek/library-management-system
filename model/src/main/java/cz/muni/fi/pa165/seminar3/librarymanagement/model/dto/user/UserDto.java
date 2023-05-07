@@ -8,7 +8,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.Singular;
 import lombok.experimental.SuperBuilder;
 
 /**
@@ -32,7 +31,6 @@ public class UserDto extends DomainObjectDto {
 
     private String lastName;
 
-    @Singular
     private List<AddressDto> addresses;
 
     private UserType userType;

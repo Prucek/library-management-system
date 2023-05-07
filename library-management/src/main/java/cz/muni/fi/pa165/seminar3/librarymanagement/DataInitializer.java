@@ -84,7 +84,7 @@ public class DataInitializer implements ApplicationRunner {
                 .username("johnD")
                 .password("password")
                 .userType(UserType.CLIENT)
-                .address(address)
+                .addresses(List.of(address))
                 .build();
 
         userService.create(user);
@@ -125,7 +125,7 @@ public class DataInitializer implements ApplicationRunner {
 
         authorService.create(author2);
 
-        Book book = Book.builder().title("Sloni žerou medvědy").author(author).author(author2).build();
+        Book book = Book.builder().title("Sloni žerou medvědy").authors(List.of(author, author2)).build();
 
         bookService.create(book);
 

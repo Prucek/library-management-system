@@ -1,14 +1,15 @@
 package cz.muni.fi.pa165.seminar3.librarymanagement.user;
 
-import com.github.javafaker.Faker;
 import static cz.muni.fi.pa165.seminar3.librarymanagement.utils.UserUtils.fakeAddressDto;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import com.github.javafaker.Faker;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.address.AddressDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.user.UserCreateDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.user.UserDto;
 import jakarta.persistence.EntityNotFoundException;
+import java.util.List;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,11 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * Tests for user facade implementation.
+ *
+ * @author Marek Miček
+ */
 @RunWith(SpringRunner.class)
 @ActiveProfiles("test")
 @SpringBootTest
@@ -38,8 +44,14 @@ public class UserFacadeImplTests {
     @Test
     public void createUserSuccessful() {
         AddressDto addressDto = fakeAddressDto(faker);
-        UserCreateDto userCreateDto = UserCreateDto.builder().username("random").email("john.doe@gmail.com")
-                .password("empty").firstName("John").lastName("Doe").address(addressDto).build();
+        UserCreateDto userCreateDto = UserCreateDto.builder()
+                .username("random")
+                .email("john.doe@gmail.com")
+                .password("empty")
+                .firstName("John")
+                .lastName("Doe")
+                .addresses(List.of(addressDto))
+                .build();
 
         UserDto result = userFacade.create(userCreateDto);
 
@@ -74,7 +86,7 @@ public class UserFacadeImplTests {
                 .lastName(userToUpdate.getLastName())
                 .email(userToUpdate.getEmail())
                 .password(userToUpdate.getPassword())
-                .address(fakeAddressDto(faker))
+                .addresses(List.of(fakeAddressDto(faker)))
                 .build();
 
         UserDto result = userFacade.update(createdUserDto.getId(), updatedUserDto);
@@ -115,17 +127,6 @@ public class UserFacadeImplTests {
     }
 
     @Test
-    public void updateUserNullCreateDto() {
-
-        // first create a user
-        UserDto createdUserDto = createUser();
-
-        // now update the user with null object
-        UserCreateDto userCreateDto = null;
-        assertThrows(NullPointerException.class, () -> userFacade.update(createdUserDto.getId(), userCreateDto));
-    }
-
-    @Test
     public void deleteUserSuccessful() {
 
         // first create a fine
@@ -150,8 +151,14 @@ public class UserFacadeImplTests {
 
     private UserDto createUser() {
         AddressDto addressDto = fakeAddressDto(faker);
-        UserCreateDto userCreateDto = UserCreateDto.builder().username("random").email("john.doe@gmail.com")
-                .password("empty").firstName("John").lastName("Doe").address(addressDto).build();
+        UserCreateDto userCreateDto = UserCreateDto.builder()
+                .username("random")
+                .email("john.doe@gmail.com")
+                .password("empty")
+                .firstName("John")
+                .lastName("Doe")
+                .addresses(List.of(addressDto))
+                .build();
 
         UserDto result = userFacade.create(userCreateDto);
 

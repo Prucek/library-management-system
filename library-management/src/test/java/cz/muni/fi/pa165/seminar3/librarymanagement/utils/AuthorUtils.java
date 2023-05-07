@@ -16,9 +16,9 @@ public class AuthorUtils {
      * Generates a fake author entity.
      *
      * @param faker faker instance
-     * @return      author entity
+     * @return author entity
      */
-    public static Author fakeAuthor(Faker faker){
+    public static Author fakeAuthor(Faker faker) {
         return Author.builder()
                 .id(faker.internet().uuid())
                 .name(faker.name().firstName())
@@ -30,9 +30,9 @@ public class AuthorUtils {
      * Generates a fake authorDto entity.
      *
      * @param faker faker instance
-     * @return      authorDto entity
+     * @return authorDto entity
      */
-    public static AuthorDto fakeAuthorDto(Faker faker){
+    public static AuthorDto fakeAuthorDto(Faker faker) {
         return AuthorDto.builder()
                 .id(faker.internet().uuid())
                 .name(faker.name().firstName())
