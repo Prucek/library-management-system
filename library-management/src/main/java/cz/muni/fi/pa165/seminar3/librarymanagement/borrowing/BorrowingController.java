@@ -1,5 +1,7 @@
 package cz.muni.fi.pa165.seminar3.librarymanagement.borrowing;
 
+import static cz.muni.fi.pa165.seminar3.librarymanagement.Config.DEFAULT_PAGE_SIZE;
+
 import cz.muni.fi.pa165.seminar3.librarymanagement.common.ErrorMessage;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.borrowing.BorrowingCreateDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.borrowing.BorrowingDto;
@@ -10,7 +12,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -119,7 +120,8 @@ public class BorrowingController {
     /**
      * REST method returning all borrowings.
      *
-     * @param pageable Represents Page object of borrowing which will be used for return value
+     * @param page     page number
+     * @param pageSize size of the page
      * @return Result object with all borrowings
      */
     @Operation(summary = "Get all borrowings", description = """
@@ -129,10 +131,12 @@ public class BorrowingController {
     @ApiResponse(responseCode = "400", description = "Invalid paging",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
     @GetMapping
-    public Result<BorrowingDto> findAll(Pageable pageable, @RequestParam(defaultValue = "") String bookInstanceId) {
+    public Result<BorrowingDto> findAll(@RequestParam(defaultValue = "0") int page,
+                                        @RequestParam(defaultValue = DEFAULT_PAGE_SIZE) int pageSize,
+                                        @RequestParam(defaultValue = "") String bookInstanceId) {
         if (bookInstanceId != null && !bookInstanceId.isBlank()) {
             return Result.of(borrowingFacade.findPending(bookInstanceId));
         }
-        return borrowingFacade.findAll(pageable);
+        return borrowingFacade.findAll(page, pageSize);
     }
 }
