@@ -41,7 +41,7 @@ public class TransactionController {
      * Method creating payment => adding ID.
      */
     @Operation(summary = "Create a new payment")
-    @ApiResponse(responseCode = "200", description = "Payment created", useReturnTypeSchema = true)
+    @ApiResponse(responseCode = "201", description = "Payment created", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "400", description = "Invalid payload",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
     @PostMapping

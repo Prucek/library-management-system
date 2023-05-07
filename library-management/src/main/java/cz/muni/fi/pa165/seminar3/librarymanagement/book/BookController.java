@@ -52,7 +52,7 @@ public class BookController {
     /**
      * REST method returning book with specified id.
      */
-    @Operation(summary = "Returns identified book", description = "Looks up a by by its id.")
+    @Operation(summary = "Returns identified book")
     @ApiResponse(responseCode = "200", description = "Book found", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "404", description = "Book not found",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
@@ -64,7 +64,7 @@ public class BookController {
     /**
      * REST method returning all books.
      */
-    @Operation(summary = "Get all books", description = "Returns all books with authors as JSON")
+    @Operation(summary = "Get all books")
     @ApiResponse(responseCode = "200", description = "Pages list of all books", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "400", description = "Invalid paging",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
@@ -77,18 +77,16 @@ public class BookController {
     /**
      * REST method for creating a new book.
      */
-    @Operation(summary = "Create a new book", security = {
-            @SecurityRequirement(name = SECURITY_SCHEME_BEARER, scopes = {LIBRARIAN_SCOPE}),
-            @SecurityRequirement(name = SECURITY_SCHEME_OAUTH2, scopes = {LIBRARIAN_SCOPE})
-    })
+    @Operation(summary = "Create a new book")
+    @SecurityRequirement(name = SECURITY_SCHEME_BEARER, scopes = {LIBRARIAN_SCOPE})
+    @SecurityRequirement(name = SECURITY_SCHEME_OAUTH2, scopes = {LIBRARIAN_SCOPE})
     @ApiResponse(responseCode = "201", description = "Book created", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "400", description = "Invalid payload",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
     @ApiResponse(responseCode = "404", description = "Author not found",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have required scope",
-            content = @Content())
+    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have required scope")
     @ResponseStatus(HttpStatus.CREATED)
     public BookDto create(@RequestBody BookCreateDto dto) {
         return facade.create(dto);
@@ -97,16 +95,15 @@ public class BookController {
     /**
      * REST method deleting specific book.
      */
-    @Operation(summary = "Delete book by its ID", security = {
-            @SecurityRequirement(name = SECURITY_SCHEME_BEARER, scopes = {LIBRARIAN_SCOPE}),
-            @SecurityRequirement(name = SECURITY_SCHEME_OAUTH2, scopes = {LIBRARIAN_SCOPE})
-    })
-    @ApiResponse(responseCode = "200", description = "Book deleted", useReturnTypeSchema = true)
+    @Operation(summary = "Delete book by its ID")
+    @SecurityRequirement(name = SECURITY_SCHEME_BEARER, scopes = {LIBRARIAN_SCOPE})
+    @SecurityRequirement(name = SECURITY_SCHEME_OAUTH2, scopes = {LIBRARIAN_SCOPE})
+    @ApiResponse(responseCode = "204", description = "Book deleted", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "404", description = "Book not found",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
-    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have required scope",
-            content = @Content())
+    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have required scope")
     @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable String id) {
         facade.delete(id);
     }
@@ -114,12 +111,10 @@ public class BookController {
     /**
      * REST method updating specific book.
      */
-    @Operation(summary = "Update book by its ID", security = {
-            @SecurityRequirement(name = SECURITY_SCHEME_BEARER, scopes = {LIBRARIAN_SCOPE}),
-            @SecurityRequirement(name = SECURITY_SCHEME_OAUTH2, scopes = {LIBRARIAN_SCOPE})
-    })
-    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have required scope",
-            content = @Content())
+    @Operation(summary = "Update book by its ID")
+    @SecurityRequirement(name = SECURITY_SCHEME_BEARER, scopes = {LIBRARIAN_SCOPE})
+    @SecurityRequirement(name = SECURITY_SCHEME_OAUTH2, scopes = {LIBRARIAN_SCOPE})
+    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have required scope")
     @PutMapping("/{id}")
     public BookDto update(@PathVariable String id, @RequestBody BookCreateDto dto) {
         return facade.update(id, dto);
@@ -128,15 +123,14 @@ public class BookController {
     /**
      * REST method adding book instance.
      */
-    @Operation(summary = "Add book instance", security = {
-            @SecurityRequirement(name = SECURITY_SCHEME_BEARER, scopes = {LIBRARIAN_SCOPE}),
-            @SecurityRequirement(name = SECURITY_SCHEME_OAUTH2, scopes = {LIBRARIAN_SCOPE})
-    })
-    @ApiResponse(responseCode = "200", description = "Book instance added", useReturnTypeSchema = true)
+    @Operation(summary = "Add book instance")
+    @SecurityRequirement(name = SECURITY_SCHEME_BEARER, scopes = {LIBRARIAN_SCOPE})
+    @SecurityRequirement(name = SECURITY_SCHEME_OAUTH2, scopes = {LIBRARIAN_SCOPE})
+    @ApiResponse(responseCode = "201", description = "Book instance added", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "404", description = "Book not found", useReturnTypeSchema = true)
-    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have required scope",
-            content = @Content())
+    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have required scope")
     @PostMapping("/{bookId}/instances")
+    @ResponseStatus(HttpStatus.CREATED)
     public BookInstanceDto addInstance(@PathVariable String bookId) {
         return facade.addInstance(bookId);
     }
@@ -144,15 +138,14 @@ public class BookController {
     /**
      * REST method removing book instance.
      */
-    @Operation(summary = "Remove book instance", security = {
-            @SecurityRequirement(name = SECURITY_SCHEME_BEARER, scopes = {LIBRARIAN_SCOPE}),
-            @SecurityRequirement(name = SECURITY_SCHEME_OAUTH2, scopes = {LIBRARIAN_SCOPE})
-    })
-    @ApiResponse(responseCode = "200", description = "Book instance added", useReturnTypeSchema = true)
+    @Operation(summary = "Remove book instance")
+    @SecurityRequirement(name = SECURITY_SCHEME_BEARER, scopes = {LIBRARIAN_SCOPE})
+    @SecurityRequirement(name = SECURITY_SCHEME_OAUTH2, scopes = {LIBRARIAN_SCOPE})
+    @ApiResponse(responseCode = "204", description = "Book instance added", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "404", description = "Book or book instance not found", useReturnTypeSchema = true)
-    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have required scope",
-            content = @Content())
+    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have required scope")
     @DeleteMapping("/instances/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void removeInstance(@PathVariable String id) {
         facade.removeInstance(id);
     }

@@ -41,7 +41,6 @@ public class ReportController {
             Calls report service to obtain finance info and returns the DTO object with requested info.
             """)
     @ApiResponse(responseCode = "200", useReturnTypeSchema = true)
-
     @ApiResponse(responseCode = "400", description = "input data were not correct",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
     @GetMapping("/finances/{userId}")

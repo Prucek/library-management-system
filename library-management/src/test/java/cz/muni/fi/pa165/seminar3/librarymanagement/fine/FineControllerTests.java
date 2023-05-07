@@ -62,7 +62,7 @@ public class FineControllerTests {
                                 .issuerId(fineDto.getIssuer().getId())
                                 .outstandingBorrowingId(fineDto.getOutstandingBorrowing().getId())
                                 .build())))
-                .andExpect(status().is2xxSuccessful())
+                .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").value(fineDto.getId()))
                 .andExpect(jsonPath("$.amount").value(fineDto.getAmount()))
                 .andExpect(jsonPath("$.issuer.id").value(fineDto.getIssuer().getId()))
@@ -94,7 +94,7 @@ public class FineControllerTests {
 
         // perform test
         mockMvc.perform(get("/fines").with(csrf()))
-                .andExpect(status().is2xxSuccessful())
+                .andExpect(status().isOk())
                 .andExpect(jsonPath("$.total").value(fineDtoResult.getTotal()))
                 .andExpect(jsonPath("$.page").value(fineDtoResult.getPage()))
                 .andExpect(jsonPath("$.items[0].id").value(fineDtoResult.getItems().get(0).getId()))
@@ -111,7 +111,7 @@ public class FineControllerTests {
 
         // perform test
         mockMvc.perform(get("/fines/" + fineDto.getId()).with(csrf()))
-                .andExpect(status().is2xxSuccessful())
+                .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(fineDto.getId()))
                 .andExpect(jsonPath("$.amount").value(fineDto.getAmount()))
                 .andExpect(jsonPath("$.issuer.id").value(fineDto.getIssuer().getId()))
@@ -145,7 +145,7 @@ public class FineControllerTests {
                                 .issuerId(newFineDto.getIssuer().getId())
                                 .outstandingBorrowingId(newFineDto.getOutstandingBorrowing().getId())
                                 .build())))
-                .andExpect(status().is2xxSuccessful())
+                .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(newFineDto.getId()))
                 .andExpect(jsonPath("$.amount").value(newFineDto.getAmount()))
                 .andExpect(jsonPath("$.issuer.id").value(newFineDto.getIssuer().getId()))
@@ -176,7 +176,7 @@ public class FineControllerTests {
         doNothing().when(fineFacade).delete(fineDto.getId());
 
         // perform test
-        mockMvc.perform(delete("/fines/" + fineDto.getId()).with(csrf())).andExpect(status().is2xxSuccessful());
+        mockMvc.perform(delete("/fines/" + fineDto.getId()).with(csrf())).andExpect(status().isNoContent());
     }
 
     @Test

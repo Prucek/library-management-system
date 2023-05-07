@@ -3,10 +3,7 @@ package cz.muni.fi.pa165.seminar3.selfservicekiosk;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.ErrorMessage;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.borrowing.BorrowingDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.kiosk.KioskBorrowDto;
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.info.Contact;
-import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -26,8 +23,6 @@ import org.springframework.web.bind.annotation.RestController;
  */
 
 @RestController
-@OpenAPIDefinition(info = @Info(title = "RestAPI controller for borrowing and returning at kiosk", version = "1.0",
-        contact = @Contact(name = "Marek Fiala", email = "xfiala6@fi.muni.cz")))
 @RequestMapping("/kiosk")
 public class KioskController {
 
@@ -42,11 +37,11 @@ public class KioskController {
      * User can borrow a book at kiosk.
      */
     @Operation(summary = "Borrow a book at kiosk")
-    @ApiResponse(responseCode = "202", description = "New borrowing accepted", useReturnTypeSchema = true)
+    @ApiResponse(responseCode = "201", description = "New borrowing accepted", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "400", description = "Invalid Payload",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
     @PostMapping("/borrow")
-    @ResponseStatus(HttpStatus.ACCEPTED)
+    @ResponseStatus(HttpStatus.CREATED)
     public BorrowingDto borrow(@RequestBody KioskBorrowDto dto) {
         return kioskFacade.borrowBook(dto);
     }
@@ -59,7 +54,6 @@ public class KioskController {
     @ApiResponse(responseCode = "404", description = "Borrowing not found",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
     @PostMapping("/return/{id}")
-    @ResponseStatus(HttpStatus.OK)
     public void returnBook(@PathVariable String id) {
         kioskFacade.returnBook(id);
     }

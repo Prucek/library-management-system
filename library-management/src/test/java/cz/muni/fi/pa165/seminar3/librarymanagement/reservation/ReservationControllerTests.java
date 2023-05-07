@@ -59,7 +59,7 @@ public class ReservationControllerTests {
 
         // perform test
         mockMvc.perform(get("/reservations/" + reservationDto.getId()).with(csrf()))
-                .andExpect(status().is2xxSuccessful())
+                .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(reservationDto.getId()));
     }
 
@@ -88,7 +88,7 @@ public class ReservationControllerTests {
                                 .to(reservationDto.getTo())
                                 .user(UserDto.builder().id(reservationDto.getUser().getId()).build())
                                 .build())))
-                .andExpect(status().is2xxSuccessful())
+                .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").hasJsonPath())
                 .andExpect(jsonPath("$.user.id").value(reservationDto.getUser().getId()));
     }
@@ -111,7 +111,7 @@ public class ReservationControllerTests {
                                 .to(newReservationDto.getTo())
                                 .userId(newReservationDto.getUser().getId())
                                 .build())))
-                .andExpect(status().is2xxSuccessful())
+                .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(newReservationDto.getId()))
                 .andExpect(jsonPath("$.user.id").value(newReservationDto.getUser().getId()));
     }
@@ -125,7 +125,7 @@ public class ReservationControllerTests {
 
         // perform test
         mockMvc.perform(delete("/reservations/" + reservationDto.getId()).with(csrf()))
-                .andExpect(status().is2xxSuccessful());
+                .andExpect(status().isNoContent());
     }
 
     @Test
@@ -148,7 +148,7 @@ public class ReservationControllerTests {
 
         // perform test
         mockMvc.perform(get("/reservations").with(csrf()))
-                .andExpect(status().is2xxSuccessful())
+                .andExpect(status().isOk())
                 .andExpect(jsonPath("$.total").value(reservationDtoResult.getTotal()))
                 .andExpect(jsonPath("$.page").value(0))
                 .andExpect(jsonPath("$.items[0].id").value(reservationDtoResult.getItems().get(0).getId()))

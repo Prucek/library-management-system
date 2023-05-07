@@ -48,7 +48,7 @@ public class UserController {
      * REST method for creating a new user.
      */
     @Operation(summary = "Create a new fine")
-    @ApiResponse(responseCode = "200", description = "User created", useReturnTypeSchema = true)
+    @ApiResponse(responseCode = "201", description = "User created", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "400", description = "Invalid payload",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
     @PostMapping
@@ -60,15 +60,13 @@ public class UserController {
     /**
      * REST method returning all users.
      */
-    @Operation(summary = "List all users", security = {
-            @SecurityRequirement(name = SECURITY_SCHEME_BEARER, scopes = {LIBRARIAN_SCOPE}),
-            @SecurityRequirement(name = SECURITY_SCHEME_OAUTH2, scopes = {LIBRARIAN_SCOPE})
-    })
+    @Operation(summary = "List all users")
+    @SecurityRequirement(name = SECURITY_SCHEME_BEARER, scopes = {LIBRARIAN_SCOPE})
+    @SecurityRequirement(name = SECURITY_SCHEME_OAUTH2, scopes = {LIBRARIAN_SCOPE})
     @ApiResponse(responseCode = "200", description = "Pages list of all users", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "400", description = "Invalid paging",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
-    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have required scope",
-            content = @Content())
+    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have required scope")
     @GetMapping
     public Result<UserDto> findAll(@RequestParam(defaultValue = "0") int page,
                                    @RequestParam(defaultValue = DEFAULT_PAGE_SIZE) int pageSize) {
@@ -78,15 +76,13 @@ public class UserController {
     /**
      * REST method returning user with specified id.
      */
-    @Operation(summary = "Find user with id", security = {
-            @SecurityRequirement(name = SECURITY_SCHEME_BEARER, scopes = {USER_SCOPE}),
-            @SecurityRequirement(name = SECURITY_SCHEME_OAUTH2, scopes = {USER_SCOPE})
-    })
+    @Operation(summary = "Find user with id")
+    @SecurityRequirement(name = SECURITY_SCHEME_BEARER, scopes = {USER_SCOPE})
+    @SecurityRequirement(name = SECURITY_SCHEME_OAUTH2, scopes = {USER_SCOPE})
     @ApiResponse(responseCode = "200", description = "User found", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "404", description = "User not found",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
-    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have required scope",
-            content = @Content())
+    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have required scope")
     @GetMapping("/{id}")
     public UserDto find(@PathVariable String id) {
         return userFacade.find(id);
@@ -95,17 +91,15 @@ public class UserController {
     /**
      * REST method for updating a new user.
      */
-    @Operation(summary = "Update user", security = {
-            @SecurityRequirement(name = SECURITY_SCHEME_BEARER, scopes = {USER_SCOPE}),
-            @SecurityRequirement(name = SECURITY_SCHEME_OAUTH2, scopes = {USER_SCOPE})
-    })
+    @Operation(summary = "Update user")
+    @SecurityRequirement(name = SECURITY_SCHEME_BEARER, scopes = {USER_SCOPE})
+    @SecurityRequirement(name = SECURITY_SCHEME_OAUTH2, scopes = {USER_SCOPE})
     @ApiResponse(responseCode = "200", description = "User updated", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "400", description = "Invalid payload",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
     @ApiResponse(responseCode = "404", description = "User not found",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
-    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have required scope",
-            content = @Content())
+    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have required scope")
     @PutMapping("/{id}")
     public UserDto update(@PathVariable String id, @RequestBody UserCreateDto userCreateDto) {
         return userFacade.update(id, userCreateDto);
@@ -114,16 +108,16 @@ public class UserController {
     /**
      * REST method for deleting a user.
      */
-    @Operation(summary = "Delete user", security = {
-            @SecurityRequirement(name = SECURITY_SCHEME_BEARER, scopes = {USER_SCOPE}),
-            @SecurityRequirement(name = SECURITY_SCHEME_OAUTH2, scopes = {USER_SCOPE})
-    })
-    @ApiResponse(responseCode = "200", description = "User deleted", useReturnTypeSchema = true)
+    @Operation(summary = "Delete user")
+    @SecurityRequirement(name = SECURITY_SCHEME_BEARER, scopes = {USER_SCOPE})
+    @SecurityRequirement(name = SECURITY_SCHEME_OAUTH2, scopes = {USER_SCOPE})
+    @ApiResponse(responseCode = "204", description = "User deleted", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "404", description = "User not found",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
     @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have required scope",
             content = @Content())
     @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable String id) {
         userFacade.delete(id);
     }

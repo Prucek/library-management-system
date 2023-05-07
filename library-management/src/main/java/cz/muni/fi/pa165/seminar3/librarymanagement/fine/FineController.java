@@ -54,17 +54,15 @@ public class FineController {
      * @param fineCreateDto fine data
      * @return created fine
      */
-    @Operation(summary = "Create a new fine", security = {
-            @SecurityRequirement(name = SECURITY_SCHEME_BEARER, scopes = {LIBRARIAN_SCOPE}),
-            @SecurityRequirement(name = SECURITY_SCHEME_OAUTH2, scopes = {LIBRARIAN_SCOPE})
-    })
-    @ApiResponse(responseCode = "200", description = "Fine created", useReturnTypeSchema = true)
+    @Operation(summary = "Create a new fine")
+    @SecurityRequirement(name = SECURITY_SCHEME_BEARER, scopes = {LIBRARIAN_SCOPE})
+    @SecurityRequirement(name = SECURITY_SCHEME_OAUTH2, scopes = {LIBRARIAN_SCOPE})
+    @ApiResponse(responseCode = "201", description = "Fine created", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "400", description = "Invalid payload",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
     @ApiResponse(responseCode = "404", description = "Issuer or borrowing not found",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
-    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have required scope",
-            content = @Content())
+    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have required scope")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public FineDto create(@RequestBody FineCreateDto fineCreateDto) {
@@ -78,15 +76,13 @@ public class FineController {
      * @param pageSize size of the page
      * @return paged fines
      */
-    @Operation(summary = "List all fines", security = {
-            @SecurityRequirement(name = SECURITY_SCHEME_BEARER, scopes = {LIBRARIAN_SCOPE}),
-            @SecurityRequirement(name = SECURITY_SCHEME_OAUTH2, scopes = {LIBRARIAN_SCOPE})
-    })
+    @Operation(summary = "List all fines")
+    @SecurityRequirement(name = SECURITY_SCHEME_BEARER, scopes = {LIBRARIAN_SCOPE})
+    @SecurityRequirement(name = SECURITY_SCHEME_OAUTH2, scopes = {LIBRARIAN_SCOPE})
     @ApiResponse(responseCode = "200", description = "Pages list of all fines", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "400", description = "Invalid paging",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
-    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have required scope",
-            content = @Content())
+    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have required scope")
     @GetMapping
     public Result<FineDto> findAll(@RequestParam(defaultValue = "0") int page,
                                    @RequestParam(defaultValue = DEFAULT_PAGE_SIZE) int pageSize) {
@@ -99,15 +95,13 @@ public class FineController {
      * @param id id of the fine
      * @return found fine
      */
-    @Operation(summary = "Find fine with id", security = {
-            @SecurityRequirement(name = SECURITY_SCHEME_BEARER, scopes = {USER_SCOPE}),
-            @SecurityRequirement(name = SECURITY_SCHEME_OAUTH2, scopes = {USER_SCOPE})
-    })
+    @Operation(summary = "Find fine with id")
+    @SecurityRequirement(name = SECURITY_SCHEME_BEARER, scopes = {USER_SCOPE})
+    @SecurityRequirement(name = SECURITY_SCHEME_OAUTH2, scopes = {USER_SCOPE})
     @ApiResponse(responseCode = "200", description = "Fine found", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "404", description = "Fine not found",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
-    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have required scope",
-            content = @Content())
+    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have required scope")
     @GetMapping(path = "{id}")
     public FineDto find(@PathVariable String id) {
         return fineFacade.find(id);
@@ -120,17 +114,15 @@ public class FineController {
      * @param fineCreateDto new fine data
      * @return updated fine
      */
-    @Operation(summary = "Update fine", security = {
-            @SecurityRequirement(name = SECURITY_SCHEME_BEARER, scopes = {LIBRARIAN_SCOPE}),
-            @SecurityRequirement(name = SECURITY_SCHEME_OAUTH2, scopes = {LIBRARIAN_SCOPE})
-    })
+    @Operation(summary = "Update fine")
+    @SecurityRequirement(name = SECURITY_SCHEME_BEARER, scopes = {LIBRARIAN_SCOPE})
+    @SecurityRequirement(name = SECURITY_SCHEME_OAUTH2, scopes = {LIBRARIAN_SCOPE})
     @ApiResponse(responseCode = "200", description = "Fine updated", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "400", description = "Invalid payload",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
     @ApiResponse(responseCode = "404", description = "Fine not found",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
-    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have required scope",
-            content = @Content())
+    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have required scope")
     @PutMapping(path = "{id}")
     public FineDto update(@PathVariable String id, @RequestBody FineCreateDto fineCreateDto) {
         return fineFacade.update(id, fineCreateDto);
@@ -141,15 +133,13 @@ public class FineController {
      *
      * @param id id of the fine
      */
-    @Operation(summary = "Delete fine", security = {
-            @SecurityRequirement(name = SECURITY_SCHEME_BEARER, scopes = {LIBRARIAN_SCOPE}),
-            @SecurityRequirement(name = SECURITY_SCHEME_OAUTH2, scopes = {LIBRARIAN_SCOPE})
-    })
+    @Operation(summary = "Delete fine")
+    @SecurityRequirement(name = SECURITY_SCHEME_BEARER, scopes = {LIBRARIAN_SCOPE})
+    @SecurityRequirement(name = SECURITY_SCHEME_OAUTH2, scopes = {LIBRARIAN_SCOPE})
     @ApiResponse(responseCode = "200", description = "Fine deleted", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "404", description = "Fine not found",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
-    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have required scope",
-            content = @Content())
+    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have required scope")
     @DeleteMapping(path = "{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable String id) {

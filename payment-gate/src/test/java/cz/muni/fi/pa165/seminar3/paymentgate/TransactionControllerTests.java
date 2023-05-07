@@ -58,7 +58,7 @@ public class TransactionControllerTests {
                                 .amount(transactionDto.getAmount())
                                 .callbackUrl(transactionDto.getCallbackUrl())
                                 .build())))
-                .andExpect(status().is2xxSuccessful())
+                .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").value(transactionDto.getId()))
                 .andExpect(jsonPath("$.amount").value(transactionDto.getAmount()))
                 .andExpect(jsonPath("$.callbackUrl").value(transactionDto.getCallbackUrl()))
@@ -74,7 +74,7 @@ public class TransactionControllerTests {
 
         // perform test
         mockMvc.perform(get("/transactions"))
-                .andExpect(status().is2xxSuccessful())
+                .andExpect(status().isOk())
                 .andExpect(jsonPath("$.total").value(transactionDtoResult.getTotal()))
                 .andExpect(jsonPath("$.page").value(transactionDtoResult.getPage()))
                 .andExpect(jsonPath("$.items[0].id").value(transactionDtoResult.getItems().get(0).getId()))
@@ -90,7 +90,7 @@ public class TransactionControllerTests {
 
         // perform test
         mockMvc.perform(get("/transactions/" + transactionDto.getId()))
-                .andExpect(status().is2xxSuccessful())
+                .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(transactionDto.getId()))
                 .andExpect(jsonPath("$.amount").value(transactionDto.getAmount()))
                 .andExpect(jsonPath("$.callbackUrl").value(transactionDto.getCallbackUrl()))
@@ -118,7 +118,7 @@ public class TransactionControllerTests {
         // perform test
         mockMvc.perform(post("/transactions/" + transactionDto.getId()).contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(cardDto)))
-                .andExpect(status().is2xxSuccessful())
+                .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(transactionDto.getId()))
                 .andExpect(jsonPath("$.amount").value(transactionDto.getAmount()))
                 .andExpect(jsonPath("$.callbackUrl").value(transactionDto.getCallbackUrl()))

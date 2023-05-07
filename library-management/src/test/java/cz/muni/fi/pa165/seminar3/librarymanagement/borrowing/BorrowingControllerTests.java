@@ -59,7 +59,7 @@ public class BorrowingControllerTests {
 
         // perform test
         mockMvc.perform(get("/borrowings/" + borrowingDto.getId()).with(csrf()))
-                .andExpect(status().is2xxSuccessful())
+                .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(borrowingDto.getId()));
     }
 
@@ -87,7 +87,7 @@ public class BorrowingControllerTests {
                                 .to(borrowingDto.getTo())
                                 .user(UserDto.builder().id(borrowingDto.getUser().getId()).build())
                                 .build())))
-                .andExpect(status().is2xxSuccessful())
+                .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").hasJsonPath())
                 .andExpect(jsonPath("$.user.id").value(borrowingDto.getUser().getId()));
     }
@@ -109,7 +109,7 @@ public class BorrowingControllerTests {
                                 .to(newBorrowingDto.getTo())
                                 .userId(newBorrowingDto.getUser().getId())
                                 .build())))
-                .andExpect(status().is2xxSuccessful())
+                .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(newBorrowingDto.getId()))
                 .andExpect(jsonPath("$.user.id").value(newBorrowingDto.getUser().getId()));
     }
@@ -122,7 +122,7 @@ public class BorrowingControllerTests {
         given(borrowingFacade.find(borrowing.getId())).willReturn(borrowing);
 
         // perform test
-        mockMvc.perform(delete("/borrowings/" + borrowing.getId()).with(csrf())).andExpect(status().is2xxSuccessful());
+        mockMvc.perform(delete("/borrowings/" + borrowing.getId()).with(csrf())).andExpect(status().isNoContent());
     }
 
     @Test
@@ -145,7 +145,7 @@ public class BorrowingControllerTests {
 
         // perform test
         mockMvc.perform(get("/borrowings").with(csrf()))
-                .andExpect(status().is2xxSuccessful())
+                .andExpect(status().isOk())
                 .andExpect(jsonPath("$.total").value(borrowingDtoResult.getTotal()))
                 .andExpect(jsonPath("$.page").value(0))
                 .andExpect(jsonPath("$.items[0].id").value(borrowingDtoResult.getItems().get(0).getId()))

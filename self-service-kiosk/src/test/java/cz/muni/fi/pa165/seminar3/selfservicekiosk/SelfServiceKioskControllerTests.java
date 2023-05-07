@@ -84,7 +84,7 @@ class SelfServiceKioskControllerTests {
         given(kioskFacade.borrowBook(any(KioskBorrowDto.class))).willReturn(expectedResult);
 
         mockMvc.perform(post("/kiosk/borrow").contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(kioskBorrowDto))).andExpect(status().isAccepted());
+                .content(objectMapper.writeValueAsString(kioskBorrowDto))).andExpect(status().isCreated());
     }
 
     @Test
@@ -93,7 +93,7 @@ class SelfServiceKioskControllerTests {
 
         doNothing().when(kioskFacade).returnBook(bookInstanceId);
 
-        mockMvc.perform(post("/kiosk/return/" + bookInstanceId)).andExpect(status().is2xxSuccessful());
+        mockMvc.perform(post("/kiosk/return/" + bookInstanceId)).andExpect(status().isOk());
 
     }
 }

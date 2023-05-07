@@ -78,7 +78,7 @@ public class AuthorControllerTests {
 
         mockMvc.perform(get("/authors/" + authorDto.getId()))
                 .andDo(print())
-                .andExpect(status().is2xxSuccessful())
+                .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value(authorDto.getName()))
                 .andExpect(jsonPath("$.surname").value(authorDto.getSurname()));
     }
@@ -99,7 +99,7 @@ public class AuthorControllerTests {
 
         doNothing().when(authorFacade).delete(authorId);
 
-        mockMvc.perform(delete("/authors/" + authorId).with(csrf())).andExpect(status().is2xxSuccessful());
+        mockMvc.perform(delete("/authors/" + authorId).with(csrf())).andExpect(status().isNoContent());
     }
 
     @Test
@@ -125,7 +125,7 @@ public class AuthorControllerTests {
                         .with(csrf())
                         .content(objectMapper.writeValueAsString(createDto)))
                 .andDo(print())
-                .andExpect(status().is2xxSuccessful())
+                .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(authorDto.getId()))
                 .andExpect(jsonPath("$.name").value(authorDto.getName()))
                 .andExpect(jsonPath("$.surname").value(authorDto.getSurname()));

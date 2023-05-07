@@ -61,7 +61,7 @@ public class BookControllerTests {
         mockMvc.perform(post("/books").contentType(MediaType.APPLICATION_JSON)
                         .with(csrf())
                         .content(objectMapper.writeValueAsString(bookDto)))
-                .andExpect(status().is2xxSuccessful())
+                .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").value(bookDto.getId()))
                 .andExpect(jsonPath("$.title").value(bookDto.getTitle()))
                 .andExpect(jsonPath("$.authors[0].id").value(bookDto.getAuthors().get(0).getId()));
@@ -90,7 +90,7 @@ public class BookControllerTests {
 
         // perform test
         mockMvc.perform(get("/books/" + bookDto.getId()))
-                .andExpect(status().is2xxSuccessful())
+                .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(bookDto.getId()))
                 .andExpect(jsonPath("$.title").value(bookDto.getTitle()))
                 .andExpect(jsonPath("$.authors[0].id").value(bookDto.getAuthors().get(0).getId()));
@@ -114,7 +114,7 @@ public class BookControllerTests {
         doNothing().when(bookFacade).delete(bookDto.getId());
 
         // perform test
-        mockMvc.perform(delete("/books/" + bookDto.getId()).with(csrf())).andExpect(status().is2xxSuccessful());
+        mockMvc.perform(delete("/books/" + bookDto.getId()).with(csrf())).andExpect(status().isNoContent());
     }
 
     @Test
@@ -140,7 +140,7 @@ public class BookControllerTests {
         mockMvc.perform(put("/books/" + bookDto.getId()).contentType(MediaType.APPLICATION_JSON)
                         .with(csrf())
                         .content(objectMapper.writeValueAsString(bookDtoNew)))
-                .andExpect(status().is2xxSuccessful())
+                .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(bookDto.getId()))
                 .andExpect(jsonPath("$.title").value(bookDtoNew.getTitle()))
                 .andExpect(jsonPath("$.authors[0].id").value(bookDtoNew.getAuthors().get(0).getId()));
@@ -168,7 +168,7 @@ public class BookControllerTests {
 
         mockMvc.perform(post("/books/" + bookDto.getId() + "/instances")
                         .contentType(MediaType.APPLICATION_JSON).with(csrf()))
-                .andExpect(status().is2xxSuccessful())
+                .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").value(bookInstanceDto.getId()));
     }
 
@@ -181,6 +181,6 @@ public class BookControllerTests {
 
         // perform test
         mockMvc.perform(delete("/books/instances/" + bookInstanceId).with(csrf()))
-                .andExpect(status().is2xxSuccessful());
+                .andExpect(status().isNoContent());
     }
 }

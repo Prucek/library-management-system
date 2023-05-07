@@ -43,13 +43,11 @@ public class SettingsController {
      *
      * @return current settings
      */
-    @Operation(summary = "Get current library settings", security = {
-            @SecurityRequirement(name = SECURITY_SCHEME_BEARER, scopes = {USER_SCOPE}),
-            @SecurityRequirement(name = SECURITY_SCHEME_OAUTH2, scopes = {USER_SCOPE})
-    })
+    @Operation(summary = "Get current library settings")
+    @SecurityRequirement(name = SECURITY_SCHEME_BEARER, scopes = {USER_SCOPE})
+    @SecurityRequirement(name = SECURITY_SCHEME_OAUTH2, scopes = {USER_SCOPE})
     @ApiResponse(responseCode = "200", description = "Library Settings", useReturnTypeSchema = true)
-    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have required scope",
-            content = @Content())
+    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have required scope")
     @GetMapping
     public SettingsDto getCurrent() {
         return settingsFacade.getCurrent();
@@ -61,15 +59,13 @@ public class SettingsController {
      * @param settingsDto new settings
      * @return updated settings
      */
-    @Operation(summary = "Update library settings", security = {
-            @SecurityRequirement(name = SECURITY_SCHEME_BEARER, scopes = {LIBRARIAN_SCOPE}),
-            @SecurityRequirement(name = SECURITY_SCHEME_OAUTH2, scopes = {LIBRARIAN_SCOPE})
-    })
+    @Operation(summary = "Update library settings")
+    @SecurityRequirement(name = SECURITY_SCHEME_BEARER, scopes = {LIBRARIAN_SCOPE})
+    @SecurityRequirement(name = SECURITY_SCHEME_OAUTH2, scopes = {LIBRARIAN_SCOPE})
     @ApiResponse(responseCode = "200", description = "Library settings updated", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "400", description = "Invalid payload",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
-    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have required scope",
-            content = @Content())
+    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have required scope")
     @PostMapping
     public SettingsDto update(@RequestBody SettingsDto settingsDto) {
         return settingsFacade.update(settingsDto);

@@ -67,7 +67,7 @@ public class UserControllerTests {
                                 .addresses(user.getAddresses())
                                 .build())))
                 .andDo(print())
-                .andExpect(status().is2xxSuccessful())
+                .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.username").value(user.getUsername()))
                 .andExpect(jsonPath("$.email").value(user.getEmail()))
                 .andExpect(jsonPath("$.firstName").value(user.getFirstName()))
@@ -105,7 +105,7 @@ public class UserControllerTests {
 
         mockMvc.perform(get("/users").with(csrf()))
                 .andDo(print())
-                .andExpect(status().is2xxSuccessful())
+                .andExpect(status().isOk())
                 .andExpect(jsonPath("$.total").value(userDtoResult.getTotal()))
                 .andExpect(jsonPath("$.items[0].username").value(userDtoResult.getItems().get(0).getUsername()))
                 .andExpect(jsonPath("$.items[0].email").value(userDtoResult.getItems().get(0).getEmail()))
@@ -144,7 +144,7 @@ public class UserControllerTests {
 
         mockMvc.perform(get("/users/" + user.getId()).with(csrf()))
                 .andDo(print())
-                .andExpect(status().is2xxSuccessful())
+                .andExpect(status().isOk())
                 .andExpect(jsonPath("$.username").value(user.getUsername()))
                 .andExpect(jsonPath("$.email").value(user.getEmail()))
                 .andExpect(jsonPath("$.firstName").value(user.getFirstName()))
@@ -181,7 +181,7 @@ public class UserControllerTests {
                         .with(csrf())
                         .content(objectMapper.writeValueAsString(updatedUser)))
                 .andDo(print())
-                .andExpect(status().is2xxSuccessful())
+                .andExpect(status().isOk())
                 .andExpect(jsonPath("$.username").value(updatedUser.getUsername()))
                 .andExpect(jsonPath("$.email").value(updatedUser.getEmail()))
                 .andExpect(jsonPath("$.firstName").value(updatedUser.getFirstName()))
@@ -215,7 +215,7 @@ public class UserControllerTests {
 
         given(userFacade.find("/users/" + user.getId())).willReturn(user);
 
-        mockMvc.perform(delete("/users/" + user.getId()).with(csrf())).andExpect(status().is2xxSuccessful());
+        mockMvc.perform(delete("/users/" + user.getId()).with(csrf())).andExpect(status().isNoContent());
     }
 
     @Test

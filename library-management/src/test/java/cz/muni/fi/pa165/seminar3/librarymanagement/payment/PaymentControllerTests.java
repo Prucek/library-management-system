@@ -58,7 +58,7 @@ public class PaymentControllerTests {
                         .content(objectMapper.writeValueAsString(PaymentCreateDto.builder()
                                 .fines(paymentDto.getPaidFines().stream().map(DomainObjectDto::getId).toList())
                                 .build())))
-                .andExpect(status().is2xxSuccessful())
+                .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").value(paymentDto.getId()))
                 .andExpect(jsonPath("$.transactionId").value(paymentDto.getTransactionId()))
                 .andExpect(jsonPath("$.status").value(paymentDto.getStatus().toString()))
@@ -87,7 +87,7 @@ public class PaymentControllerTests {
 
         // perform test
         mockMvc.perform(post("/payments/" + paymentDto.getId()).with(csrf()))
-                .andExpect(status().is2xxSuccessful())
+                .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(paymentDto.getId()))
                 .andExpect(jsonPath("$.transactionId").value(paymentDto.getTransactionId()))
                 .andExpect(jsonPath("$.status").value(paymentDto.getStatus().toString()))
@@ -114,7 +114,7 @@ public class PaymentControllerTests {
 
         // perform test
         mockMvc.perform(get("/payments").with(csrf()))
-                .andExpect(status().is2xxSuccessful())
+                .andExpect(status().isOk())
                 .andExpect(jsonPath("$.total").value(paymentDtoResult.getTotal()))
                 .andExpect(jsonPath("$.page").value(paymentDtoResult.getPage()))
                 .andExpect(jsonPath("$.items[0].id").value(paymentDtoResult.getItems().get(0).getId()))
@@ -131,7 +131,7 @@ public class PaymentControllerTests {
 
         // perform test
         mockMvc.perform(get("/payments/" + paymentDto.getId()).with(csrf()))
-                .andExpect(status().is2xxSuccessful())
+                .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(paymentDto.getId()))
                 .andExpect(jsonPath("$.transactionId").value(paymentDto.getTransactionId()))
                 .andExpect(jsonPath("$.status").value(paymentDto.getStatus().toString()))
