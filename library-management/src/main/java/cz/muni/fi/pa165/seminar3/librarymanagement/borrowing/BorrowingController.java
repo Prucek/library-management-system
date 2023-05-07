@@ -56,7 +56,7 @@ public class BorrowingController {
     @ApiResponse(responseCode = "200", description = "Borrowing found", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "404", description = "Borrowing not found",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
-    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have scope test_1",
+    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have required scope",
             content = @Content())
     @GetMapping("/{id}")
     public BorrowingDto find(@PathVariable String id) {
@@ -78,7 +78,7 @@ public class BorrowingController {
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
     @ApiResponse(responseCode = "404", description = "User or book not found",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
-    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have scope test_2",
+    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have required scope",
             content = @Content())
     @PostMapping
     public BorrowingDto create(@RequestBody BorrowingCreateDto borrowingCreateDto) {
@@ -104,7 +104,7 @@ public class BorrowingController {
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
     @ApiResponse(responseCode = "404", description = "Borrowing not found",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
-    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have scope test_2",
+    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have required scope",
             content = @Content())
     @PutMapping("/{id}")
     public BorrowingDto update(@PathVariable String id, @RequestBody BorrowingCreateDto borrowingCreateDto) {
@@ -125,7 +125,7 @@ public class BorrowingController {
     @ApiResponse(responseCode = "200", description = "Borrowing deleted", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "404", description = "Borrowing not found",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
-    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have scope test_2",
+    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have required scope",
             content = @Content())
     @DeleteMapping("/{id}")
     public void delete(@PathVariable String id) {
@@ -146,7 +146,7 @@ public class BorrowingController {
     @ApiResponse(responseCode = "200", description = "Pages list of all borrowings", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "400", description = "Invalid paging",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
-    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have scope test_1",
+    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have required scope",
             content = @Content())
     @GetMapping
     public Result<BorrowingDto> findAll(@RequestParam(defaultValue = "0") int page,

@@ -63,7 +63,7 @@ public class FineController {
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
     @ApiResponse(responseCode = "404", description = "Issuer or borrowing not found",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
-    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have scope test_2",
+    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have required scope",
             content = @Content())
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -85,7 +85,7 @@ public class FineController {
     @ApiResponse(responseCode = "200", description = "Pages list of all fines", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "400", description = "Invalid paging",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
-    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have scope test_2",
+    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have required scope",
             content = @Content())
     @GetMapping
     public Result<FineDto> findAll(@RequestParam(defaultValue = "0") int page,
@@ -106,7 +106,7 @@ public class FineController {
     @ApiResponse(responseCode = "200", description = "Fine found", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "404", description = "Fine not found",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
-    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have scope test_2",
+    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have required scope",
             content = @Content())
     @GetMapping(path = "{id}")
     public FineDto find(@PathVariable String id) {
@@ -129,7 +129,7 @@ public class FineController {
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
     @ApiResponse(responseCode = "404", description = "Fine not found",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
-    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have scope test_2",
+    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have required scope",
             content = @Content())
     @PutMapping(path = "{id}")
     public FineDto update(@PathVariable String id, @RequestBody FineCreateDto fineCreateDto) {
@@ -148,7 +148,7 @@ public class FineController {
     @ApiResponse(responseCode = "200", description = "Fine deleted", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "404", description = "Fine not found",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
-    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have scope test_2",
+    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have required scope",
             content = @Content())
     @DeleteMapping(path = "{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)

@@ -87,7 +87,7 @@ public class BookController {
     @ApiResponse(responseCode = "404", description = "Author not found",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have scope test_2",
+    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have required scope",
             content = @Content())
     @ResponseStatus(HttpStatus.CREATED)
     public BookDto create(@RequestBody BookCreateDto dto) {
@@ -104,7 +104,7 @@ public class BookController {
     @ApiResponse(responseCode = "200", description = "Book deleted", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "404", description = "Book not found",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
-    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have scope test_2",
+    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have required scope",
             content = @Content())
     @DeleteMapping("/{id}")
     public void delete(@PathVariable String id) {
@@ -118,7 +118,7 @@ public class BookController {
             @SecurityRequirement(name = SECURITY_SCHEME_BEARER, scopes = {LIBRARIAN_SCOPE}),
             @SecurityRequirement(name = SECURITY_SCHEME_OAUTH2, scopes = {LIBRARIAN_SCOPE})
     })
-    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have scope test_2",
+    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have required scope",
             content = @Content())
     @PutMapping("/{id}")
     public BookDto update(@PathVariable String id, @RequestBody BookCreateDto dto) {
@@ -134,7 +134,7 @@ public class BookController {
     })
     @ApiResponse(responseCode = "200", description = "Book instance added", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "404", description = "Book not found", useReturnTypeSchema = true)
-    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have scope test_2",
+    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have required scope",
             content = @Content())
     @PostMapping("/{bookId}/instances")
     public BookInstanceDto addInstance(@PathVariable String bookId) {
@@ -150,7 +150,7 @@ public class BookController {
     })
     @ApiResponse(responseCode = "200", description = "Book instance added", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "404", description = "Book or book instance not found", useReturnTypeSchema = true)
-    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have scope test_2",
+    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have required scope",
             content = @Content())
     @DeleteMapping("/instances/{id}")
     public void removeInstance(@PathVariable String id) {

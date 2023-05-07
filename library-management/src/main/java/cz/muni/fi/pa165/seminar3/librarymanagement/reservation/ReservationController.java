@@ -69,7 +69,7 @@ public class ReservationController {
     @ApiResponse(responseCode = "200", description = "Reservation found", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "404", description = "reservation not found",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
-    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have scope test_1",
+    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have required scope",
             content = @Content())
     @GetMapping("/{id}")
     public ReservationDto find(@PathVariable String id) {
@@ -96,7 +96,7 @@ public class ReservationController {
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
     @ApiResponse(responseCode = "404", description = "User or book not found",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
-    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have scope test_2",
+    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have required scope",
             content = @Content())
     @PostMapping
     public ReservationDto create(@RequestBody ReservationCreateDto reservationCreateDto) {
@@ -122,7 +122,7 @@ public class ReservationController {
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
     @ApiResponse(responseCode = "404", description = "Reservation not found",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
-    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have scope test_2",
+    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have required scope",
             content = @Content())
     @PutMapping("/{id}")
     public ReservationDto update(@PathVariable String id, @RequestBody ReservationCreateDto reservationCreateDto) {
@@ -144,7 +144,7 @@ public class ReservationController {
     @ApiResponse(responseCode = "200", description = "Reservation deleted", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "404", description = "Reservation not found",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
-    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have scope test_2",
+    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have required scope",
             content = @Content())
     @DeleteMapping("/{id}")
     public void delete(@PathVariable String id) {
@@ -165,7 +165,7 @@ public class ReservationController {
     @ApiResponse(responseCode = "200", description = "Pages list of all reservations", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "400", description = "Invalid paging",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
-    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have scope test_1",
+    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have required scope",
             content = @Content())
     @GetMapping
     public Result<ReservationDto> findAll(@RequestParam(defaultValue = "0") int page,

@@ -63,7 +63,7 @@ public class PaymentController {
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
     @ApiResponse(responseCode = "404", description = "Fine not found",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
-    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have scope test_2",
+    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have required scope",
             content = @Content())
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -87,7 +87,7 @@ public class PaymentController {
     @ApiResponse(responseCode = "200", description = "Payment status updated", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "404", description = "Payment not found",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
-    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have scope test_2",
+    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have required scope",
             content = @Content())
     @PostMapping(path = "{id}")
     public PaymentDto paymentGateCallback(@PathVariable String id) {
@@ -108,7 +108,7 @@ public class PaymentController {
     @ApiResponse(responseCode = "200", description = "Paged list of payments", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "400", description = "Invalid paging",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
-    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have scope test_1",
+    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have required scope",
             content = @Content())
     @GetMapping
     public Result<PaymentDto> findAll(@RequestParam(defaultValue = "0") int page,
@@ -129,7 +129,7 @@ public class PaymentController {
     @ApiResponse(responseCode = "200", description = "Payment found", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "404", description = "Payment not found",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
-    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have scope test_1",
+    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have required scope",
             content = @Content())
     @GetMapping(path = "{id}")
     public PaymentDto find(@PathVariable String id) {

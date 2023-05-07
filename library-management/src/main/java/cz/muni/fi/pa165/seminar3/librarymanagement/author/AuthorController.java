@@ -79,7 +79,7 @@ public class AuthorController {
     @ApiResponse(responseCode = "201", description = "Author created", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "400", description = "Invalid payload",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
-    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have scope test_2",
+    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have required scope",
             content = @Content())
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
@@ -97,7 +97,7 @@ public class AuthorController {
     @ApiResponse(responseCode = "200", description = "Author deleted", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "404", description = "Author not found",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
-    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have scope test_2",
+    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have required scope",
             content = @Content())
     @DeleteMapping("/{id}")
     public void delete(@PathVariable String id) {
@@ -114,7 +114,7 @@ public class AuthorController {
     @ApiResponse(responseCode = "200", description = "Author updated", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "404", description = "Author not found",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
-    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have scope test_2",
+    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have required scope",
             content = @Content())
     @PutMapping("/{id}")
     public AuthorDto update(@PathVariable String id, @RequestBody AuthorCreateDto dto) {

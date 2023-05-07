@@ -48,7 +48,7 @@ public class SettingsController {
             @SecurityRequirement(name = SECURITY_SCHEME_OAUTH2, scopes = {USER_SCOPE})
     })
     @ApiResponse(responseCode = "200", description = "Library Settings", useReturnTypeSchema = true)
-    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have scope test_2",
+    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have required scope",
             content = @Content())
     @GetMapping
     public SettingsDto getCurrent() {
@@ -68,7 +68,7 @@ public class SettingsController {
     @ApiResponse(responseCode = "200", description = "Library settings updated", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "400", description = "Invalid payload",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
-    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have scope test_2",
+    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have required scope",
             content = @Content())
     @PostMapping
     public SettingsDto update(@RequestBody SettingsDto settingsDto) {

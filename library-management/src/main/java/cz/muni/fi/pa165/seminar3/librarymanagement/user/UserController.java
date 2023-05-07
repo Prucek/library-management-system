@@ -67,7 +67,7 @@ public class UserController {
     @ApiResponse(responseCode = "200", description = "Pages list of all users", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "400", description = "Invalid paging",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
-    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have scope test_2",
+    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have required scope",
             content = @Content())
     @GetMapping
     public Result<UserDto> findAll(@RequestParam(defaultValue = "0") int page,
@@ -85,7 +85,7 @@ public class UserController {
     @ApiResponse(responseCode = "200", description = "User found", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "404", description = "User not found",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
-    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have scope test_2",
+    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have required scope",
             content = @Content())
     @GetMapping("/{id}")
     public UserDto find(@PathVariable String id) {
@@ -104,7 +104,7 @@ public class UserController {
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
     @ApiResponse(responseCode = "404", description = "User not found",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
-    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have scope test_2",
+    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have required scope",
             content = @Content())
     @PutMapping("/{id}")
     public UserDto update(@PathVariable String id, @RequestBody UserCreateDto userCreateDto) {
@@ -121,7 +121,7 @@ public class UserController {
     @ApiResponse(responseCode = "200", description = "User deleted", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "404", description = "User not found",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
-    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have scope test_2",
+    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have required scope",
             content = @Content())
     @DeleteMapping("/{id}")
     public void delete(@PathVariable String id) {
