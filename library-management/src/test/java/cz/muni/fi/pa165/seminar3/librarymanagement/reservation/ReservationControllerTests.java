@@ -1,11 +1,13 @@
 package cz.muni.fi.pa165.seminar3.librarymanagement.reservation;
 
+import static cz.muni.fi.pa165.seminar3.librarymanagement.LibraryManagementApplication.USER_SCOPE;
 import static cz.muni.fi.pa165.seminar3.librarymanagement.utils.ReservationUtils.fakeReservationDto;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doThrow;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -27,6 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 /**
@@ -48,34 +51,37 @@ public class ReservationControllerTests {
     private ObjectMapper objectMapper;
 
     @Test
+    @WithMockUser(authorities = "SCOPE_" + USER_SCOPE)
     public void findSuccessful() throws Exception {
         ReservationDto reservationDto = fakeReservationDto(faker);
         // mock facade
         given(reservationFacade.find(reservationDto.getId())).willReturn(reservationDto);
 
         // perform test
-        mockMvc.perform(get("/reservations/" + reservationDto.getId()))
+        mockMvc.perform(get("/reservations/" + reservationDto.getId()).with(csrf()))
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(jsonPath("$.id").value(reservationDto.getId()));
     }
 
     @Test
+    @WithMockUser(authorities = "SCOPE_" + USER_SCOPE)
     public void findNotFound() throws Exception {
         // mock facade
         given(reservationFacade.find(any())).willThrow(NotFoundException.class);
 
         // perform test
-        mockMvc.perform(get("/reservations/" + UUID.randomUUID())).andExpect(status().isNotFound());
+        mockMvc.perform(get("/reservations/" + UUID.randomUUID()).with(csrf())).andExpect(status().isNotFound());
     }
 
     @Test
+    @WithMockUser(authorities = "SCOPE_" + USER_SCOPE)
     public void createSuccessful() throws Exception {
         ReservationDto reservationDto = fakeReservationDto(faker);
         // mock facade
         given(reservationFacade.create(any())).willReturn(reservationDto);
 
         // perform test
-        mockMvc.perform(post("/reservations").contentType(MediaType.APPLICATION_JSON)
+        mockMvc.perform(post("/reservations").contentType(MediaType.APPLICATION_JSON).with(csrf())
                         .content(objectMapper.writeValueAsString(BorrowingDto.builder()
                                 .from(reservationDto.getFrom())
                                 .to(reservationDto.getTo())
@@ -87,6 +93,7 @@ public class ReservationControllerTests {
     }
 
     @Test
+    @WithMockUser(authorities = "SCOPE_" + USER_SCOPE)
     public void updateSuccessful() throws Exception {
         ReservationDto reservationDto = fakeReservationDto(faker);
         ReservationDto newReservationDto = fakeReservationDto(faker);
@@ -96,7 +103,7 @@ public class ReservationControllerTests {
         given(reservationFacade.updateReservation(eq(reservationDto.getId()), any())).willReturn(newReservationDto);
 
         // perform test
-        mockMvc.perform(put("/reservations/" + reservationDto.getId()).contentType(MediaType.APPLICATION_JSON)
+        mockMvc.perform(put("/reservations/" + reservationDto.getId()).contentType(MediaType.APPLICATION_JSON).with(csrf())
                         .content(objectMapper.writeValueAsString(BorrowingCreateDto.builder()
                                 .from(newReservationDto.getFrom())
                                 .to(newReservationDto.getTo())
@@ -108,25 +115,28 @@ public class ReservationControllerTests {
     }
 
     @Test
+    @WithMockUser(authorities = "SCOPE_" + USER_SCOPE)
     public void deleteSuccessful() throws Exception {
         ReservationDto reservationDto = fakeReservationDto(faker);
         // mock facade
         given(reservationFacade.find(reservationDto.getId())).willReturn(reservationDto);
 
         // perform test
-        mockMvc.perform(delete("/reservations/" + reservationDto.getId())).andExpect(status().is2xxSuccessful());
+        mockMvc.perform(delete("/reservations/" + reservationDto.getId()).with(csrf())).andExpect(status().is2xxSuccessful());
     }
 
     @Test
+    @WithMockUser(authorities = "SCOPE_" + USER_SCOPE)
     public void deleteNotFound() throws Exception {
         // mock facade
         doThrow(NotFoundException.class).when(reservationFacade).deleteReservation(any());
 
         // perform test
-        mockMvc.perform(delete("/reservations/" + UUID.randomUUID())).andExpect(status().isNotFound());
+        mockMvc.perform(delete("/reservations/" + UUID.randomUUID()).with(csrf())).andExpect(status().isNotFound());
     }
 
     @Test
+    @WithMockUser(authorities = "SCOPE_" + USER_SCOPE)
     public void findAllSuccessful() throws Exception {
         Result<ReservationDto> reservationDtoResult =
                 Result.of(fakeReservationDto(faker), fakeReservationDto(faker), fakeReservationDto(faker));
@@ -134,7 +144,7 @@ public class ReservationControllerTests {
         given(reservationFacade.findAll(eq(0), anyInt())).willReturn(reservationDtoResult);
 
         // perform test
-        mockMvc.perform(get("/reservations"))
+        mockMvc.perform(get("/reservations").with(csrf()))
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(jsonPath("$.total").value(reservationDtoResult.getTotal()))
                 .andExpect(jsonPath("$.page").value(0))

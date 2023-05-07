@@ -10,6 +10,7 @@ COPY model/pom.xml ./model/pom.xml
 COPY payment-gate/pom.xml ./payment-gate/pom.xml
 COPY reporting/pom.xml ./reporting/pom.xml
 COPY self-service-kiosk/pom.xml ./self-service-kiosk/pom.xml
+COPY oauth2-client/pom.xml ./oauth2-client/pom.xml
 
 RUN mvn dependency:go-offline
 
@@ -32,5 +33,6 @@ COPY --from=build /source/library-management/target/*.jar /app/library-managemen
 COPY --from=build /source/payment-gate/target/*.jar /app/payment-gate.jar
 COPY --from=build /source/reporting/target/*.jar /app/reporting.jar
 COPY --from=build /source/self-service-kiosk/target/*.jar /app/self-service-kiosk.jar
+COPY --from=build /source/oauth2-client/target/*.jar /app/oauth2-client.jar
 
 ENTRYPOINT ["java", "-jar"]

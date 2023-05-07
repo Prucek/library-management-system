@@ -1,11 +1,17 @@
 package cz.muni.fi.pa165.seminar3.librarymanagement.settings;
 
+import static cz.muni.fi.pa165.seminar3.librarymanagement.LibraryManagementApplication.LIBRARIAN_SCOPE;
+import static cz.muni.fi.pa165.seminar3.librarymanagement.LibraryManagementApplication.SECURITY_SCHEME_BEARER;
+import static cz.muni.fi.pa165.seminar3.librarymanagement.LibraryManagementApplication.SECURITY_SCHEME_OAUTH2;
+import static cz.muni.fi.pa165.seminar3.librarymanagement.LibraryManagementApplication.USER_SCOPE;
+
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.ErrorMessage;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.settings.SettingsDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -37,8 +43,13 @@ public class SettingsController {
      *
      * @return current settings
      */
-    @Operation(summary = "Get current library settings")
+    @Operation(summary = "Get current library settings", security = {
+            @SecurityRequirement(name = SECURITY_SCHEME_BEARER, scopes = {USER_SCOPE}),
+            @SecurityRequirement(name = SECURITY_SCHEME_OAUTH2, scopes = {USER_SCOPE})
+    })
     @ApiResponse(responseCode = "200", description = "Library Settings", useReturnTypeSchema = true)
+    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have required scope",
+            content = @Content())
     @GetMapping
     public SettingsDto getCurrent() {
         return settingsFacade.getCurrent();
@@ -50,11 +61,15 @@ public class SettingsController {
      * @param settingsDto new settings
      * @return updated settings
      */
-    @Operation(summary = "Update library settings")
-    @ApiResponse(responseCode = "200", description = "Library settings updated",
-            useReturnTypeSchema = true)
+    @Operation(summary = "Update library settings", security = {
+            @SecurityRequirement(name = SECURITY_SCHEME_BEARER, scopes = {LIBRARIAN_SCOPE}),
+            @SecurityRequirement(name = SECURITY_SCHEME_OAUTH2, scopes = {LIBRARIAN_SCOPE})
+    })
+    @ApiResponse(responseCode = "200", description = "Library settings updated", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "400", description = "Invalid payload",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
+    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have required scope",
+            content = @Content())
     @PostMapping
     public SettingsDto update(@RequestBody SettingsDto settingsDto) {
         return settingsFacade.update(settingsDto);

@@ -1,6 +1,9 @@
 package cz.muni.fi.pa165.seminar3.librarymanagement.author;
 
 import static cz.muni.fi.pa165.seminar3.librarymanagement.Config.DEFAULT_PAGE_SIZE;
+import static cz.muni.fi.pa165.seminar3.librarymanagement.LibraryManagementApplication.LIBRARIAN_SCOPE;
+import static cz.muni.fi.pa165.seminar3.librarymanagement.LibraryManagementApplication.SECURITY_SCHEME_BEARER;
+import static cz.muni.fi.pa165.seminar3.librarymanagement.LibraryManagementApplication.SECURITY_SCHEME_OAUTH2;
 
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.ErrorMessage;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.author.AuthorCreateDto;
@@ -10,6 +13,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -68,10 +72,15 @@ public class AuthorController {
     /**
      * REST method for creating a new author.
      */
-    @Operation(summary = "Create a new author")
+    @Operation(summary = "Create a new author", security = {
+            @SecurityRequirement(name = SECURITY_SCHEME_BEARER, scopes = {LIBRARIAN_SCOPE}),
+            @SecurityRequirement(name = SECURITY_SCHEME_OAUTH2, scopes = {LIBRARIAN_SCOPE})
+    })
     @ApiResponse(responseCode = "201", description = "Author created", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "400", description = "Invalid payload",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
+    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have required scope",
+            content = @Content())
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     public AuthorDto create(@RequestBody AuthorCreateDto dto) {
@@ -81,10 +90,15 @@ public class AuthorController {
     /**
      * REST method deleting specific author.
      */
-    @Operation(summary = "Delete author by its ID")
+    @Operation(summary = "Delete author by its ID", security = {
+            @SecurityRequirement(name = SECURITY_SCHEME_BEARER, scopes = {LIBRARIAN_SCOPE}),
+            @SecurityRequirement(name = SECURITY_SCHEME_OAUTH2, scopes = {LIBRARIAN_SCOPE})
+    })
     @ApiResponse(responseCode = "200", description = "Author deleted", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "404", description = "Author not found",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
+    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have required scope",
+            content = @Content())
     @DeleteMapping("/{id}")
     public void delete(@PathVariable String id) {
         facade.delete(id);
@@ -93,10 +107,15 @@ public class AuthorController {
     /**
      * REST method updating specific book.
      */
-    @Operation(summary = "Update author by its ID")
+    @Operation(summary = "Update author by its ID", security = {
+            @SecurityRequirement(name = SECURITY_SCHEME_BEARER, scopes = {LIBRARIAN_SCOPE}),
+            @SecurityRequirement(name = SECURITY_SCHEME_OAUTH2, scopes = {LIBRARIAN_SCOPE})
+    })
     @ApiResponse(responseCode = "200", description = "Author updated", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "404", description = "Author not found",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
+    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have required scope",
+            content = @Content())
     @PutMapping("/{id}")
     public AuthorDto update(@PathVariable String id, @RequestBody AuthorCreateDto dto) {
         return facade.update(id, dto);

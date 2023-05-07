@@ -1,5 +1,6 @@
 package cz.muni.fi.pa165.seminar3.librarymanagement.user;
 
+import static cz.muni.fi.pa165.seminar3.librarymanagement.LibraryManagementApplication.USER_SCOPE;
 import static cz.muni.fi.pa165.seminar3.librarymanagement.utils.UserUtils.fakeUserDto;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -27,7 +28,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+
+import static cz.muni.fi.pa165.seminar3.librarymanagement.LibraryManagementApplication.LIBRARIAN_SCOPE;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 
 /**
  * Tests for user controller.
@@ -49,8 +54,9 @@ public class UserControllerTests {
     private final Faker faker = new Faker();
 
     @Test
+//    @WithMockUser(authorities = "SCOPE_" + LIBRARIAN_SCOPE)
     void createSuccessful() throws Exception {
-        UserDto user = fakeUserDto(faker, UserType.CLIENT);
+        UserDto user = fakeUserDto(faker, null);
 
         given(userFacade.create(any())).willReturn(user);
 
@@ -78,7 +84,7 @@ public class UserControllerTests {
 
     @Test
     public void createEntityNotFound() throws Exception {
-        UserDto userDto = fakeUserDto(faker, UserType.CLIENT);
+        UserDto userDto = fakeUserDto(faker, null);
         // mock facade
         given(userFacade.create(any(UserCreateDto.class))).willThrow(NotFoundException.class);
 
@@ -86,16 +92,22 @@ public class UserControllerTests {
         mockMvc.perform(post("/users").contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(
                         UserCreateDto.builder().firstName(userDto.getFirstName()).email(userDto.getEmail()).build())));
+        mockMvc.perform(post("/users").contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(UserCreateDto.builder()
+                        .firstName(userDto.getFirstName())
+                        .email(userDto.getEmail())
+                        .build())));
     }
 
     @Test
+    @WithMockUser(authorities = "SCOPE_" + LIBRARIAN_SCOPE)
     void findAll() throws Exception {
         Result<UserDto> userDtoResult =
                 Result.of(fakeUserDto(faker, UserType.CLIENT), fakeUserDto(faker, UserType.CLIENT));
 
         given(userFacade.findAll(eq(0), anyInt())).willReturn(userDtoResult);
 
-        mockMvc.perform(get("/users"))
+        mockMvc.perform(get("/users").with(csrf()))
                 .andDo(print())
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(jsonPath("$.total").value(userDtoResult.getTotal()))
@@ -128,12 +140,13 @@ public class UserControllerTests {
     }
 
     @Test
+    @WithMockUser(authorities = "SCOPE_" + USER_SCOPE)
     void findSuccessful() throws Exception {
         UserDto user = fakeUserDto(faker, UserType.CLIENT);
 
         given(userFacade.find(user.getId())).willReturn(user);
 
-        mockMvc.perform(get("/users/" + user.getId()))
+        mockMvc.perform(get("/users/" + user.getId()).with(csrf()))
                 .andDo(print())
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(jsonPath("$.username").value(user.getUsername()))
@@ -148,17 +161,19 @@ public class UserControllerTests {
     }
 
     @Test
+    @WithMockUser(authorities = "SCOPE_" + USER_SCOPE)
     public void findNotFound() throws Exception {
         String userId = UUID.randomUUID().toString();
         // mock facade
         given(userFacade.find(userId)).willThrow(NotFoundException.class);
 
         // perform test
-        mockMvc.perform(get("/users/" + userId)).andExpect(status().isNotFound());
+        mockMvc.perform(get("/users/" + userId).with(csrf())).andExpect(status().isNotFound());
     }
 
     @Test
-    public void updateSuccessful() throws Exception {
+    @WithMockUser(authorities = "SCOPE_" + USER_SCOPE)
+    public void updateSuccessful() throws Exception{
         UserDto user = fakeUserDto(faker, UserType.CLIENT);
         UserDto updatedUser = fakeUserDto(faker, UserType.CLIENT);
         updatedUser.setUsername("newName");
@@ -166,7 +181,7 @@ public class UserControllerTests {
         given(userFacade.find(user.getId())).willReturn(user);
         given(userFacade.update(eq(user.getId()), any())).willReturn(updatedUser);
 
-        mockMvc.perform(put("/users/" + user.getId()).contentType(MediaType.APPLICATION_JSON)
+        mockMvc.perform(put("/users/" + user.getId()).contentType(MediaType.APPLICATION_JSON).with(csrf())
                         .content(objectMapper.writeValueAsString(updatedUser)))
                 .andDo(print())
                 .andExpect(status().is2xxSuccessful())
@@ -183,32 +198,35 @@ public class UserControllerTests {
     }
 
     @Test
+    @WithMockUser(authorities = "SCOPE_" + USER_SCOPE)
     public void updateNotFound() throws Exception {
         UserDto user = fakeUserDto(faker, UserType.CLIENT);
         // mock facade
         given(userFacade.update(eq(user.getId()), any())).willThrow(NotFoundException.class);
 
         // perform test
-        mockMvc.perform(put("/users/" + user.getId()).contentType(MediaType.APPLICATION_JSON)
+        mockMvc.perform(put("/users/" + user.getId()).contentType(MediaType.APPLICATION_JSON).with(csrf())
                 .content(objectMapper.writeValueAsString(
                         UserCreateDto.builder().firstName(user.getFirstName()).email(user.getEmail()).build())));
     }
 
     @Test
+    @WithMockUser(authorities = "SCOPE_" + USER_SCOPE)
     public void deleteSuccessful() throws Exception {
         UserDto user = fakeUserDto(faker, UserType.CLIENT);
 
         given(userFacade.find("/users/" + user.getId())).willReturn(user);
 
-        mockMvc.perform(delete("/users/" + user.getId())).andExpect(status().is2xxSuccessful());
+        mockMvc.perform(delete("/users/" + user.getId()).with(csrf())).andExpect(status().is2xxSuccessful());
     }
 
     @Test
+    @WithMockUser(authorities = "SCOPE_" + USER_SCOPE)
     public void deleteNotFound() throws Exception {
         // mock services
         doThrow(NotFoundException.class).when(userFacade).delete(any());
 
         // perform test
-        mockMvc.perform(delete("/users/" + UUID.randomUUID())).andExpect(status().isNotFound());
+        mockMvc.perform(delete("/users/" + UUID.randomUUID()).with(csrf())).andExpect(status().isNotFound());
     }
 }

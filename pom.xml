@@ -87,7 +87,6 @@
                 <groupId>com.github.javafaker</groupId>
                 <artifactId>javafaker</artifactId>
                 <version>1.0.2</version>
-                <scope>test</scope>
             </dependency>
 
             <dependency>
@@ -124,6 +123,7 @@
         <module>model</module>
         <module>reporting</module>
         <module>self-service-kiosk</module>
+        <module>oauth2-client</module>
     </modules>
 
     <build>

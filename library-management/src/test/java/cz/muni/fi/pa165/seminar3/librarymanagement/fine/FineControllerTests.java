@@ -1,5 +1,7 @@
 package cz.muni.fi.pa165.seminar3.librarymanagement.fine;
 
+import static cz.muni.fi.pa165.seminar3.librarymanagement.LibraryManagementApplication.LIBRARIAN_SCOPE;
+import static cz.muni.fi.pa165.seminar3.librarymanagement.LibraryManagementApplication.USER_SCOPE;
 import static cz.muni.fi.pa165.seminar3.librarymanagement.utils.FineUtils.fakeFineDto;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -7,6 +9,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -26,6 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 /**
@@ -45,13 +49,14 @@ public class FineControllerTests {
     private final Faker faker = new Faker();
 
     @Test
+    @WithMockUser(authorities = "SCOPE_" + LIBRARIAN_SCOPE)
     public void createFineSuccessful() throws Exception {
         FineDto fineDto = fakeFineDto(faker);
         // mock facade
         given(fineFacade.create(any(FineCreateDto.class))).willReturn(fineDto);
 
         // perform test
-        mockMvc.perform(post("/fines").contentType(MediaType.APPLICATION_JSON)
+        mockMvc.perform(post("/fines").contentType(MediaType.APPLICATION_JSON).with(csrf())
                         .content(objectMapper.writeValueAsString(FineCreateDto.builder()
                                 .amount(fineDto.getAmount())
                                 .issuerId(fineDto.getIssuer().getId())
@@ -65,13 +70,14 @@ public class FineControllerTests {
     }
 
     @Test
+    @WithMockUser(authorities = "SCOPE_" + LIBRARIAN_SCOPE)
     public void createFineEntityNotFound() throws Exception {
         FineDto fineDto = fakeFineDto(faker);
         // mock facade
         given(fineFacade.create(any(FineCreateDto.class))).willThrow(NotFoundException.class);
 
         // perform test
-        mockMvc.perform(post("/fines").contentType(MediaType.APPLICATION_JSON)
+        mockMvc.perform(post("/fines").contentType(MediaType.APPLICATION_JSON).with(csrf())
                 .content(objectMapper.writeValueAsString(FineCreateDto.builder()
                         .amount(fineDto.getAmount())
                         .issuerId(fineDto.getIssuer().getId())
@@ -80,13 +86,14 @@ public class FineControllerTests {
     }
 
     @Test
+    @WithMockUser(authorities = "SCOPE_" + LIBRARIAN_SCOPE)
     public void findAll() throws Exception {
         Result<FineDto> fineDtoResult = Result.of(fakeFineDto(faker), fakeFineDto(faker), fakeFineDto(faker));
         // mock facade
         given(fineFacade.findAll(eq(0), anyInt())).willReturn(fineDtoResult);
 
         // perform test
-        mockMvc.perform(get("/fines"))
+        mockMvc.perform(get("/fines").with(csrf()))
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(jsonPath("$.total").value(fineDtoResult.getTotal()))
                 .andExpect(jsonPath("$.page").value(fineDtoResult.getPage()))
@@ -96,13 +103,14 @@ public class FineControllerTests {
     }
 
     @Test
+    @WithMockUser(authorities = "SCOPE_" + USER_SCOPE)
     public void findSuccessful() throws Exception {
         FineDto fineDto = fakeFineDto(faker);
         // mock facade
         given(fineFacade.find(fineDto.getId())).willReturn(fineDto);
 
         // perform test
-        mockMvc.perform(get("/fines/" + fineDto.getId()))
+        mockMvc.perform(get("/fines/" + fineDto.getId()).with(csrf()))
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(jsonPath("$.id").value(fineDto.getId()))
                 .andExpect(jsonPath("$.amount").value(fineDto.getAmount()))
@@ -111,16 +119,18 @@ public class FineControllerTests {
     }
 
     @Test
+    @WithMockUser(authorities = "SCOPE_" + USER_SCOPE)
     public void findNotFound() throws Exception {
         String fineId = UUID.randomUUID().toString();
         // mock facade
         given(fineFacade.find(fineId)).willThrow(NotFoundException.class);
 
         // perform test
-        mockMvc.perform(get("/fines/" + fineId)).andExpect(status().isNotFound());
+        mockMvc.perform(get("/fines/" + fineId).with(csrf())).andExpect(status().isNotFound());
     }
 
     @Test
+    @WithMockUser(authorities = "SCOPE_" + LIBRARIAN_SCOPE)
     public void updateSuccessful() throws Exception {
         FineDto fineDto = fakeFineDto(faker);
         FineDto newFineDto = fakeFineDto(faker);
@@ -129,7 +139,7 @@ public class FineControllerTests {
         given(fineFacade.update(eq(fineDto.getId()), any())).willReturn(newFineDto);
 
         // perform test
-        mockMvc.perform(put("/fines/" + fineDto.getId()).contentType(MediaType.APPLICATION_JSON)
+        mockMvc.perform(put("/fines/" + fineDto.getId()).contentType(MediaType.APPLICATION_JSON).with(csrf())
                         .content(objectMapper.writeValueAsString(FineCreateDto.builder()
                                 .amount(newFineDto.getAmount())
                                 .issuerId(newFineDto.getIssuer().getId())
@@ -143,13 +153,14 @@ public class FineControllerTests {
     }
 
     @Test
+    @WithMockUser(authorities = "SCOPE_" + LIBRARIAN_SCOPE)
     public void updateNotFound() throws Exception {
         FineDto fineDto = fakeFineDto(faker);
         // mock facade
         given(fineFacade.update(eq(fineDto.getId()), any())).willThrow(NotFoundException.class);
 
         // perform test
-        mockMvc.perform(put("/fines/" + fineDto.getId()).contentType(MediaType.APPLICATION_JSON)
+        mockMvc.perform(put("/fines/" + fineDto.getId()).contentType(MediaType.APPLICATION_JSON).with(csrf())
                 .content(objectMapper.writeValueAsString(FineCreateDto.builder()
                         .amount(fineDto.getAmount())
                         .issuerId(fineDto.getIssuer().getId())
@@ -158,21 +169,23 @@ public class FineControllerTests {
     }
 
     @Test
+    @WithMockUser(authorities = "SCOPE_" + LIBRARIAN_SCOPE)
     public void deleteSuccessful() throws Exception {
         FineDto fineDto = fakeFineDto(faker);
         // mock facade
         doNothing().when(fineFacade).delete(fineDto.getId());
 
         // perform test
-        mockMvc.perform(delete("/fines/" + fineDto.getId())).andExpect(status().is2xxSuccessful());
+        mockMvc.perform(delete("/fines/" + fineDto.getId()).with(csrf())).andExpect(status().is2xxSuccessful());
     }
 
     @Test
+    @WithMockUser(authorities = "SCOPE_" + LIBRARIAN_SCOPE)
     public void deleteNotFound() throws Exception {
         // mock services
         doThrow(NotFoundException.class).when(fineFacade).delete(any());
 
         // perform test
-        mockMvc.perform(delete("/fines/" + UUID.randomUUID())).andExpect(status().isNotFound());
+        mockMvc.perform(delete("/fines/" + UUID.randomUUID()).with(csrf())).andExpect(status().isNotFound());
     }
 }

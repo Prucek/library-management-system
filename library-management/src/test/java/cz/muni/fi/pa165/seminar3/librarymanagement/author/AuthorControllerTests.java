@@ -1,11 +1,13 @@
 package cz.muni.fi.pa165.seminar3.librarymanagement.author;
 
+import static cz.muni.fi.pa165.seminar3.librarymanagement.LibraryManagementApplication.LIBRARIAN_SCOPE;
 import static cz.muni.fi.pa165.seminar3.librarymanagement.utils.AuthorUtils.fakeAuthorDto;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -27,6 +29,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.security.test.context.support.WithMockUser;
+
 
 /**
  * Tests for AuthorController.
@@ -47,6 +51,7 @@ public class AuthorControllerTests {
     private final Faker faker = new Faker();
 
     @Test
+    @WithMockUser(authorities = "SCOPE_" + LIBRARIAN_SCOPE)
     void createAuthorSuccessful() throws Exception {
         AuthorDto authorDto = fakeAuthorDto(faker);
 
@@ -55,7 +60,7 @@ public class AuthorControllerTests {
 
         // perform test
         mockMvc.perform(post("/authors").accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON).with(csrf())
                         .content(objectMapper.writeValueAsString(authorDto)))
                 .andDo(print())
                 .andExpect(status().isCreated())
@@ -87,24 +92,27 @@ public class AuthorControllerTests {
     }
 
     @Test
+    @WithMockUser(authorities = "SCOPE_" + LIBRARIAN_SCOPE)
     void deleteAuthor() throws Exception {
         String authorId = UUID.randomUUID().toString();
 
         doNothing().when(authorFacade).delete(authorId);
 
-        mockMvc.perform(delete("/authors/" + authorId)).andExpect(status().is2xxSuccessful());
+        mockMvc.perform(delete("/authors/" + authorId).with(csrf())).andExpect(status().is2xxSuccessful());
     }
 
     @Test
+    @WithMockUser(authorities = "SCOPE_" + LIBRARIAN_SCOPE)
     void deleteAuthorNotFound() throws Exception {
         String authorId = UUID.randomUUID().toString();
 
         doThrow(NotFoundException.class).when(authorFacade).delete(any());
 
-        mockMvc.perform(delete("/authors/" + authorId)).andExpect(status().isNotFound());
+        mockMvc.perform(delete("/authors/" + authorId).with(csrf())).andExpect(status().isNotFound());
     }
 
     @Test
+    @WithMockUser(authorities = "SCOPE_" + LIBRARIAN_SCOPE)
     void updateAuthor() throws Exception {
         AuthorDto authorDto = fakeAuthorDto(faker);
         AuthorCreateDto createDto =
@@ -112,7 +120,7 @@ public class AuthorControllerTests {
 
         given(authorFacade.update(eq(authorDto.getId()), any())).willReturn(authorDto);
 
-        mockMvc.perform(put("/authors/" + authorDto.getId()).contentType(MediaType.APPLICATION_JSON)
+        mockMvc.perform(put("/authors/" + authorDto.getId()).contentType(MediaType.APPLICATION_JSON).with(csrf())
                         .content(objectMapper.writeValueAsString(createDto)))
                 .andDo(print())
                 .andExpect(status().is2xxSuccessful())
@@ -123,6 +131,7 @@ public class AuthorControllerTests {
     }
 
     @Test
+    @WithMockUser(authorities = "SCOPE_" + LIBRARIAN_SCOPE)
     void updateUserNotFound() throws Exception {
         AuthorDto authorDto = fakeAuthorDto(faker);
         AuthorCreateDto createDto =
@@ -130,7 +139,7 @@ public class AuthorControllerTests {
 
         given(authorFacade.update(eq(authorDto.getId()), any())).willThrow(NotFoundException.class);
 
-        mockMvc.perform(put("/authors/" + authorDto.getId()).contentType(MediaType.APPLICATION_JSON)
+        mockMvc.perform(put("/authors/" + authorDto.getId()).contentType(MediaType.APPLICATION_JSON).with(csrf())
                 .content(objectMapper.writeValueAsString(createDto))).andExpect(status().isNotFound());
     }
 }

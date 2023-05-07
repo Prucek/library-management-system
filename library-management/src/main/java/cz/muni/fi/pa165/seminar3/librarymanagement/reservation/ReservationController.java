@@ -1,6 +1,9 @@
 package cz.muni.fi.pa165.seminar3.librarymanagement.reservation;
 
 import static cz.muni.fi.pa165.seminar3.librarymanagement.Config.DEFAULT_PAGE_SIZE;
+import static cz.muni.fi.pa165.seminar3.librarymanagement.LibraryManagementApplication.SECURITY_SCHEME_BEARER;
+import static cz.muni.fi.pa165.seminar3.librarymanagement.LibraryManagementApplication.SECURITY_SCHEME_OAUTH2;
+import static cz.muni.fi.pa165.seminar3.librarymanagement.LibraryManagementApplication.USER_SCOPE;
 
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.ErrorMessage;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.common.Result;
@@ -13,6 +16,7 @@ import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -58,11 +62,15 @@ public class ReservationController {
      * @return Concrete reservation specified by its id
      */
     @Operation(summary = "Returns identified reservation", description = "Looks up a reservation by its id.",
-            responses = {
-                    @ApiResponse(responseCode = "200", description = "Reservation found", useReturnTypeSchema = true),
-                    @ApiResponse(responseCode = "404", description = "reservation not found",
-                            content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
+            security = {
+                    @SecurityRequirement(name = SECURITY_SCHEME_BEARER, scopes = {USER_SCOPE}),
+                    @SecurityRequirement(name = SECURITY_SCHEME_OAUTH2, scopes = {USER_SCOPE})
             })
+    @ApiResponse(responseCode = "200", description = "Reservation found", useReturnTypeSchema = true)
+    @ApiResponse(responseCode = "404", description = "reservation not found",
+            content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
+    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have required scope",
+            content = @Content())
     @GetMapping("/{id}")
     public ReservationDto find(@PathVariable String id) {
         return reservationFacade.find(id);
@@ -77,12 +85,19 @@ public class ReservationController {
     @Operation(summary = "Create a new reservation", description = """
             Receives data in request body and stores it as a new message.
             Returns the new reservation as its response.
-            """)
+            """,
+            security = {
+                @SecurityRequirement(name = SECURITY_SCHEME_BEARER, scopes = {USER_SCOPE}),
+                @SecurityRequirement(name = SECURITY_SCHEME_OAUTH2, scopes = {USER_SCOPE})
+            }
+    )
     @ApiResponse(responseCode = "200", description = "Reservation created", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "400", description = "Invalid payload",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
     @ApiResponse(responseCode = "404", description = "User or book not found",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
+    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have required scope",
+            content = @Content())
     @PostMapping
     public ReservationDto create(@RequestBody ReservationCreateDto reservationCreateDto) {
         return reservationFacade.create(reservationCreateDto);
@@ -97,12 +112,18 @@ public class ReservationController {
     @Operation(summary = "Update existing reservation", description = """
             Provides update of existing reservation.
             Returns updated reservation as its response.
-            """)
+            """, security = {
+                @SecurityRequirement(name = SECURITY_SCHEME_BEARER, scopes = {USER_SCOPE}),
+                @SecurityRequirement(name = SECURITY_SCHEME_OAUTH2, scopes = {USER_SCOPE})
+            }
+    )
     @ApiResponse(responseCode = "200", description = "Reservation updated", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "400", description = "Invalid payload",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
     @ApiResponse(responseCode = "404", description = "Reservation not found",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
+    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have required scope",
+            content = @Content())
     @PutMapping("/{id}")
     public ReservationDto update(@PathVariable String id, @RequestBody ReservationCreateDto reservationCreateDto) {
         return reservationFacade.updateReservation(id, reservationCreateDto);
@@ -115,10 +136,16 @@ public class ReservationController {
      */
     @Operation(summary = "Delete existing reservation", description = """
             Enables deleting of existing reservation.
-            """)
+            """, security = {
+                @SecurityRequirement(name = SECURITY_SCHEME_BEARER, scopes = {USER_SCOPE}),
+                @SecurityRequirement(name = SECURITY_SCHEME_OAUTH2, scopes = {USER_SCOPE})
+            }
+    )
     @ApiResponse(responseCode = "200", description = "Reservation deleted", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "404", description = "Reservation not found",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
+    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have required scope",
+            content = @Content())
     @DeleteMapping("/{id}")
     public void delete(@PathVariable String id) {
         reservationFacade.deleteReservation(id);
@@ -131,12 +158,15 @@ public class ReservationController {
      * @param pageSize size of the page
      * @return Result object with all reservations
      */
-    @Operation(summary = "Get all reservations", description = """
-            Returns all reservations
-            """)
+    @Operation(summary = "Get all reservations", description = "Returns all reservations", security = {
+            @SecurityRequirement(name = SECURITY_SCHEME_BEARER, scopes = {USER_SCOPE}),
+            @SecurityRequirement(name = SECURITY_SCHEME_OAUTH2, scopes = {USER_SCOPE})
+    })
     @ApiResponse(responseCode = "200", description = "Pages list of all reservations", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "400", description = "Invalid paging",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
+    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have required scope",
+            content = @Content())
     @GetMapping
     public Result<ReservationDto> findAll(@RequestParam(defaultValue = "0") int page,
                                           @RequestParam(defaultValue = DEFAULT_PAGE_SIZE) int pageSize) {

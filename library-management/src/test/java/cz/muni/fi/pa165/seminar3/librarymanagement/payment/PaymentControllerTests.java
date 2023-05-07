@@ -1,10 +1,13 @@
 package cz.muni.fi.pa165.seminar3.librarymanagement.payment;
 
+import static cz.muni.fi.pa165.seminar3.librarymanagement.LibraryManagementApplication.LIBRARIAN_SCOPE;
+import static cz.muni.fi.pa165.seminar3.librarymanagement.LibraryManagementApplication.USER_SCOPE;
 import static cz.muni.fi.pa165.seminar3.librarymanagement.utils.PaymentUtils.fakePaymentDto;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -24,6 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 /**
@@ -43,13 +47,14 @@ public class PaymentControllerTests {
     private final Faker faker = new Faker();
 
     @Test
+    @WithMockUser(authorities = "SCOPE_" + USER_SCOPE)
     public void createSuccessful() throws Exception {
         PaymentDto paymentDto = fakePaymentDto(faker);
         // mock facade
         given(paymentFacade.create(any())).willReturn(paymentDto);
 
         // perform test
-        mockMvc.perform(post("/payments").contentType(MediaType.APPLICATION_JSON)
+        mockMvc.perform(post("/payments").contentType(MediaType.APPLICATION_JSON).with(csrf())
                         .content(objectMapper.writeValueAsString(PaymentCreateDto.builder()
                                 .fines(paymentDto.getPaidFines().stream().map(DomainObjectDto::getId).toList())
                                 .build())))
@@ -61,25 +66,27 @@ public class PaymentControllerTests {
     }
 
     @Test
+    @WithMockUser(authorities = "SCOPE_" + USER_SCOPE)
     public void createNotFound() throws Exception {
         // mock facade
         given(paymentFacade.create(any())).willThrow(NotFoundException.class);
 
         // perform test
-        mockMvc.perform(post("/payments").contentType(MediaType.APPLICATION_JSON)
+        mockMvc.perform(post("/payments").contentType(MediaType.APPLICATION_JSON).with(csrf())
                         .content(objectMapper.writeValueAsString(
                                 PaymentCreateDto.builder().fines(List.of(UUID.randomUUID().toString())).build())))
                 .andExpect(status().isNotFound());
     }
 
     @Test
+    @WithMockUser(authorities = "SCOPE_" + USER_SCOPE)
     public void paymentGateCallbackSuccessful() throws Exception {
         PaymentDto paymentDto = fakePaymentDto(faker);
         // mock facade
         given(paymentFacade.finalizePayment(eq(paymentDto.getId()))).willReturn(paymentDto);
 
         // perform test
-        mockMvc.perform(post("/payments/" + paymentDto.getId()))
+        mockMvc.perform(post("/payments/" + paymentDto.getId()).with(csrf()))
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(jsonPath("$.id").value(paymentDto.getId()))
                 .andExpect(jsonPath("$.transactionId").value(paymentDto.getTransactionId()))
@@ -88,15 +95,17 @@ public class PaymentControllerTests {
     }
 
     @Test
+    @WithMockUser(authorities = "SCOPE_" + USER_SCOPE)
     public void paymentGateCallbackNotFound() throws Exception {
         // mock facade
         given(paymentFacade.finalizePayment(any())).willThrow(NotFoundException.class);
 
         // perform test
-        mockMvc.perform(post("/payments/" + UUID.randomUUID())).andExpect(status().isNotFound());
+        mockMvc.perform(post("/payments/" + UUID.randomUUID()).with(csrf())).andExpect(status().isNotFound());
     }
 
     @Test
+    @WithMockUser(authorities = "SCOPE_" + LIBRARIAN_SCOPE)
     public void findAll() throws Exception {
         Result<PaymentDto> paymentDtoResult =
                 Result.of(fakePaymentDto(faker), fakePaymentDto(faker), fakePaymentDto(faker));
@@ -104,7 +113,7 @@ public class PaymentControllerTests {
         given(paymentFacade.findAll(eq(0), anyInt())).willReturn(paymentDtoResult);
 
         // perform test
-        mockMvc.perform(get("/payments"))
+        mockMvc.perform(get("/payments").with(csrf()))
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(jsonPath("$.total").value(paymentDtoResult.getTotal()))
                 .andExpect(jsonPath("$.page").value(paymentDtoResult.getPage()))
@@ -114,13 +123,14 @@ public class PaymentControllerTests {
     }
 
     @Test
+    @WithMockUser(authorities = "SCOPE_" + USER_SCOPE)
     public void findSuccessful() throws Exception {
         PaymentDto paymentDto = fakePaymentDto(faker);
         // mock facade
         given(paymentFacade.find(eq(paymentDto.getId()))).willReturn(paymentDto);
 
         // perform test
-        mockMvc.perform(get("/payments/" + paymentDto.getId()))
+        mockMvc.perform(get("/payments/" + paymentDto.getId()).with(csrf()))
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(jsonPath("$.id").value(paymentDto.getId()))
                 .andExpect(jsonPath("$.transactionId").value(paymentDto.getTransactionId()))
@@ -129,11 +139,12 @@ public class PaymentControllerTests {
     }
 
     @Test
+    @WithMockUser(authorities = "SCOPE_" + USER_SCOPE)
     public void findNotFound() throws Exception {
         // mock facade
         given(paymentFacade.find(any())).willThrow(NotFoundException.class);
 
         // perform test
-        mockMvc.perform(get("/payments/" + UUID.randomUUID())).andExpect(status().isNotFound());
+        mockMvc.perform(get("/payments/" + UUID.randomUUID()).with(csrf())).andExpect(status().isNotFound());
     }
 }
