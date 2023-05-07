@@ -6,41 +6,49 @@ import random
 from ids_storage_model import ids_storage
 from scenarios.create_dtos import reservation_create_dto, borrowing_create_dto, fake_author_dto, book_create_dto, book_update_dto, fince_create_dto
 
+
 class FindConcreteTaskSet(TaskSet):
     @task
     def find_user(self):
-        self.client.get(f'/users/{random.choice(ids_storage.user_ids)}')
-        logging.info('Finding user')
+        if ids_storage.user_ids:
+            self.client.get(f'/users/{random.choice(ids_storage.user_ids)}')
+            logging.info('Finding user')
 
     @task
     def find_book(self):
-        self.client.get(f'/books/{random.choice(ids_storage.book_ids)}')
-        logging.info('Finding book')
+        if ids_storage.book_ids:
+            self.client.get(f'/books/{random.choice(ids_storage.book_ids)}')
+            logging.info('Finding book')
 
     @task
     def find_author(self):
-        self.client.get(f'/authors/{random.choice(ids_storage.authors_ids)}')
-        logging.info('Finding author')
+        if ids_storage.authors_ids:
+            self.client.get(f'/authors/{random.choice(ids_storage.authors_ids)}')
+            logging.info('Finding author')
 
     @task
     def find_borrowing(self):
-        self.client.get(f'/borrowings/{random.choice(ids_storage.borrowings_ids)}')
-        logging.info('Finding borrowing')
+        if ids_storage.borrowings_ids:
+            self.client.get(f'/borrowings/{random.choice(ids_storage.borrowings_ids)}')
+            logging.info('Finding borrowing')
 
     @task
     def find_reservations(self):
-        self.client.get(f'/reservations/{random.choice(ids_storage.reservations_ids)}')
-        logging.info('Finding reservation')
+        if ids_storage.reservations_ids:
+            self.client.get(f'/reservations/{random.choice(ids_storage.reservations_ids)}')
+            logging.info('Finding reservation')
 
     @task
     def find_fine(self):
-        self.client.get(f'/fines/{random.choice(ids_storage.fines_ids)}')
-        logging.info('Finding fine')
+        if ids_storage.fines_ids:
+            self.client.get(f'/fines/{random.choice(ids_storage.fines_ids)}')
+            logging.info('Finding fine')
 
     @task
     def find_payment(self):
-        self.client.get(f'/payments/{random.choice(ids_storage.payments_ids)}')
-        logging.info('Finding payment')
+        if ids_storage.payments_ids:
+            self.client.get(f'/payments/{random.choice(ids_storage.payments_ids)}')
+            logging.info('Finding payment')
 
 
 class GetAllTaskSet(TaskSet):
@@ -78,6 +86,7 @@ class GetAllTaskSet(TaskSet):
     def get_payments(self):
         self.client.get(f'/payments')
         logging.info('Getting payments')
+
 
 class DeleteInvalidTaskSet(TaskSet):
     @task
@@ -183,7 +192,6 @@ class ReservationsTaskSet(TaskSet):
             logging.info(f'Deleting reservation for {task_selected_reservation_id}')
 
 
-
 class AuthorsTaskSet(TaskSet):
     @task(1)
     def make_author(self):
@@ -191,26 +199,6 @@ class AuthorsTaskSet(TaskSet):
         with self.client.post('/authors', json=new_author_dto) as response:
             ids_storage.authors_ids.append(response.json()['id'])
             logging.info(f'Creating author {new_author_dto["name"]} {new_author_dto["surname"]}')
-
-    @task(2)
-    def delete_author(self):
-        if ids_storage.authors_ids:
-            task_selected_author_id = random.choice(ids_storage.authors_ids)
-            author_has_publications = False
-            resp = self.client.get(f'/books')
-            # Check if author has publications
-            for book in resp.json()['items']:
-                if next((sub for sub in book['authors'] if sub['id'] == task_selected_author_id), None) is not None:
-                    author_has_publications = True
-
-            with self.client.delete(f'/authors/{task_selected_author_id}', catch_response=True) as response:
-                # Author with publications should not be removed
-                if author_has_publications and response.status_code == 500:
-                    logging.info(f'Author with id {task_selected_author_id} was not removed beacause has publications.')
-                    response.success()
-                else:
-                    ids_storage.authors_ids.remove(task_selected_author_id)
-                    logging.info(f'Deleting author {task_selected_author_id}')
 
     @task(2)
     def update_author(self):
@@ -255,35 +243,6 @@ class BookTaskSet(TaskSet):
                 updated_book_dto = book_update_dto(response.json())
                 self.client.put(f'/books/{task_selected_book_id}', json=updated_book_dto)
                 logging.info(f'Updating book title from {response.json()["title"]} to {updated_book_dto["title"]}')
-
-    @task(2)
-    def delete_book(self):
-        if ids_storage.book_ids:
-            task_selected_book_id = random.choice(ids_storage.book_ids)
-            book_is_reserved_or_borrowed = False
-            resp = self.client.get(f'/reservations')
-            # Is book reserved
-            for reservation in resp.json()['items']:
-                if reservation['book']['id'] == task_selected_book_id:
-                    book_is_reserved_or_borrowed = True
-                    break
-            # Is boook instance borrowed
-            if not book_is_reserved_or_borrowed:
-                book_resp = self.client.get(f'/books/{task_selected_book_id}')
-                book_instances_ids = [sub['id'] for sub in book_resp.json()['instances']]
-                borrowing_resp = self.client.get(f'/borrowings')
-                for borrowing in borrowing_resp.json()['items']:
-                    if borrowing['bookInstance']['id'] in book_instances_ids:
-                        book_is_reserved_or_borrowed = True
-                        break
-
-            with self.client.delete(f'/books/{task_selected_book_id}', catch_response=True) as response:
-                if book_is_reserved_or_borrowed and response.status_code == 500:
-                    logging.info(f'Book with id {task_selected_book_id} was not removed beacause is reserved or borrowed.')
-                    response.success()
-                else:
-                    ids_storage.book_ids.remove(task_selected_book_id)
-                    logging.info(f'Deleting book {task_selected_book_id}')
 
 
 class FineTaskSet(TaskSet):

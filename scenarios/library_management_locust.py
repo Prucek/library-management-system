@@ -9,19 +9,17 @@ from scenarios.create_dtos import user_dto, reservation_create_dto, borrowing_cr
 from ids_storage_model import ids_storage
 from taks_sets import FindConcreteTaskSet, DeleteInvalidTaskSet, GetAllTaskSet, BorrowingsTaskSet, ReservationsTaskSet, AuthorsTaskSet, BookTaskSet, FineTaskSet
 
+
 authorization_token = os.environ.get("LOCUST_TOKEN")
 if not authorization_token:
     raise EnvironmentError("Authorization token is not passed as an environment variable")
+
 
 class FetchExistingDataAndAuthorization(HttpUser):
     host = 'http://127.0.0.1:8090'
     wait_time = between(0.1, 0.5)
     fixed_count = 1  # Only one admin will be spawned
     executed = False
-
-    @events.init.add_listener
-    def on_locust_init(environment, **_kwargs):
-        print(f'Your token is: {authorization_token}')
 
     def on_start(self):
         self.client.headers = {'content-type': 'application/json',
@@ -57,17 +55,6 @@ class FetchExistingDataAndAuthorization(HttpUser):
                 ids_storage.payments_ids.append(payment['id'])
         self.executed = True
 
-
-    def on_stop(self):
-        print(f'Users {ids_storage.user_ids}')
-        print(f'Books {ids_storage.book_ids}')
-        print(f'Authors {ids_storage.authors_ids}')
-        print(f'Borrowings {ids_storage.borrowings_ids}')
-        print(f'Reservations {ids_storage.reservations_ids}')
-        print(f'Instances {ids_storage.instances_ids}')
-        print(f'Fines {ids_storage.fines_ids}')
-        print(f'Payments {ids_storage.payments_ids}')
-    
     # Task to make this class work
     @task
     def find_user(self):
@@ -79,23 +66,17 @@ class CommonUser(HttpUser):
     host = 'http://127.0.0.1:8090'
     wait_time = between(1, 2)
     fixed_count = 2
-    
+
     def on_start(self):
         self.client.headers = {'content-type': 'application/json',
                                'Authorization': f'Bearer {authorization_token}'}
 
     tasks = [FindConcreteTaskSet,
-             GetAllTaskSet, 
+             GetAllTaskSet,
              BorrowingsTaskSet,
              BorrowingsTaskSet,
              ReservationsTaskSet,
              ReservationsTaskSet]
-
-    # Every new testing user creates new user in system
-    def on_start(self):
-        with self.client.post('/users', json=user_dto()) as response:
-            ids_storage.user_ids.append(response.json()['id'])
-
 
 
 class Librarian(HttpUser):
@@ -108,10 +89,10 @@ class Librarian(HttpUser):
     wait_time = between(1, 4)
     fixed_count = 2
     tasks = [DeleteInvalidTaskSet,
-             BookTaskSet, 
+             BookTaskSet,
              BookTaskSet,
              AuthorsTaskSet,
-             AuthorsTaskSet,  
+             AuthorsTaskSet,
              FineTaskSet,
              FineTaskSet]
 
@@ -120,7 +101,7 @@ class PaymentGateUser(HttpUser):
     host = 'http://127.0.0.1:8081'
     wait_time = between(1, 4)
     fixed_count = 1
-    
+
     def on_start(self):
         self.client.headers = {'content-type': 'application/json',
                                'Authorization': f'Bearer {authorization_token}'}
