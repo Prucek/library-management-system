@@ -2,3 +2,5 @@ library-management:
   url: http://localhost:8080
 server:
   port: 8083
+  error:
+    include-message: always
