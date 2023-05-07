@@ -1,6 +1,7 @@
 package cz.muni.fi.pa165.seminar3.librarymanagement.fine;
 
 import static cz.muni.fi.pa165.seminar3.librarymanagement.LibraryManagementApplication.LIBRARIAN_SCOPE;
+import static cz.muni.fi.pa165.seminar3.librarymanagement.LibraryManagementApplication.USER_SCOPE;
 import static cz.muni.fi.pa165.seminar3.librarymanagement.utils.FineUtils.fakeFineDto;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -102,7 +103,7 @@ public class FineControllerTests {
     }
 
     @Test
-    @WithMockUser(authorities = "SCOPE_" + LIBRARIAN_SCOPE)
+    @WithMockUser(authorities = "SCOPE_" + USER_SCOPE)
     public void findSuccessful() throws Exception {
         FineDto fineDto = fakeFineDto(faker);
         // mock facade
@@ -118,7 +119,7 @@ public class FineControllerTests {
     }
 
     @Test
-    @WithMockUser(authorities = "SCOPE_" + LIBRARIAN_SCOPE)
+    @WithMockUser(authorities = "SCOPE_" + USER_SCOPE)
     public void findNotFound() throws Exception {
         String fineId = UUID.randomUUID().toString();
         // mock facade

@@ -56,8 +56,8 @@ public class PaymentController {
      * @return created payment
      */
     @Operation(summary = "Create a new payment for fines", security = {
-            @SecurityRequirement(name = SECURITY_SCHEME_BEARER, scopes = {LIBRARIAN_SCOPE}),
-            @SecurityRequirement(name = SECURITY_SCHEME_OAUTH2, scopes = {LIBRARIAN_SCOPE})
+            @SecurityRequirement(name = SECURITY_SCHEME_BEARER, scopes = {USER_SCOPE}),
+            @SecurityRequirement(name = SECURITY_SCHEME_OAUTH2, scopes = {USER_SCOPE})
     })
     @ApiResponse(responseCode = "200", description = "Payment created, proceed to payment gate",
             useReturnTypeSchema = true)
@@ -86,8 +86,8 @@ public class PaymentController {
     @Operation(summary = "Callback for the payment gate",
             description = "Checks the transaction status with the payment gate and updates the status",
             security = {
-                @SecurityRequirement(name = SECURITY_SCHEME_BEARER, scopes = {LIBRARIAN_SCOPE}),
-                @SecurityRequirement(name = SECURITY_SCHEME_OAUTH2, scopes = {LIBRARIAN_SCOPE})
+                @SecurityRequirement(name = SECURITY_SCHEME_BEARER, scopes = {USER_SCOPE}),
+                @SecurityRequirement(name = SECURITY_SCHEME_OAUTH2, scopes = {USER_SCOPE})
             }
     )
     @ApiResponse(responseCode = "200", description = "Payment status updated", useReturnTypeSchema = true)
@@ -112,8 +112,8 @@ public class PaymentController {
      * @return paged payments
      */
     @Operation(summary = "List all payments", security = {
-            @SecurityRequirement(name = SECURITY_SCHEME_BEARER, scopes = {USER_SCOPE}),
-            @SecurityRequirement(name = SECURITY_SCHEME_OAUTH2, scopes = {USER_SCOPE})
+            @SecurityRequirement(name = SECURITY_SCHEME_BEARER, scopes = {LIBRARIAN_SCOPE}),
+            @SecurityRequirement(name = SECURITY_SCHEME_OAUTH2, scopes = {LIBRARIAN_SCOPE})
     })
     @ApiResponse(responseCode = "200", description = "Paged list of payments", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "400", description = "Invalid paging",

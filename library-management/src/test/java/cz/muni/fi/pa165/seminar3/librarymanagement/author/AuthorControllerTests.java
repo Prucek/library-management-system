@@ -1,7 +1,6 @@
 package cz.muni.fi.pa165.seminar3.librarymanagement.author;
 
 import static cz.muni.fi.pa165.seminar3.librarymanagement.LibraryManagementApplication.LIBRARIAN_SCOPE;
-import static cz.muni.fi.pa165.seminar3.librarymanagement.LibraryManagementApplication.USER_SCOPE;
 import static cz.muni.fi.pa165.seminar3.librarymanagement.utils.AuthorUtils.fakeAuthorDto;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -71,7 +70,6 @@ public class AuthorControllerTests {
     }
 
     @Test
-    @WithMockUser(authorities = "SCOPE_" + USER_SCOPE)
     void findAuthorSuccessful() throws Exception {
         AuthorDto authorDto = fakeAuthorDto(faker);
 
@@ -85,7 +83,6 @@ public class AuthorControllerTests {
     }
 
     @Test
-    @WithMockUser(authorities = "SCOPE_" + USER_SCOPE)
     void findAuthorNotFound() throws Exception {
         String authorId = UUID.randomUUID().toString();
 

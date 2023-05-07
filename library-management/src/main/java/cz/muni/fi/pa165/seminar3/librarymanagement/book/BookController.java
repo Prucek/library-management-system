@@ -5,7 +5,6 @@ import static cz.muni.fi.pa165.seminar3.librarymanagement.Config.DEFAULT_PAGE_SI
 import static cz.muni.fi.pa165.seminar3.librarymanagement.LibraryManagementApplication.LIBRARIAN_SCOPE;
 import static cz.muni.fi.pa165.seminar3.librarymanagement.LibraryManagementApplication.SECURITY_SCHEME_BEARER;
 import static cz.muni.fi.pa165.seminar3.librarymanagement.LibraryManagementApplication.SECURITY_SCHEME_OAUTH2;
-import static cz.muni.fi.pa165.seminar3.librarymanagement.LibraryManagementApplication.USER_SCOPE;
 
 import cz.muni.fi.pa165.seminar3.librarymanagement.common.ErrorMessage;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.book.BookCreateDto;
@@ -55,15 +54,10 @@ public class BookController {
     /**
      * REST method returning book with specified id.
      */
-    @Operation(summary = "Returns identified book", description = "Looks up a by by its id.", security = {
-            @SecurityRequirement(name = SECURITY_SCHEME_BEARER, scopes = {USER_SCOPE}),
-            @SecurityRequirement(name = SECURITY_SCHEME_OAUTH2, scopes = {USER_SCOPE})
-    })
+    @Operation(summary = "Returns identified book", description = "Looks up a by by its id.")
     @ApiResponse(responseCode = "200", description = "Book found", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "404", description = "Book not found",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
-    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have scope test_1",
-            content = @Content())
     @GetMapping("/{id}")
     public BookDto find(@PathVariable String id) {
         try {
@@ -76,15 +70,10 @@ public class BookController {
     /**
      * REST method returning all books.
      */
-    @Operation(summary = "Get all books", description = "Returns all books with authors as JSON", security = {
-            @SecurityRequirement(name = SECURITY_SCHEME_BEARER, scopes = {USER_SCOPE}),
-            @SecurityRequirement(name = SECURITY_SCHEME_OAUTH2, scopes = {USER_SCOPE})
-    })
+    @Operation(summary = "Get all books", description = "Returns all books with authors as JSON")
     @ApiResponse(responseCode = "200", description = "Pages list of all books", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "400", description = "Invalid paging",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
-    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have scope test_1",
-            content = @Content())
     @GetMapping
     public Result<BookDto> findAll(@RequestParam(defaultValue = "0") int page,
                                    @RequestParam(defaultValue = DEFAULT_PAGE_SIZE) int pageSize) {
@@ -199,15 +188,10 @@ public class BookController {
     /**
      * REST method getting book instance.
      */
-    @Operation(summary = "Returns identified book instance", security = {
-            @SecurityRequirement(name = SECURITY_SCHEME_BEARER, scopes = {USER_SCOPE}),
-            @SecurityRequirement(name = SECURITY_SCHEME_OAUTH2, scopes = {USER_SCOPE})
-    })
+    @Operation(summary = "Returns identified book instance")
     @ApiResponse(responseCode = "200", description = "Book instance found", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "404", description = "Book instance not found",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
-    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have scope test_1",
-            content = @Content())
     @GetMapping("/instances/{id}")
     public BookInstanceDto getInstance(@PathVariable String id) {
         try {

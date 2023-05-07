@@ -40,14 +40,18 @@ public class LibraryManagementApplication {
      */
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+
+        // So unauthorized POST requests can be made to /users
+        http.csrf().disable();
         http
                 .authorizeHttpRequests(x -> x
-                        .requestMatchers(HttpMethod.GET, "/books/**").hasAuthority("SCOPE_" + USER_SCOPE)
+
+                        // HttpMethod.GET, "/books/**" unregistered user can see books
                         .requestMatchers(HttpMethod.POST, "/books/**").hasAuthority("SCOPE_" + LIBRARIAN_SCOPE)
                         .requestMatchers(HttpMethod.PUT, "/books/**").hasAuthority("SCOPE_" + LIBRARIAN_SCOPE)
                         .requestMatchers(HttpMethod.DELETE, "/books/**").hasAuthority("SCOPE_" + LIBRARIAN_SCOPE)
 
-                        .requestMatchers(HttpMethod.GET, "/authors/**").hasAuthority("SCOPE_" + USER_SCOPE)
+                        // HttpMethod.GET, "/authors/**" unregistered user can see authors
                         .requestMatchers(HttpMethod.POST, "/authors/**").hasAuthority("SCOPE_" + LIBRARIAN_SCOPE)
                         .requestMatchers(HttpMethod.PUT, "/authors/**").hasAuthority("SCOPE_" + LIBRARIAN_SCOPE)
                         .requestMatchers(HttpMethod.DELETE, "/authors/**").hasAuthority("SCOPE_" + LIBRARIAN_SCOPE)
@@ -57,28 +61,29 @@ public class LibraryManagementApplication {
                         .requestMatchers(HttpMethod.PUT, "/borrowings/**").hasAuthority("SCOPE_" + LIBRARIAN_SCOPE)
                         .requestMatchers(HttpMethod.DELETE, "/borrowings/**").hasAuthority("SCOPE_" + LIBRARIAN_SCOPE)
 
-                        .requestMatchers(HttpMethod.GET, "/fines/**").hasAuthority("SCOPE_" + LIBRARIAN_SCOPE)
+                        .requestMatchers(HttpMethod.GET, "/fines").hasAuthority("SCOPE_" + LIBRARIAN_SCOPE)
+                        .requestMatchers(HttpMethod.GET, "/fines/**").hasAuthority("SCOPE_" + USER_SCOPE)
                         .requestMatchers(HttpMethod.POST, "/fines/**").hasAuthority("SCOPE_" + LIBRARIAN_SCOPE)
                         .requestMatchers(HttpMethod.PUT, "/fines/**").hasAuthority("SCOPE_" + LIBRARIAN_SCOPE)
                         .requestMatchers(HttpMethod.DELETE, "/fines/**").hasAuthority("SCOPE_" + LIBRARIAN_SCOPE)
 
+                        .requestMatchers(HttpMethod.GET, "/payments").hasAuthority("SCOPE_" + LIBRARIAN_SCOPE)
                         .requestMatchers(HttpMethod.GET, "/payments/**").hasAuthority("SCOPE_" + USER_SCOPE)
-                        .requestMatchers(HttpMethod.POST, "/payments/**").hasAuthority("SCOPE_" + LIBRARIAN_SCOPE)
-                        .requestMatchers(HttpMethod.PUT, "/payments/**").hasAuthority("SCOPE_" + LIBRARIAN_SCOPE)
-                        .requestMatchers(HttpMethod.DELETE, "/payments/**").hasAuthority("SCOPE_" + LIBRARIAN_SCOPE)
+                        .requestMatchers(HttpMethod.POST, "/payments/**").hasAuthority("SCOPE_" + USER_SCOPE)
 
                         .requestMatchers(HttpMethod.GET, "/reservations/**").hasAuthority("SCOPE_" + USER_SCOPE)
-                        .requestMatchers(HttpMethod.POST, "/reservations/**").hasAuthority("SCOPE_" + LIBRARIAN_SCOPE)
-                        .requestMatchers(HttpMethod.PUT, "/reservations/**").hasAuthority("SCOPE_" + LIBRARIAN_SCOPE)
-                        .requestMatchers(HttpMethod.DELETE, "/reservations/**").hasAuthority("SCOPE_" + LIBRARIAN_SCOPE)
+                        .requestMatchers(HttpMethod.POST, "/reservations/**").hasAuthority("SCOPE_" + USER_SCOPE)
+                        .requestMatchers(HttpMethod.PUT, "/reservations/**").hasAuthority("SCOPE_" + USER_SCOPE)
+                        .requestMatchers(HttpMethod.DELETE, "/reservations/**").hasAuthority("SCOPE_" + USER_SCOPE)
 
-                        .requestMatchers(HttpMethod.GET, "/settings/**").hasAuthority("SCOPE_" + LIBRARIAN_SCOPE)
+                        .requestMatchers(HttpMethod.GET, "/settings/**").hasAuthority("SCOPE_" + USER_SCOPE)
                         .requestMatchers(HttpMethod.POST, "/settings/**").hasAuthority("SCOPE_" + LIBRARIAN_SCOPE)
 
-                        .requestMatchers(HttpMethod.GET, "/users/**").hasAuthority("SCOPE_" + LIBRARIAN_SCOPE)
-                        .requestMatchers(HttpMethod.POST, "/users/**").hasAuthority("SCOPE_" + LIBRARIAN_SCOPE)
-                        .requestMatchers(HttpMethod.PUT, "/users/**").hasAuthority("SCOPE_" + LIBRARIAN_SCOPE)
-                        .requestMatchers(HttpMethod.DELETE, "/users/**").hasAuthority("SCOPE_" + LIBRARIAN_SCOPE)
+                        .requestMatchers(HttpMethod.GET, "/users").hasAuthority("SCOPE_" + LIBRARIAN_SCOPE)
+                        .requestMatchers(HttpMethod.GET, "/users/**").hasAuthority("SCOPE_" + USER_SCOPE)
+                        // HttpMethod.POST, "/users" unregistered user can register
+                        .requestMatchers(HttpMethod.PUT, "/users/**").hasAuthority("SCOPE_" + USER_SCOPE)
+                        .requestMatchers(HttpMethod.DELETE, "/users/**").hasAuthority("SCOPE_" + USER_SCOPE)
                         .anyRequest().permitAll()
                 )
                 .oauth2ResourceServer(OAuth2ResourceServerConfigurer::opaqueToken)

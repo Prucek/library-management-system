@@ -4,6 +4,7 @@ import static cz.muni.fi.pa165.seminar3.librarymanagement.Config.DEFAULT_PAGE_SI
 import static cz.muni.fi.pa165.seminar3.librarymanagement.LibraryManagementApplication.LIBRARIAN_SCOPE;
 import static cz.muni.fi.pa165.seminar3.librarymanagement.LibraryManagementApplication.SECURITY_SCHEME_BEARER;
 import static cz.muni.fi.pa165.seminar3.librarymanagement.LibraryManagementApplication.SECURITY_SCHEME_OAUTH2;
+import static cz.muni.fi.pa165.seminar3.librarymanagement.LibraryManagementApplication.USER_SCOPE;
 
 import cz.muni.fi.pa165.seminar3.librarymanagement.common.ErrorMessage;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.common.Result;
@@ -48,15 +49,10 @@ public class UserController {
     /**
      * REST method for creating a new user.
      */
-    @Operation(summary = "Create a new fine", security = {
-            @SecurityRequirement(name = SECURITY_SCHEME_BEARER, scopes = {LIBRARIAN_SCOPE}),
-            @SecurityRequirement(name = SECURITY_SCHEME_OAUTH2, scopes = {LIBRARIAN_SCOPE})
-    })
+    @Operation(summary = "Create a new fine")
     @ApiResponse(responseCode = "200", description = "User created", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "400", description = "Invalid payload",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
-    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have scope test_2",
-            content = @Content())
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public UserDto create(@RequestBody UserCreateDto userCreateDto) {
@@ -89,8 +85,8 @@ public class UserController {
      * REST method returning user with specified id.
      */
     @Operation(summary = "Find user with id", security = {
-            @SecurityRequirement(name = SECURITY_SCHEME_BEARER, scopes = {LIBRARIAN_SCOPE}),
-            @SecurityRequirement(name = SECURITY_SCHEME_OAUTH2, scopes = {LIBRARIAN_SCOPE})
+            @SecurityRequirement(name = SECURITY_SCHEME_BEARER, scopes = {USER_SCOPE}),
+            @SecurityRequirement(name = SECURITY_SCHEME_OAUTH2, scopes = {USER_SCOPE})
     })
     @ApiResponse(responseCode = "200", description = "User found", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "404", description = "User not found",
@@ -110,8 +106,8 @@ public class UserController {
      * REST method for updating a new user.
      */
     @Operation(summary = "Update user", security = {
-            @SecurityRequirement(name = SECURITY_SCHEME_BEARER, scopes = {LIBRARIAN_SCOPE}),
-            @SecurityRequirement(name = SECURITY_SCHEME_OAUTH2, scopes = {LIBRARIAN_SCOPE})
+            @SecurityRequirement(name = SECURITY_SCHEME_BEARER, scopes = {USER_SCOPE}),
+            @SecurityRequirement(name = SECURITY_SCHEME_OAUTH2, scopes = {USER_SCOPE})
     })
     @ApiResponse(responseCode = "200", description = "User updated", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "400", description = "Invalid payload",
@@ -133,8 +129,8 @@ public class UserController {
      * REST method for deleting a user.
      */
     @Operation(summary = "Delete user", security = {
-            @SecurityRequirement(name = SECURITY_SCHEME_BEARER, scopes = {LIBRARIAN_SCOPE}),
-            @SecurityRequirement(name = SECURITY_SCHEME_OAUTH2, scopes = {LIBRARIAN_SCOPE})
+            @SecurityRequirement(name = SECURITY_SCHEME_BEARER, scopes = {USER_SCOPE}),
+            @SecurityRequirement(name = SECURITY_SCHEME_OAUTH2, scopes = {USER_SCOPE})
     })
     @ApiResponse(responseCode = "200", description = "User deleted", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "404", description = "User not found",

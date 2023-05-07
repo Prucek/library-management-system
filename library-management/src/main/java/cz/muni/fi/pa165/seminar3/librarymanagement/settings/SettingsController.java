@@ -3,6 +3,7 @@ package cz.muni.fi.pa165.seminar3.librarymanagement.settings;
 import static cz.muni.fi.pa165.seminar3.librarymanagement.LibraryManagementApplication.LIBRARIAN_SCOPE;
 import static cz.muni.fi.pa165.seminar3.librarymanagement.LibraryManagementApplication.SECURITY_SCHEME_BEARER;
 import static cz.muni.fi.pa165.seminar3.librarymanagement.LibraryManagementApplication.SECURITY_SCHEME_OAUTH2;
+import static cz.muni.fi.pa165.seminar3.librarymanagement.LibraryManagementApplication.USER_SCOPE;
 
 import cz.muni.fi.pa165.seminar3.librarymanagement.common.ErrorMessage;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.settings.SettingsDto;
@@ -43,8 +44,8 @@ public class SettingsController {
      * @return current settings
      */
     @Operation(summary = "Get current library settings", security = {
-            @SecurityRequirement(name = SECURITY_SCHEME_BEARER, scopes = {LIBRARIAN_SCOPE}),
-            @SecurityRequirement(name = SECURITY_SCHEME_OAUTH2, scopes = {LIBRARIAN_SCOPE})
+            @SecurityRequirement(name = SECURITY_SCHEME_BEARER, scopes = {USER_SCOPE}),
+            @SecurityRequirement(name = SECURITY_SCHEME_OAUTH2, scopes = {USER_SCOPE})
     })
     @ApiResponse(responseCode = "200", description = "Library Settings", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have scope test_2",

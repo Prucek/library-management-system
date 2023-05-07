@@ -1,7 +1,6 @@
 package cz.muni.fi.pa165.seminar3.librarymanagement.reservation;
 
 import static cz.muni.fi.pa165.seminar3.librarymanagement.Config.DEFAULT_PAGE_SIZE;
-import static cz.muni.fi.pa165.seminar3.librarymanagement.LibraryManagementApplication.LIBRARIAN_SCOPE;
 import static cz.muni.fi.pa165.seminar3.librarymanagement.LibraryManagementApplication.SECURITY_SCHEME_BEARER;
 import static cz.muni.fi.pa165.seminar3.librarymanagement.LibraryManagementApplication.SECURITY_SCHEME_OAUTH2;
 import static cz.muni.fi.pa165.seminar3.librarymanagement.LibraryManagementApplication.USER_SCOPE;
@@ -95,8 +94,8 @@ public class ReservationController {
             Returns the new reservation as its response.
             """,
             security = {
-                @SecurityRequirement(name = SECURITY_SCHEME_BEARER, scopes = {LIBRARIAN_SCOPE}),
-                @SecurityRequirement(name = SECURITY_SCHEME_OAUTH2, scopes = {LIBRARIAN_SCOPE})
+                @SecurityRequirement(name = SECURITY_SCHEME_BEARER, scopes = {USER_SCOPE}),
+                @SecurityRequirement(name = SECURITY_SCHEME_OAUTH2, scopes = {USER_SCOPE})
             }
     )
     @ApiResponse(responseCode = "200", description = "Reservation created", useReturnTypeSchema = true)
@@ -121,8 +120,8 @@ public class ReservationController {
             Provides update of existing reservation.
             Returns updated reservation as its response.
             """, security = {
-                @SecurityRequirement(name = SECURITY_SCHEME_BEARER, scopes = {LIBRARIAN_SCOPE}),
-                @SecurityRequirement(name = SECURITY_SCHEME_OAUTH2, scopes = {LIBRARIAN_SCOPE})
+                @SecurityRequirement(name = SECURITY_SCHEME_BEARER, scopes = {USER_SCOPE}),
+                @SecurityRequirement(name = SECURITY_SCHEME_OAUTH2, scopes = {USER_SCOPE})
             }
     )
     @ApiResponse(responseCode = "200", description = "Reservation updated", useReturnTypeSchema = true)
@@ -145,8 +144,8 @@ public class ReservationController {
     @Operation(summary = "Delete existing reservation", description = """
             Enables deleting of existing reservation.
             """, security = {
-                @SecurityRequirement(name = SECURITY_SCHEME_BEARER, scopes = {LIBRARIAN_SCOPE}),
-                @SecurityRequirement(name = SECURITY_SCHEME_OAUTH2, scopes = {LIBRARIAN_SCOPE})
+                @SecurityRequirement(name = SECURITY_SCHEME_BEARER, scopes = {USER_SCOPE}),
+                @SecurityRequirement(name = SECURITY_SCHEME_OAUTH2, scopes = {USER_SCOPE})
             }
     )
     @ApiResponse(responseCode = "200", description = "Reservation deleted", useReturnTypeSchema = true)

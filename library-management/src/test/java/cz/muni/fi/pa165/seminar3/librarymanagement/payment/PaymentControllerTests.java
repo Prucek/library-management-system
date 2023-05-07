@@ -47,7 +47,7 @@ public class PaymentControllerTests {
     private final Faker faker = new Faker();
 
     @Test
-    @WithMockUser(authorities = "SCOPE_" + LIBRARIAN_SCOPE)
+    @WithMockUser(authorities = "SCOPE_" + USER_SCOPE)
     public void createSuccessful() throws Exception {
         PaymentDto paymentDto = fakePaymentDto(faker);
         // mock facade
@@ -66,7 +66,7 @@ public class PaymentControllerTests {
     }
 
     @Test
-    @WithMockUser(authorities = "SCOPE_" + LIBRARIAN_SCOPE)
+    @WithMockUser(authorities = "SCOPE_" + USER_SCOPE)
     public void createNotFound() throws Exception {
         // mock facade
         given(paymentFacade.create(any())).willThrow(EntityNotFoundException.class);
@@ -79,7 +79,7 @@ public class PaymentControllerTests {
     }
 
     @Test
-    @WithMockUser(authorities = "SCOPE_" + LIBRARIAN_SCOPE)
+    @WithMockUser(authorities = "SCOPE_" + USER_SCOPE)
     public void paymentGateCallbackSuccessful() throws Exception {
         PaymentDto paymentDto = fakePaymentDto(faker);
         // mock facade
@@ -95,7 +95,7 @@ public class PaymentControllerTests {
     }
 
     @Test
-    @WithMockUser(authorities = "SCOPE_" + LIBRARIAN_SCOPE)
+    @WithMockUser(authorities = "SCOPE_" + USER_SCOPE)
     public void paymentGateCallbackNotFound() throws Exception {
         // mock facade
         given(paymentFacade.finalizePayment(any())).willThrow(EntityNotFoundException.class);
@@ -105,7 +105,7 @@ public class PaymentControllerTests {
     }
 
     @Test
-    @WithMockUser(authorities = "SCOPE_" + USER_SCOPE)
+    @WithMockUser(authorities = "SCOPE_" + LIBRARIAN_SCOPE)
     public void findAll() throws Exception {
         Result<PaymentDto> paymentDtoResult =
                 Result.of(fakePaymentDto(faker), fakePaymentDto(faker), fakePaymentDto(faker));

@@ -1,7 +1,6 @@
 package cz.muni.fi.pa165.seminar3.librarymanagement.book;
 
 import static cz.muni.fi.pa165.seminar3.librarymanagement.LibraryManagementApplication.LIBRARIAN_SCOPE;
-import static cz.muni.fi.pa165.seminar3.librarymanagement.LibraryManagementApplication.USER_SCOPE;
 import static cz.muni.fi.pa165.seminar3.librarymanagement.utils.BookUtils.fakeBookDto;
 import static cz.muni.fi.pa165.seminar3.librarymanagement.utils.BookUtils.fakeBookInstanceDto;
 import static org.mockito.ArgumentMatchers.any;
@@ -81,7 +80,6 @@ public class BookControllerTests {
     }
 
     @Test
-    @WithMockUser(authorities = "SCOPE_" + USER_SCOPE)
     public void findBookSuccessful() throws Exception {
         BookDto bookDto = fakeBookDto(faker);
 
@@ -97,7 +95,6 @@ public class BookControllerTests {
     }
 
     @Test
-    @WithMockUser(authorities = "SCOPE_" + USER_SCOPE)
     public void findBookNotFound() throws Exception {
         // mock facades
         String bookId = UUID.randomUUID().toString();
