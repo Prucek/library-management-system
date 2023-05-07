@@ -35,25 +35,30 @@ books without having an account.
 ## Running with Podman Compose
 
 To build the containers you can simply run:
+
 ```shell
 podman-compose build
 ```
- 
+
 or build using your favourite container build tool (the `podman-compose.yml`
 uses `quay.io/juraj_marcin/pa165-library-management-system` as image)
+
 ```shell
 buildah build -t quay.io/juraj_marcin/pa165-library-management-system
 ```
 
 Then you can start all services with (use `-d` to run detached):
+
 ```shell
 podman-compose up [-d]
 ```
 
 Services can afterwards stopped with
+
 ```shell
 podman-compose down
 ```
+
 or by sending a `SIGINT` signal to the services running in foreground (not
 detached).
 
@@ -82,7 +87,25 @@ Sending a `DELETE` request to `/seed` will drop the in-memory database.
 
 ## Demo Scenarios
 
-See [scenarios/README.md](scenarios/README.md).
+See [scenarios/README.md](scenarios/README.md) for setup.
+
+### Tested cases
+
+The demo tests various combinations of operations from this list
+
+- find by id (user, book, author, borrowing, reservation, fine, payment)
+- list all (users, books, authors, borrowings, reservations, fines, payments)
+- invalid deletions
+- new borrowing, update borrowing
+- new reservation, update reservation, delete reservation
+- new author, update author
+- new book, update book
+- new fine, update fine
+
+### Goal
+
+The goal is to have no failures and keep the average response time of the
+service under 100 ms.
 
 ## Use Case Diagram
 
