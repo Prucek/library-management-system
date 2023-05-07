@@ -13,7 +13,7 @@ import static org.mockito.Mockito.verify;
 import com.github.javafaker.Faker;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.author.AuthorCreateDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.author.AuthorDto;
-import jakarta.persistence.EntityNotFoundException;
+import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.exceptions.NotFoundException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -73,10 +73,10 @@ public class AuthorFacadeTests {
         Author author = fakeAuthor(faker);
 
         // mock services
-        given(authorService.find(eq(author.getId()))).willThrow(EntityNotFoundException.class);
+        given(authorService.find(eq(author.getId()))).willThrow(NotFoundException.class);
 
         // perform test
-        assertThrows(EntityNotFoundException.class, () -> authorFacade.update(author.getId(),
+        assertThrows(NotFoundException.class, () -> authorFacade.update(author.getId(),
                 AuthorCreateDto.builder().name(author.getName()).surname(author.getSurname()).build()));
     }
 
@@ -98,9 +98,9 @@ public class AuthorFacadeTests {
         Author author = fakeAuthor(faker);
 
         // mock services
-        given(authorService.find(eq(author.getId()))).willThrow(EntityNotFoundException.class);
+        given(authorService.find(eq(author.getId()))).willThrow(NotFoundException.class);
 
         // perform test
-        assertThrows(EntityNotFoundException.class, () -> authorFacade.delete(author.getId()));
+        assertThrows(NotFoundException.class, () -> authorFacade.delete(author.getId()));
     }
 }

@@ -2,7 +2,7 @@ package cz.muni.fi.pa165.seminar3.librarymanagement.author;
 
 import static cz.muni.fi.pa165.seminar3.librarymanagement.Config.DEFAULT_PAGE_SIZE;
 
-import cz.muni.fi.pa165.seminar3.librarymanagement.common.ErrorMessage;
+import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.ErrorMessage;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.author.AuthorCreateDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.author.AuthorDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.common.Result;
@@ -10,7 +10,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -24,7 +23,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
 
 /**
  * Spring REST Controller for Authors.
@@ -51,11 +49,7 @@ public class AuthorController {
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
     @GetMapping("/{id}")
     public AuthorDto find(@PathVariable String id) {
-        try {
-            return facade.find(id);
-        } catch (EntityNotFoundException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "author with id=" + id + " not found");
-        }
+        return facade.find(id);
     }
 
     /**
@@ -81,11 +75,7 @@ public class AuthorController {
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     public AuthorDto create(@RequestBody AuthorCreateDto dto) {
-        try {
-            return facade.create(dto);
-        } catch (EntityNotFoundException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.toString());
-        }
+        return facade.create(dto);
     }
 
     /**
@@ -97,11 +87,7 @@ public class AuthorController {
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
     @DeleteMapping("/{id}")
     public void delete(@PathVariable String id) {
-        try {
-            facade.delete(id);
-        } catch (EntityNotFoundException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.toString());
-        }
+        facade.delete(id);
     }
 
     /**
@@ -113,10 +99,6 @@ public class AuthorController {
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
     @PutMapping("/{id}")
     public AuthorDto update(@PathVariable String id, @RequestBody AuthorCreateDto dto) {
-        try {
-            return facade.update(id, dto);
-        } catch (EntityNotFoundException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.toString());
-        }
+        return facade.update(id, dto);
     }
 }

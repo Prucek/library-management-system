@@ -8,7 +8,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.verify;
 
-import jakarta.persistence.EntityNotFoundException;
+import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.exceptions.NotFoundException;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -86,7 +86,7 @@ public class DomainServiceTests {
         given(testRepository.findById(any())).willReturn(Optional.empty());
 
         // perform test
-        assertThrows(EntityNotFoundException.class, () -> testDomainService.find(UUID.randomUUID().toString()));
+        assertThrows(NotFoundException.class, () -> testDomainService.find(UUID.randomUUID().toString()));
     }
 
     @Test

@@ -19,7 +19,7 @@ import com.github.javafaker.Faker;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.book.BookCreateDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.book.BookDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.book.BookInstanceDto;
-import jakarta.persistence.EntityNotFoundException;
+import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.exceptions.NotFoundException;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,7 +67,7 @@ public class BookControllerTests {
         BookDto bookDto = fakeBookDto(faker);
 
         //mock facades
-        given(bookFacade.create(any(BookCreateDto.class))).willThrow(EntityNotFoundException.class);
+        given(bookFacade.create(any(BookCreateDto.class))).willThrow(NotFoundException.class);
 
         // perform test
         mockMvc.perform(post("/books").contentType(MediaType.APPLICATION_JSON)
@@ -93,7 +93,7 @@ public class BookControllerTests {
     public void findBookNotFound() throws Exception {
         // mock facades
         String bookId = UUID.randomUUID().toString();
-        given(bookFacade.find(bookId)).willThrow(EntityNotFoundException.class);
+        given(bookFacade.find(bookId)).willThrow(NotFoundException.class);
 
         // perform test
         mockMvc.perform(get("/books/" + bookId)).andExpect(status().isNotFound());
@@ -112,7 +112,7 @@ public class BookControllerTests {
     @Test
     public void deleteBookNotFound() throws Exception {
         // mock facades
-        doThrow(EntityNotFoundException.class).when(bookFacade).delete(any());
+        doThrow(NotFoundException.class).when(bookFacade).delete(any());
 
         // perform test
         mockMvc.perform(delete("/books/" + UUID.randomUUID())).andExpect(status().isNotFound());
@@ -139,7 +139,7 @@ public class BookControllerTests {
     public void updateBookNotFound() throws Exception {
         BookDto bookDto = fakeBookDto(faker);
 
-        given(bookFacade.update(eq(bookDto.getId()), any())).willThrow(EntityNotFoundException.class);
+        given(bookFacade.update(eq(bookDto.getId()), any())).willThrow(NotFoundException.class);
 
         mockMvc.perform(put("/books/" + bookDto.getId()).contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(bookDto))).andExpect(status().isNotFound());

@@ -11,6 +11,7 @@ import static org.mockito.BDDMockito.given;
 
 import com.github.javafaker.Faker;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.common.Result;
+import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.exceptions.NotFoundException;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.paymentgate.CardDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.paymentgate.TransactionCreateDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.paymentgate.TransactionDto;
@@ -19,7 +20,6 @@ import cz.muni.fi.pa165.seminar3.paymentgate.transaction.Transaction;
 import cz.muni.fi.pa165.seminar3.paymentgate.transaction.TransactionMapper;
 import cz.muni.fi.pa165.seminar3.paymentgate.transaction.TransactionRepository;
 import cz.muni.fi.pa165.seminar3.paymentgate.transaction.TransactionService;
-import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
@@ -95,7 +95,7 @@ public class TransactionServiceTests {
         given(transactionRepository.findById(eq(transaction.getId()))).willReturn(Optional.empty());
 
         // perform test
-        assertThrows(EntityNotFoundException.class, () -> transactionService.pay(transaction.getId(), cardDto));
+        assertThrows(NotFoundException.class, () -> transactionService.pay(transaction.getId(), cardDto));
     }
 
     @Test
@@ -142,7 +142,7 @@ public class TransactionServiceTests {
         given(transactionRepository.findById(eq(transaction.getId()))).willReturn(Optional.empty());
 
         // perform test
-        assertThrows(EntityNotFoundException.class, () -> transactionService.find(transaction.getId()));
+        assertThrows(NotFoundException.class, () -> transactionService.find(transaction.getId()));
     }
 
     @Test

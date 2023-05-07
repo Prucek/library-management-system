@@ -22,3 +22,5 @@ payment-gate:
   callback: http://localhost:8080/payments/
 server:
   port: 8080
+  error:
+    include-message: always
