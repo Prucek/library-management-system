@@ -1,5 +1,6 @@
 package cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.kiosk;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,7 +10,7 @@ import lombok.experimental.SuperBuilder;
 /**
  * DTO for a borrowing action at kiosk.
  *
- *@author MarekFiala
+ * @author MarekFiala
  */
 @Getter
 @Setter
@@ -17,6 +18,8 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @SuperBuilder
 public class KioskBorrowDto {
+    @NotBlank
     private String userId;
+    @NotBlank
     private String bookInstanceId;
 }

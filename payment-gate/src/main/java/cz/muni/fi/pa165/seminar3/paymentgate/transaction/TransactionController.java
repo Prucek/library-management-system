@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -46,7 +47,7 @@ public class TransactionController {
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public TransactionDto create(@RequestBody TransactionCreateDto dto) {
+    public TransactionDto create(@RequestBody @Valid TransactionCreateDto dto) {
 
         if (dto.getAmount() <= 0) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "amount must be positive");
@@ -89,7 +90,7 @@ public class TransactionController {
     @ApiResponse(responseCode = "400", description = "Invalid paging",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
     @PostMapping("/{id}")
-    public TransactionDto pay(@PathVariable String id, @RequestBody CardDto cardDto) {
+    public TransactionDto pay(@PathVariable String id, @RequestBody @Valid CardDto cardDto) {
         return service.pay(id, cardDto);
     }
 }

@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -42,7 +43,7 @@ public class KioskController {
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
     @PostMapping("/borrow")
     @ResponseStatus(HttpStatus.CREATED)
-    public BorrowingDto borrow(@RequestBody KioskBorrowDto dto) {
+    public BorrowingDto borrow(@RequestBody @Valid KioskBorrowDto dto) {
         return kioskFacade.borrowBook(dto);
     }
 
