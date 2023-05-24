@@ -1,5 +1,7 @@
 package cz.muni.fi.pa165.seminar3.librarymanagement.utils;
 
+import static cz.muni.fi.pa165.seminar3.librarymanagement.utils.BookUtils.fakeBookInstance;
+import static cz.muni.fi.pa165.seminar3.librarymanagement.utils.BookUtils.fakeBookInstanceDto;
 import static cz.muni.fi.pa165.seminar3.librarymanagement.utils.UserUtils.fakeUser;
 import static cz.muni.fi.pa165.seminar3.librarymanagement.utils.UserUtils.fakeUserDto;
 
@@ -32,6 +34,7 @@ public class BorrowingUtils {
                         .toInstant()
                         .atZone(ZoneId.systemDefault())
                         .toLocalDateTime())
+                .bookInstance(fakeBookInstance(faker))
                 .user(fakeUser(faker, UserType.CLIENT))
                 .build();
     }
@@ -52,6 +55,7 @@ public class BorrowingUtils {
                         .toInstant()
                         .atZone(ZoneId.systemDefault())
                         .toLocalDateTime())
+                .bookInstance(fakeBookInstanceDto(faker))
                 .user(fakeUserDto(faker, UserType.CLIENT))
                 .build();
     }

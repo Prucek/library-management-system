@@ -15,6 +15,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -66,7 +67,7 @@ public class FineController {
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public FineDto create(@RequestBody FineCreateDto fineCreateDto) {
+    public FineDto create(@RequestBody @Valid FineCreateDto fineCreateDto) {
         return fineFacade.create(fineCreateDto);
     }
 
@@ -122,7 +123,7 @@ public class FineController {
     @ApiResponse(responseCode = "404", description = "Fine not found",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
     @PutMapping(path = "{id}")
-    public FineDto update(@PathVariable String id, @RequestBody FineCreateDto fineCreateDto) {
+    public FineDto update(@PathVariable String id, @RequestBody @Valid FineCreateDto fineCreateDto) {
         return fineFacade.update(id, fineCreateDto);
     }
 

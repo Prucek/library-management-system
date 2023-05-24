@@ -1,9 +1,6 @@
 package cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.user;
 
-import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.address.AddressDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.common.DomainObjectDto;
-import java.util.List;
-import java.util.Objects;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -31,21 +28,16 @@ public class UserDto extends DomainObjectDto {
 
     private String lastName;
 
-    private List<AddressDto> addresses;
-
     private UserType userType;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof UserDto userDto)) {
-            return false;
-        }
-        return Objects.equals(username, userDto.username) && Objects.equals(email, userDto.email) && Objects.equals(
-                firstName, userDto.firstName) && Objects.equals(lastName, userDto.lastName) && Objects.equals(addresses,
-                userDto.addresses);
-    }
+    private String country;
+
+    private String city;
+
+    private String street;
+
+    private String houseNumber;
+
+    private String zip;
 }
 

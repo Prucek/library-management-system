@@ -1,48 +1,35 @@
 package cz.muni.fi.pa165.seminar3.librarymanagement.fine;
 
-import static cz.muni.fi.pa165.seminar3.librarymanagement.utils.BorrowingUtils.fakeBorrowing;
+import static cz.muni.fi.pa165.seminar3.librarymanagement.utils.FineUtils.fakeFine;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.verify;
 
 import com.github.javafaker.Faker;
-import cz.muni.fi.pa165.seminar3.librarymanagement.borrowing.Borrowing;
 import cz.muni.fi.pa165.seminar3.librarymanagement.borrowing.BorrowingService;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.exceptions.NotFoundException;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.fine.FineCreateDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.fine.FineDto;
-import cz.muni.fi.pa165.seminar3.librarymanagement.user.User;
 import cz.muni.fi.pa165.seminar3.librarymanagement.user.UserService;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.dao.InvalidDataAccessApiUsageException;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Tests for Fine facade implementation.
  *
  * @author Peter Rúček
  */
-@RunWith(SpringRunner.class)
-@ActiveProfiles("test")
-@SpringBootTest
-@Transactional
+@WebMvcTest(controllers = {FineFacadeImpl.class, FineMapper.class})
 public class FineFacadeImplTests {
 
-    @Autowired
-    private FineRepository domainRepository;
-
-    @Autowired
-    private FineService domainService;
-
-    @Autowired
-    private FineMapper domainMapper;
+    @MockBean
+    private FineService fineService;
 
     @MockBean
     private UserService userService;
@@ -57,93 +44,59 @@ public class FineFacadeImplTests {
 
     @Test
     public void createFineSuccessful() {
+        Fine fine = fakeFine(faker);
 
-        FineCreateDto fineCreateDto =
-                FineCreateDto.builder().amount(10.).issuerId("random").outstandingBorrowingId("random").build();
-        Borrowing fakeBorrowing = fakeBorrowing(faker);
-        User fakeUser = fakeBorrowing.getUser();
-        Fine fakeFine = Fine.builder().amount(10.).issuer(fakeUser).outstandingBorrowing(fakeBorrowing).build();
+        // mock
+        given(userService.find(fine.getIssuer().getId())).willReturn(fine.getIssuer());
+        given(borrowingService.find(fine.getOutstandingBorrowing().getId())).willReturn(fine.getOutstandingBorrowing());
+        given(fineService.create(any(Fine.class))).willReturn(fine);
 
-        given(userService.find(any(String.class))).willReturn(fakeUser);
-        given(borrowingService.find(any(String.class))).willReturn(fakeBorrowing);
-
-        FineDto result = fineFacade.create(fineCreateDto);
-        assertThat(domainMapper.fromDto(result)).isEqualTo(fakeFine);
-        assertThat(domainRepository.findById(result.getId())).isPresent();
-    }
-
-    @Test
-    public void createFineEmptyCreateDto() {
-
-        FineCreateDto fineCreateDto = FineCreateDto.builder().build();
-        Fine fakeFine = Fine.builder().build();
-
-        given(userService.find(any(String.class))).willReturn(null);
-        given(borrowingService.find(any(String.class))).willReturn(null);
-
-        FineDto result = fineFacade.create(fineCreateDto);
-        assertThat(domainMapper.fromDto(result)).isEqualTo(fakeFine);
-        assertThat(domainRepository.findById(result.getId())).isPresent();
-    }
-
-    @Test
-    public void createFineNullCreateDto() {
-
-        FineCreateDto fineCreateDto = null;
-        assertThrows(NullPointerException.class, () -> fineFacade.create(fineCreateDto));
-    }
-
-    @Test
-    @Transactional
-    public void updateFineSuccessful() {
-
-        // first create a fine
-        FineDto result = createFine();
-
-        // now update the fine
-        Fine fine = domainRepository.findById(result.getId()).get();
-
-        FineCreateDto newCreateDto = FineCreateDto.builder()
-                .amount(15.6)
+        // perform
+        FineCreateDto fineCreateDto = FineCreateDto.builder()
+                .amount(fine.getAmount())
                 .issuerId(fine.getIssuer().getId())
                 .outstandingBorrowingId(fine.getOutstandingBorrowing().getId())
                 .build();
-        given(userService.find(any(String.class))).willReturn(fine.getIssuer());
-        given(borrowingService.find(any(String.class))).willReturn(fine.getOutstandingBorrowing());
 
-        result = fineFacade.update(fine.getId(), newCreateDto);
-
-        assertThat(domainRepository.findById(result.getId())).isPresent();
-        assertThat(domainMapper.fromDto(result).getAmount()).isEqualTo(newCreateDto.getAmount());
+        FineDto result = fineFacade.create(fineCreateDto);
+        assertThat(result.getId()).isEqualTo(fine.getId());
+        assertThat(result.getAmount()).isEqualTo(fine.getAmount());
+        assertThat(result.getIssuer().getId()).isEqualTo(fine.getIssuer().getId());
+        assertThat(result.getOutstandingBorrowing().getId()).isEqualTo(fine.getOutstandingBorrowing().getId());
     }
 
     @Test
-    public void updateFineEmptyCreateDto() {
-
+    public void updateFineSuccessful() {
         // first create a fine
-        FineDto result = createFine();
+        Fine fine = fakeFine(faker);
+        Fine newFine = fakeFine(faker);
+
+        // mock
+        given(userService.find(newFine.getIssuer().getId())).willReturn(newFine.getIssuer());
+        given(borrowingService.find(newFine.getOutstandingBorrowing().getId())).willReturn(
+                newFine.getOutstandingBorrowing());
+        given(fineService.find(eq(fine.getId()))).willReturn(fine);
+        given(fineService.update(any(Fine.class))).willReturn(newFine);
 
         // now update the fine
-        FineCreateDto fineCreateDto = FineCreateDto.builder().build();
+        FineCreateDto newCreateDto = FineCreateDto.builder()
+                .amount(newFine.getAmount())
+                .issuerId(newFine.getIssuer().getId())
+                .outstandingBorrowingId(newFine.getOutstandingBorrowing().getId())
+                .build();
 
-        given(userService.find(any(String.class))).willReturn(null);
-        given(borrowingService.find(any(String.class))).willReturn(null);
+        FineDto result = fineFacade.update(fine.getId(), newCreateDto);
 
-        Fine fakeFine = Fine.builder().build();
-        result = fineFacade.update(result.getId(), fineCreateDto);
-        assertThat(domainMapper.fromDto(result)).isEqualTo(fakeFine);
-        assertThat(domainRepository.findById(result.getId())).isPresent();
-    }
-
-    @Test
-    public void updateFineNullId() {
-
-        FineCreateDto fineCreateDto = FineCreateDto.builder().build();
-        assertThrows(InvalidDataAccessApiUsageException.class, () -> fineFacade.update(null, fineCreateDto));
+        assertThat(result.getId()).isEqualTo(newFine.getId());
+        assertThat(result.getAmount()).isEqualTo(newFine.getAmount());
+        assertThat(result.getIssuer().getId()).isEqualTo(newFine.getIssuer().getId());
+        assertThat(result.getOutstandingBorrowing().getId()).isEqualTo(newFine.getOutstandingBorrowing().getId());
     }
 
     @Test
     public void updateFineNonExistentId() {
+        // mock
+        given(fineService.find(eq("non-existent"))).willThrow(NotFoundException.class);
 
         FineCreateDto fineCreateDto = FineCreateDto.builder().build();
         assertThrows(NotFoundException.class, () -> fineFacade.update("non-existent", fineCreateDto));
@@ -151,43 +104,21 @@ public class FineFacadeImplTests {
 
     @Test
     public void deleteFineSuccessful() {
+        Fine fine = fakeFine(faker);
 
-        // first create a fine
-        FineDto result = createFine();
+        // mock
+        given(fineService.find(eq(fine.getId()))).willReturn(fine);
 
-        // now delete the fine
-        fineFacade.delete(result.getId());
-        assertThat(domainRepository.findById(result.getId())).isEmpty();
-        assertThat(userService.find(result.getIssuer().getId())).isNotNull();
-        assertThat(borrowingService.find(result.getOutstandingBorrowing().getId())).isNotNull();
-    }
-
-    @Test
-    public void deleteFineNullId() {
-
-        assertThrows(InvalidDataAccessApiUsageException.class, () -> fineFacade.delete(null));
+        // perform
+        fineFacade.delete(fine.getId());
+        verify(fineService, atLeastOnce()).delete(eq(fine));
     }
 
     @Test
     public void deleteFineNonExistentId() {
+        // mock
+        given(fineService.find(eq("non-existent"))).willThrow(NotFoundException.class);
 
         assertThrows(NotFoundException.class, () -> fineFacade.delete("non-existent"));
-    }
-
-    private FineDto createFine() {
-        FineCreateDto fineCreateDto =
-                FineCreateDto.builder().amount(10.).issuerId("random").outstandingBorrowingId("random").build();
-        Borrowing fakeBorrowing = fakeBorrowing(faker);
-        User fakeUser = fakeBorrowing.getUser();
-        Fine fakeFine = Fine.builder().amount(10.).issuer(fakeUser).outstandingBorrowing(fakeBorrowing).build();
-
-        given(userService.find(any(String.class))).willReturn(fakeUser);
-        given(borrowingService.find(any(String.class))).willReturn(fakeBorrowing);
-
-        FineDto result = fineFacade.create(fineCreateDto);
-        assertThat(domainMapper.fromDto(result)).isEqualTo(fakeFine);
-        assertThat(domainRepository.findById(result.getId())).isPresent();
-
-        return result;
     }
 }

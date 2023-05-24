@@ -17,12 +17,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.javafaker.Faker;
-import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.borrowing.BorrowingCreateDto;
-import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.borrowing.BorrowingDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.common.Result;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.exceptions.NotFoundException;
+import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.reservation.ReservationCreateDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.reservation.ReservationDto;
-import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.user.UserDto;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,10 +81,11 @@ public class ReservationControllerTests {
         // perform test
         mockMvc.perform(post("/reservations").contentType(MediaType.APPLICATION_JSON)
                         .with(csrf())
-                        .content(objectMapper.writeValueAsString(BorrowingDto.builder()
+                        .content(objectMapper.writeValueAsString(ReservationCreateDto.builder()
                                 .from(reservationDto.getFrom())
                                 .to(reservationDto.getTo())
-                                .user(UserDto.builder().id(reservationDto.getUser().getId()).build())
+                                .bookId(reservationDto.getBook().getId())
+                                .userId(reservationDto.getUser().getId())
                                 .build())))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").hasJsonPath())
@@ -106,9 +105,10 @@ public class ReservationControllerTests {
         // perform test
         mockMvc.perform(put("/reservations/" + reservationDto.getId()).contentType(MediaType.APPLICATION_JSON)
                         .with(csrf())
-                        .content(objectMapper.writeValueAsString(BorrowingCreateDto.builder()
+                        .content(objectMapper.writeValueAsString(ReservationCreateDto.builder()
                                 .from(newReservationDto.getFrom())
                                 .to(newReservationDto.getTo())
+                                .bookId(reservationDto.getBook().getId())
                                 .userId(newReservationDto.getUser().getId())
                                 .build())))
                 .andExpect(status().isOk())

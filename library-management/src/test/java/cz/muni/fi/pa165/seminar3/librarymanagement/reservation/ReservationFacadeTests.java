@@ -60,7 +60,7 @@ public class ReservationFacadeTests {
         ReservationDto result = reservationFacade.create(ReservationCreateDto.builder()
                 .from(reservation.getFrom())
                 .to(reservation.getTo())
-                .issuerId(user.getId())
+                .userId(user.getId())
                 .bookId(book.getId())
                 .build());
         assertThat(result.getId()).isEqualTo(reservation.getId());
@@ -82,7 +82,7 @@ public class ReservationFacadeTests {
         assertThrows(NotFoundException.class, () -> reservationFacade.create(ReservationCreateDto.builder()
                 .from(reservation.getFrom())
                 .to(reservation.getTo())
-                .issuerId(user.getId())
+                .userId(user.getId())
                 .bookId(book.getId())
                 .build()));
     }
@@ -101,7 +101,7 @@ public class ReservationFacadeTests {
         assertThrows(NotFoundException.class, () -> reservationFacade.create(ReservationCreateDto.builder()
                 .from(reservation.getFrom())
                 .to(reservation.getTo())
-                .issuerId(user.getId())
+                .userId(user.getId())
                 .bookId(book.getId())
                 .build()));
     }
@@ -122,7 +122,7 @@ public class ReservationFacadeTests {
         ReservationDto result = reservationFacade.updateReservation(reservation.getId(), ReservationCreateDto.builder()
                 .from(reservation.getFrom())
                 .to(reservation.getTo())
-                .issuerId(user.getId())
+                .userId(user.getId())
                 .bookId(book.getId())
                 .build());
         assertThat(result.getId()).isEqualTo(reservation.getId());
@@ -148,7 +148,7 @@ public class ReservationFacadeTests {
                 ReservationCreateDto.builder()
                         .from(reservation.getFrom())
                         .to(reservation.getTo())
-                        .issuerId(user.getId())
+                        .userId(user.getId())
                         .bookId(book.getId())
                         .build()));
     }
@@ -169,7 +169,7 @@ public class ReservationFacadeTests {
                 ReservationCreateDto.builder()
                         .from(reservation.getFrom())
                         .to(reservation.getTo())
-                        .issuerId(user.getId())
+                        .userId(user.getId())
                         .bookId(book.getId())
                         .build()));
     }
@@ -190,7 +190,7 @@ public class ReservationFacadeTests {
                 ReservationCreateDto.builder()
                         .from(reservation.getFrom())
                         .to(reservation.getTo())
-                        .issuerId(user.getId())
+                        .userId(user.getId())
                         .bookId(book.getId())
                         .build()));
     }

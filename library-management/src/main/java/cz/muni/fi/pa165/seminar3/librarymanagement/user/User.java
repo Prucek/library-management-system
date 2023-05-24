@@ -1,16 +1,11 @@
 package cz.muni.fi.pa165.seminar3.librarymanagement.user;
 
-import cz.muni.fi.pa165.seminar3.librarymanagement.address.Address;
 import cz.muni.fi.pa165.seminar3.librarymanagement.common.DomainObject;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.user.UserType;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -37,15 +32,19 @@ public class User extends DomainObject {
     @Enumerated(EnumType.STRING)
     private UserType userType;
 
-    private String password;
-
     private String email;
 
     private String firstName;
 
     private String lastName;
 
+    private String country;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
-    private List<Address> addresses;
+    private String city;
+
+    private String street;
+
+    private String houseNumber;
+
+    private String zip;
 }

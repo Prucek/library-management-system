@@ -15,6 +15,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -55,7 +56,7 @@ public class UserController {
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public UserDto create(@RequestBody UserCreateDto userCreateDto) {
+    public UserDto create(@RequestBody @Valid UserCreateDto userCreateDto) {
         return userFacade.create(userCreateDto);
     }
 
@@ -100,7 +101,7 @@ public class UserController {
     @ApiResponse(responseCode = "404", description = "User not found",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
     @PutMapping("/{id}")
-    public UserDto update(@PathVariable String id, @RequestBody UserCreateDto userCreateDto) {
+    public UserDto update(@PathVariable String id, @RequestBody @Valid UserCreateDto userCreateDto) {
         return userFacade.update(id, userCreateDto);
     }
 

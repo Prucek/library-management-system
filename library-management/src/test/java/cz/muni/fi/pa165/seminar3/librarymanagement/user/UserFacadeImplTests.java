@@ -1,40 +1,34 @@
 package cz.muni.fi.pa165.seminar3.librarymanagement.user;
 
-import static cz.muni.fi.pa165.seminar3.librarymanagement.utils.UserUtils.fakeAddressDto;
+import static cz.muni.fi.pa165.seminar3.librarymanagement.utils.UserUtils.fakeUser;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.verify;
 
 import com.github.javafaker.Faker;
-import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.address.AddressDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.exceptions.NotFoundException;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.user.UserCreateDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.user.UserDto;
-import java.util.List;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.user.UserType;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.dao.InvalidDataAccessApiUsageException;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 /**
  * Tests for user facade implementation.
  *
  * @author Marek Miček
  */
-@RunWith(SpringRunner.class)
-@ActiveProfiles("test")
-@SpringBootTest
-@Transactional
+@WebMvcTest(controllers = {UserFacadeImpl.class, UserMapper.class})
 public class UserFacadeImplTests {
 
-    @Autowired
-    private UserRepository domainRepository;
-
-    @Autowired
-    private UserMapper domainMapper;
+    @MockBean
+    private UserService userService;
 
     @Autowired
     private UserFacadeImpl userFacade;
@@ -43,128 +37,104 @@ public class UserFacadeImplTests {
 
     @Test
     public void createUserSuccessful() {
-        AddressDto addressDto = fakeAddressDto(faker);
+        User user = fakeUser(faker, UserType.CLIENT);
+        // mock
+        given(userService.create(any(User.class))).willReturn(user);
         UserCreateDto userCreateDto = UserCreateDto.builder()
                 .username("random")
                 .email("john.doe@gmail.com")
-                .password("empty")
                 .firstName("John")
                 .lastName("Doe")
-                .addresses(List.of(addressDto))
+                .street(user.getStreet())
+                .houseNumber(user.getHouseNumber())
+                .city(user.getCity())
+                .zip(user.getZip())
+                .country(user.getCountry())
                 .build();
 
+        // perform
         UserDto result = userFacade.create(userCreateDto);
 
-        assertThat(domainRepository.findById(result.getId())).isPresent();
-    }
-
-    @Test
-    public void createEmptyUserSuccessful() {
-        UserCreateDto userCreateDto = UserCreateDto.builder().build();
-        UserDto result = userFacade.create(userCreateDto);
-
-        assertThat(domainRepository.findById(result.getId())).isPresent();
-    }
-
-    @Test
-    public void createNullUserThrowsException() {
-        assertThrows(NullPointerException.class, () -> userFacade.create(null));
-
+        assertThat(result.getId()).isEqualTo(user.getId());
+        assertThat(result.getUsername()).isEqualTo(user.getUsername());
+        assertThat(result.getUserType()).isEqualTo(user.getUserType());
+        assertThat(result.getEmail()).isEqualTo(user.getEmail());
+        assertThat(result.getFirstName()).isEqualTo(user.getFirstName());
+        assertThat(result.getLastName()).isEqualTo(user.getLastName());
+        assertThat(result.getCountry()).isEqualTo(user.getCountry());
+        assertThat(result.getCity()).isEqualTo(user.getCity());
+        assertThat(result.getStreet()).isEqualTo(user.getStreet());
+        assertThat(result.getHouseNumber()).isEqualTo(user.getHouseNumber());
+        assertThat(result.getZip()).isEqualTo(user.getZip());
     }
 
     @Test
     public void updateUserSuccessful() {
         // create user
-        UserDto createdUserDto = createUser();
+        User user = fakeUser(faker, UserType.CLIENT);
+        User newUser = fakeUser(faker, UserType.CLIENT);
 
-        // update user
-        User userToUpdate = domainRepository.findById(createdUserDto.getId()).orElse(null);
-        assert userToUpdate != null;
+        // mock
+        given(userService.find(eq(user.getId()))).willReturn(user);
+        given(userService.update(any(User.class))).willReturn(newUser);
         UserCreateDto updatedUserDto = UserCreateDto.builder()
-                .username("new_user_name")
-                .firstName(userToUpdate.getFirstName())
-                .lastName(userToUpdate.getLastName())
-                .email(userToUpdate.getEmail())
-                .password(userToUpdate.getPassword())
-                .addresses(List.of(fakeAddressDto(faker)))
+                .username(newUser.getUsername())
+                .firstName(newUser.getFirstName())
+                .lastName(newUser.getLastName())
+                .email(newUser.getEmail())
+                .street(newUser.getStreet())
+                .houseNumber(newUser.getHouseNumber())
+                .city(newUser.getCity())
+                .zip(newUser.getZip())
+                .country(newUser.getCountry())
                 .build();
 
-        UserDto result = userFacade.update(createdUserDto.getId(), updatedUserDto);
+        // perform
+        UserDto result = userFacade.update(user.getId(), updatedUserDto);
 
-        assertThat(domainRepository.findById(createdUserDto.getId())).isPresent();
-        assertThat(domainMapper.fromDto(result).getUsername()).isEqualTo(updatedUserDto.getUsername());
+        assertThat(result.getId()).isEqualTo(newUser.getId());
+        assertThat(result.getUsername()).isEqualTo(newUser.getUsername());
+        assertThat(result.getUserType()).isEqualTo(newUser.getUserType());
+        assertThat(result.getEmail()).isEqualTo(newUser.getEmail());
+        assertThat(result.getFirstName()).isEqualTo(newUser.getFirstName());
+        assertThat(result.getLastName()).isEqualTo(newUser.getLastName());
+        assertThat(result.getCountry()).isEqualTo(newUser.getCountry());
+        assertThat(result.getCity()).isEqualTo(newUser.getCity());
+        assertThat(result.getStreet()).isEqualTo(newUser.getStreet());
+        assertThat(result.getHouseNumber()).isEqualTo(newUser.getHouseNumber());
+        assertThat(result.getZip()).isEqualTo(newUser.getZip());
     }
 
-    @Test
-    public void updateEmptyUserSuccessful() {
-        // create user
-        UserDto createdUserDto = createUser();
-
-        // update user
-        UserCreateDto updatedUserDto = UserCreateDto.builder().build();
-        UserDto result = userFacade.update(createdUserDto.getId(), updatedUserDto);
-
-        assertThat(domainRepository.findById(result.getId())).isPresent();
-        assertThat(result.getUsername()).isEqualTo(updatedUserDto.getUsername());
-        assertThat(result.getFirstName()).isEqualTo(updatedUserDto.getFirstName());
-        assertThat(result.getLastName()).isEqualTo(updatedUserDto.getLastName());
-        assertThat(result.getEmail()).isEqualTo(updatedUserDto.getEmail());
-        assertThat(result.getAddresses()).isEqualTo(updatedUserDto.getAddresses());
-    }
 
     @Test
-    public void updateUserNullId() {
+    public void updateUserNonExistentId() {
+        // mock
+        given(userService.find(eq("non-existent"))).willThrow(NotFoundException.class);
 
+        // perform
         UserCreateDto userCreateDto = UserCreateDto.builder().build();
-        assertThrows(InvalidDataAccessApiUsageException.class, () -> userFacade.update(null, userCreateDto));
-    }
-
-    @Test
-    public void updateFineNonExistentId() {
-
-        UserCreateDto fineCreateDto = UserCreateDto.builder().build();
-        assertThrows(NotFoundException.class, () -> userFacade.update("non-existent", fineCreateDto));
+        assertThrows(NotFoundException.class, () -> userFacade.update("non-existent", userCreateDto));
     }
 
     @Test
     public void deleteUserSuccessful() {
+        // create user
+        User user = fakeUser(faker, UserType.CLIENT);
 
-        // first create a fine
-        UserDto createdUserDto = createUser();
+        // mock
+        given(userService.find(eq(user.getId()))).willReturn(user);
 
-        // now delete the fine
-        userFacade.delete(createdUserDto.getId());
-        assertThat(domainRepository.findById(createdUserDto.getId())).isEmpty();
+        // perform
+        userFacade.delete(user.getId());
+        verify(userService, atLeastOnce()).delete(eq(user));
     }
 
     @Test
-    public void deleteFineNullId() {
+    public void deleteUserNonExistentId() {
+        // mock
+        given(userService.find(eq("non-existent"))).willThrow(NotFoundException.class);
 
-        assertThrows(InvalidDataAccessApiUsageException.class, () -> userFacade.delete(null));
-    }
-
-    @Test
-    public void deleteFineNonExistentId() {
-
+        // perform
         assertThrows(NotFoundException.class, () -> userFacade.delete("non-existent"));
     }
-
-    private UserDto createUser() {
-        AddressDto addressDto = fakeAddressDto(faker);
-        UserCreateDto userCreateDto = UserCreateDto.builder()
-                .username("random")
-                .email("john.doe@gmail.com")
-                .password("empty")
-                .firstName("John")
-                .lastName("Doe")
-                .addresses(List.of(addressDto))
-                .build();
-
-        UserDto result = userFacade.create(userCreateDto);
-
-        assertThat(domainRepository.findById(result.getId())).isPresent();
-
-        return result;
-    }
-
 }

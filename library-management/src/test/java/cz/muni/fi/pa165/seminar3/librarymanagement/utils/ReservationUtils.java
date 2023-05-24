@@ -1,5 +1,7 @@
 package cz.muni.fi.pa165.seminar3.librarymanagement.utils;
 
+import static cz.muni.fi.pa165.seminar3.librarymanagement.utils.BookUtils.fakeBook;
+import static cz.muni.fi.pa165.seminar3.librarymanagement.utils.BookUtils.fakeBookDto;
 import static cz.muni.fi.pa165.seminar3.librarymanagement.utils.UserUtils.fakeUser;
 import static cz.muni.fi.pa165.seminar3.librarymanagement.utils.UserUtils.fakeUserDto;
 
@@ -28,6 +30,7 @@ public class ReservationUtils {
                 .id(faker.internet().uuid())
                 .from(faker.date().past(60, TimeUnit.DAYS).toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime())
                 .to(faker.date().future(30, TimeUnit.DAYS).toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime())
+                .book(fakeBook(faker))
                 .user(fakeUser(faker, UserType.CLIENT))
                 .build();
     }
@@ -43,6 +46,7 @@ public class ReservationUtils {
                 .id(faker.internet().uuid())
                 .from(faker.date().past(60, TimeUnit.DAYS).toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime())
                 .to(faker.date().future(30, TimeUnit.DAYS).toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime())
+                .book(fakeBookDto(faker))
                 .user(fakeUserDto(faker, UserType.CLIENT))
                 .build();
     }

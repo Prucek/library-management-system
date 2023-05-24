@@ -1,8 +1,7 @@
 package cz.muni.fi.pa165.seminar3.librarymanagement.seed;
 
+import com.github.javafaker.Address;
 import com.github.javafaker.Faker;
-import cz.muni.fi.pa165.seminar3.librarymanagement.address.Address;
-import cz.muni.fi.pa165.seminar3.librarymanagement.address.AddressRepository;
 import cz.muni.fi.pa165.seminar3.librarymanagement.author.Author;
 import cz.muni.fi.pa165.seminar3.librarymanagement.author.AuthorRepository;
 import cz.muni.fi.pa165.seminar3.librarymanagement.book.Book;
@@ -53,7 +52,6 @@ public class SeedService {
     private final AuthorRepository authorRepository;
     private final BookRepository bookRepository;
     private final BookInstanceRepository bookInstanceRepository;
-    private final AddressRepository addressRepository;
     private final UserRepository userRepository;
     private final BorrowingRepository borrowingsRepository;
     private final FineRepository fineRepository;
@@ -65,20 +63,18 @@ public class SeedService {
      * @param bookRepository         book repository instance
      * @param bookInstanceRepository book instance repository instance
      * @param userRepository         user repository instance
-     * @param addressRepository      address repository instance
      * @param settingsService        settings service instance
      * @param fineRepository         fine repository instance
      * @param borrowingsRepository   borrowings repository instance
      */
     public SeedService(SettingsService settingsService, AuthorRepository authorRepository,
                        BookRepository bookRepository, BookInstanceRepository bookInstanceRepository,
-                       AddressRepository addressRepository, UserRepository userRepository,
-                       BorrowingRepository borrowingsRepository, FineRepository fineRepository) {
+                       UserRepository userRepository, BorrowingRepository borrowingsRepository,
+                       FineRepository fineRepository) {
         this.settingsService = settingsService;
         this.authorRepository = authorRepository;
         this.bookRepository = bookRepository;
         this.bookInstanceRepository = bookInstanceRepository;
-        this.addressRepository = addressRepository;
         this.userRepository = userRepository;
         this.borrowingsRepository = borrowingsRepository;
         this.fineRepository = fineRepository;
@@ -116,24 +112,12 @@ public class SeedService {
         return bookInstances;
     }
 
-    private List<Address> seedAddresses(Faker faker, long count) {
-        List<Address> addresses = Stream.iterate(0, i -> i + 1)
-                .limit(count)
-                .map(i -> faker.address())
-                .map(address -> (Address) Address.builder()
-                        .street(address.streetName())
-                        .houseNumber(address.streetAddressNumber())
-                        .zip(address.zipCode())
-                        .city(address.city())
-                        .country(address.country())
-                        .build())
-                .toList();
-        addressRepository.saveAll(addresses);
-        return addresses;
+    private List<Address> getAddresses(Faker faker, long count) {
+        return Stream.iterate(0, i -> i + 1).limit(count).map(i -> faker.address()).toList();
     }
 
     private List<User> seedLibrarians(Faker faker) {
-        List<Address> addresses = seedAddresses(faker, LIBRARIANS);
+        List<Address> addresses = getAddresses(faker, LIBRARIANS);
         List<User> librarians = Stream.iterate(0, i -> i + 1)
                 .limit(LIBRARIANS)
                 .map(i -> (User) User.builder()
@@ -142,7 +126,11 @@ public class SeedService {
                         .username(faker.name().username())
                         .email(faker.internet().emailAddress())
                         .userType(UserType.LIBRARIAN)
-                        .addresses(List.of(addresses.get(i)))
+                        .street(addresses.get(i).streetName())
+                        .houseNumber(addresses.get(i).streetAddressNumber())
+                        .city(addresses.get(i).city())
+                        .zip(addresses.get(i).zipCode())
+                        .country(addresses.get(i).country())
                         .build())
                 .toList();
         userRepository.saveAll(librarians);
@@ -150,7 +138,7 @@ public class SeedService {
     }
 
     private List<User> seedClients(Faker faker) {
-        List<Address> addresses = seedAddresses(faker, CLIENTS);
+        List<Address> addresses = getAddresses(faker, CLIENTS);
         List<User> librarians = Stream.iterate(0, i -> i + 1)
                 .limit(CLIENTS)
                 .map(i -> (User) User.builder()
@@ -159,7 +147,11 @@ public class SeedService {
                         .username(faker.name().username())
                         .email(faker.internet().emailAddress())
                         .userType(UserType.CLIENT)
-                        .addresses(List.of(addresses.get(i)))
+                        .street(addresses.get(i).streetName())
+                        .houseNumber(addresses.get(i).streetAddressNumber())
+                        .city(addresses.get(i).city())
+                        .zip(addresses.get(i).zipCode())
+                        .country(addresses.get(i).country())
                         .build())
                 .toList();
         userRepository.saveAll(librarians);
@@ -253,7 +245,6 @@ public class SeedService {
         fineRepository.deleteAll();
         borrowingsRepository.deleteAll();
         userRepository.deleteAll();
-        addressRepository.deleteAll();
         bookInstanceRepository.deleteAll();
         bookRepository.deleteAll();
         authorRepository.deleteAll();

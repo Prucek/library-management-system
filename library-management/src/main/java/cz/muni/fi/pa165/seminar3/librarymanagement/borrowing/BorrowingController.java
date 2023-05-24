@@ -15,6 +15,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -80,7 +81,7 @@ public class BorrowingController {
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public BorrowingDto create(@RequestBody BorrowingCreateDto borrowingCreateDto) {
+    public BorrowingDto create(@RequestBody @Valid BorrowingCreateDto borrowingCreateDto) {
         return borrowingFacade.create(borrowingCreateDto);
     }
 
@@ -99,7 +100,7 @@ public class BorrowingController {
     @ApiResponse(responseCode = "404", description = "Borrowing not found",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
     @PutMapping("/{id}")
-    public BorrowingDto update(@PathVariable String id, @RequestBody BorrowingCreateDto borrowingCreateDto) {
+    public BorrowingDto update(@PathVariable String id, @RequestBody @Valid BorrowingCreateDto borrowingCreateDto) {
         return borrowingFacade.updateBorrowing(id, borrowingCreateDto);
     }
 

@@ -16,6 +16,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -88,7 +89,7 @@ public class BookController {
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public BookDto create(@RequestBody BookCreateDto dto) {
+    public BookDto create(@RequestBody @Valid BookCreateDto dto) {
         return facade.create(dto);
     }
 
@@ -114,7 +115,7 @@ public class BookController {
     @SecurityRequirement(name = SECURITY_SCHEME_BEARER, scopes = {LIBRARIAN_SCOPE})
     @SecurityRequirement(name = SECURITY_SCHEME_OAUTH2, scopes = {LIBRARIAN_SCOPE})
     @PutMapping("/{id}")
-    public BookDto update(@PathVariable String id, @RequestBody BookCreateDto dto) {
+    public BookDto update(@PathVariable String id, @RequestBody @Valid BookCreateDto dto) {
         return facade.update(id, dto);
     }
 

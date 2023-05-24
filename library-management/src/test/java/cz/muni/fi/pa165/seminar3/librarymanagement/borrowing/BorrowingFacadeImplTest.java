@@ -1,51 +1,38 @@
 package cz.muni.fi.pa165.seminar3.librarymanagement.borrowing;
 
-import static cz.muni.fi.pa165.seminar3.librarymanagement.utils.BookUtils.fakeBookInstance;
 import static cz.muni.fi.pa165.seminar3.librarymanagement.utils.BorrowingUtils.fakeBorrowing;
-import static cz.muni.fi.pa165.seminar3.librarymanagement.utils.UserUtils.fakeUser;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.verify;
 
 import com.github.javafaker.Faker;
-import cz.muni.fi.pa165.seminar3.librarymanagement.book.BookInstance;
 import cz.muni.fi.pa165.seminar3.librarymanagement.book.BookService;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.borrowing.BorrowingCreateDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.borrowing.BorrowingDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.exceptions.NotFoundException;
-import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.user.UserType;
-import cz.muni.fi.pa165.seminar3.librarymanagement.user.User;
 import cz.muni.fi.pa165.seminar3.librarymanagement.user.UserService;
-import java.time.LocalDateTime;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.dao.InvalidDataAccessApiUsageException;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Tests for borrowing facade.
  *
  * @author Marek Fiala
  */
-@RunWith(SpringRunner.class)
-@ActiveProfiles("test")
-@SpringBootTest
+@WebMvcTest(controllers = {BorrowingFacadeImpl.class, BorrowingMapper.class})
 public class BorrowingFacadeImplTest {
 
     @Autowired
-    private BorrowingRepository domainRepository;
-
-    @Autowired
-    private BorrowingMapper domainMapper;
-
-    @Autowired
     private BorrowingFacade borrowingFacade;
+
+    @MockBean
+    private BorrowingService borrowingService;
 
     @MockBean
     private UserService userService;
@@ -57,11 +44,12 @@ public class BorrowingFacadeImplTest {
 
     @Test
     public void createBorrowingSuccessful() {
-        User fakeUser = fakeUser(faker, UserType.CLIENT);
-        BookInstance fakeBookInsance = fakeBookInstance(faker);
         Borrowing fakeBorrowing = fakeBorrowing(faker);
-        fakeBorrowing.setBookInstance(fakeBookInsance);
-        fakeBorrowing.setUser(fakeUser);
+        // mock
+        given(userService.find(eq(fakeBorrowing.getUser().getId()))).willReturn(fakeBorrowing.getUser());
+        given(bookService.getInstance(eq(fakeBorrowing.getBookInstance().getId()))).willReturn(
+                fakeBorrowing.getBookInstance());
+        given(borrowingService.create(any(Borrowing.class))).willReturn(fakeBorrowing);
 
         BorrowingCreateDto borrowingCreateDto = BorrowingCreateDto.builder()
                 .to(fakeBorrowing.getTo())
@@ -71,121 +59,77 @@ public class BorrowingFacadeImplTest {
                 .bookInstanceId(fakeBorrowing.getBookInstance().getId())
                 .build();
 
-        given(userService.find(any(String.class))).willReturn(fakeUser);
-        given(bookService.getInstance(any(String.class))).willReturn(fakeBookInsance);
+        // perform
+        BorrowingDto result = borrowingFacade.create(borrowingCreateDto);
 
-        Borrowing borrowingResult = domainMapper.fromDto(borrowingFacade.create(borrowingCreateDto));
-        assertThat(domainRepository.findById(borrowingResult.getId())).isPresent();
-        assertThat(borrowingResult).isEqualTo(fakeBorrowing);
+        assertThat(result.getId()).isEqualTo(fakeBorrowing.getId());
+        assertThat(result.getFrom()).isEqualTo(fakeBorrowing.getFrom());
+        assertThat(result.getTo()).isEqualTo(fakeBorrowing.getTo());
+        assertThat(result.getBookInstance().getId()).isEqualTo(fakeBorrowing.getBookInstance().getId());
+        assertThat(result.getUser().getId()).isEqualTo(fakeBorrowing.getUser().getId());
+        assertThat(result.getReturned()).isEqualTo(fakeBorrowing.getReturned());
     }
 
     @Test
-    public void createBorrowingEmptyCreateDto() {
-        Borrowing fakeBorrowing = Borrowing.builder().build();
-        BorrowingCreateDto borrowingCreateDto = BorrowingCreateDto.builder().build();
-
-        given(userService.find(any(String.class))).willReturn(null);
-        given(bookService.getInstance(any(String.class))).willReturn(null);
-
-        Borrowing borrowingResult = domainMapper.fromDto(borrowingFacade.create(borrowingCreateDto));
-        assertThat(domainRepository.findById(borrowingResult.getId())).isPresent();
-        assertThat(borrowingResult).isEqualTo(fakeBorrowing);
-    }
-
-    @Test
-    public void createBorrowingNullCreateDto() {
-        BorrowingCreateDto borrowingCreateDto = null;
-        assertThrows(NullPointerException.class, () -> borrowingFacade.create(borrowingCreateDto));
-    }
-
-    @Test
-    @Transactional
     public void updateBorrowingSuccessful() {
-        Borrowing borrowing = createBorrowing();
-        BorrowingCreateDto updatedBorrowingCreateDto = BorrowingCreateDto.builder().to(LocalDateTime.now()).build();
+        Borrowing borrowing = fakeBorrowing(faker);
+        Borrowing newBorrowing = fakeBorrowing(faker);
 
-        given(userService.find(any(String.class))).willReturn(borrowing.getUser());
-        given(bookService.getInstance(any(String.class))).willReturn(borrowing.getBookInstance());
+        BorrowingCreateDto borrowingCreateDto = BorrowingCreateDto.builder()
+                .to(newBorrowing.getTo())
+                .from(newBorrowing.getFrom())
+                .returned(newBorrowing.getReturned())
+                .userId(newBorrowing.getUser().getId())
+                .bookInstanceId(newBorrowing.getBookInstance().getId())
+                .build();
 
-        BorrowingDto updatedBorrowingDto =
-                borrowingFacade.updateBorrowing(borrowing.getId(), updatedBorrowingCreateDto);
-        assertThat(domainRepository.findById(updatedBorrowingDto.getId())).isPresent();
-        assertThat(updatedBorrowingCreateDto.getTo()).isEqualTo(updatedBorrowingDto.getTo());
-    }
+        // mock
+        given(userService.find(eq(newBorrowing.getUser().getId()))).willReturn(newBorrowing.getUser());
+        given(bookService.getInstance(eq(newBorrowing.getBookInstance().getId()))).willReturn(
+                newBorrowing.getBookInstance());
+        given(borrowingService.find(eq(borrowing.getId()))).willReturn(borrowing);
+        given(borrowingService.update(any(Borrowing.class))).willReturn(newBorrowing);
 
-    @Test
-    @Transactional
-    public void updateBorrowingEmptyCreateDto() {
-        Borrowing borrowing = createBorrowing();
-        BorrowingCreateDto emptyBorrowingCreateDto = BorrowingCreateDto.builder().build();
-        Borrowing emptyBorrowing = Borrowing.builder().build();
+        // perform
+        BorrowingDto updatedBorrowingDto = borrowingFacade.updateBorrowing(borrowing.getId(), borrowingCreateDto);
 
-        given(userService.find(any(String.class))).willReturn(null);
-        given(bookService.getInstance(any(String.class))).willReturn(null);
-
-        BorrowingDto updatedBorrowingDto = borrowingFacade.updateBorrowing(borrowing.getId(), emptyBorrowingCreateDto);
-        assertThat(domainRepository.findById(updatedBorrowingDto.getId())).isPresent();
-        assertThat(domainMapper.fromDto(updatedBorrowingDto)).isEqualTo(emptyBorrowing);
-    }
-
-    @Test
-    public void updateBorrowingNullId() {
-        BorrowingCreateDto borrowingCreateDto = BorrowingCreateDto.builder().build();
-        assertThrows(InvalidDataAccessApiUsageException.class,
-                () -> borrowingFacade.updateBorrowing(null, borrowingCreateDto));
+        assertThat(updatedBorrowingDto.getId()).isEqualTo(newBorrowing.getId());
+        assertThat(updatedBorrowingDto.getFrom()).isEqualTo(newBorrowing.getFrom());
+        assertThat(updatedBorrowingDto.getTo()).isEqualTo(newBorrowing.getTo());
+        assertThat(updatedBorrowingDto.getBookInstance().getId()).isEqualTo(newBorrowing.getBookInstance().getId());
+        assertThat(updatedBorrowingDto.getUser().getId()).isEqualTo(newBorrowing.getUser().getId());
+        assertThat(updatedBorrowingDto.getReturned()).isEqualTo(newBorrowing.getReturned());
     }
 
     @Test
     public void updateBorrowingNotFound() {
-        Borrowing borrowing = createBorrowing();
-        BorrowingCreateDto borrowingCreateDto = null;
+        Borrowing borrowing = fakeBorrowing(faker);
+        BorrowingCreateDto borrowingCreateDto = BorrowingCreateDto.builder().build();
+        // mock
+        given(borrowingService.find(eq(borrowing.getId()))).willThrow(NotFoundException.class);
 
-        assertThrows(NullPointerException.class,
+        // perform
+        assertThrows(NotFoundException.class,
                 () -> borrowingFacade.updateBorrowing(borrowing.getId(), borrowingCreateDto));
     }
 
     @Test
     public void deleteBorrowingSuccessful() {
-        Borrowing borrowing = createBorrowing();
+        Borrowing borrowing = fakeBorrowing(faker);
+
+        // mock
+        given(borrowingService.find(eq(borrowing.getId()))).willReturn(borrowing);
+
+        // perform
 
         borrowingFacade.deleteBorrowing(borrowing.getId());
-        assertThat(domainRepository.findById(borrowing.getId())).isEmpty();
-        assertThat(userService.find(borrowing.getUser().getId())).isNotNull();
-        assertThat(bookService.getInstance(borrowing.getBookInstance().getId())).isNotNull();
-    }
-
-    @Test
-    public void deleteBorrowingNullId() {
-        assertThrows(InvalidDataAccessApiUsageException.class, () -> borrowingFacade.deleteBorrowing(null));
+        verify(borrowingService, atLeastOnce()).delete(eq(borrowing));
     }
 
     @Test
     public void deleteBorrowingNotFound() {
+        // mock
+        given(borrowingService.find(eq("non-existing"))).willThrow(NotFoundException.class);
         assertThrows(NotFoundException.class, () -> borrowingFacade.deleteBorrowing("non-existing"));
-    }
-
-    Borrowing createBorrowing() {
-        User fakeUser = fakeUser(faker, UserType.CLIENT);
-        BookInstance fakeBookInsance = fakeBookInstance(faker);
-        Borrowing fakeBorrowing = fakeBorrowing(faker);
-        fakeBorrowing.setBookInstance(fakeBookInsance);
-        fakeBorrowing.setUser(fakeUser);
-
-        BorrowingCreateDto borrowingCreateDto = BorrowingCreateDto.builder()
-                .to(fakeBorrowing.getTo())
-                .from(fakeBorrowing.getFrom())
-                .returned(fakeBorrowing.getReturned())
-                .userId(fakeBorrowing.getUser().getId())
-                .bookInstanceId(fakeBorrowing.getBookInstance().getId())
-                .build();
-
-        given(userService.find(any(String.class))).willReturn(fakeUser);
-        given(bookService.getInstance(any(String.class))).willReturn(fakeBookInsance);
-
-        Borrowing borrowingResult = domainMapper.fromDto(borrowingFacade.create(borrowingCreateDto));
-        assertThat(domainRepository.findById(borrowingResult.getId())).isPresent();
-        assertThat(borrowingResult).isEqualTo(fakeBorrowing);
-
-        return borrowingResult;
     }
 }

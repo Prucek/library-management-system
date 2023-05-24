@@ -22,7 +22,6 @@ import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.borrowing.Borrowing
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.borrowing.BorrowingDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.common.Result;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.exceptions.NotFoundException;
-import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.user.UserDto;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,11 +80,13 @@ public class BorrowingControllerTests {
         given(borrowingFacade.create(any())).willReturn(borrowingDto);
 
         // perform test
-        mockMvc.perform(post("/borrowings").contentType(MediaType.APPLICATION_JSON).with(csrf())
-                        .content(objectMapper.writeValueAsString(BorrowingDto.builder()
+        mockMvc.perform(post("/borrowings").contentType(MediaType.APPLICATION_JSON)
+                        .with(csrf())
+                        .content(objectMapper.writeValueAsString(BorrowingCreateDto.builder()
                                 .from(borrowingDto.getFrom())
                                 .to(borrowingDto.getTo())
-                                .user(UserDto.builder().id(borrowingDto.getUser().getId()).build())
+                                .bookInstanceId(borrowingDto.getBookInstance().getId())
+                                .userId(borrowingDto.getUser().getId())
                                 .build())))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").hasJsonPath())
@@ -103,10 +104,12 @@ public class BorrowingControllerTests {
         given(borrowingFacade.updateBorrowing(eq(borrowingDto.getId()), any())).willReturn(newBorrowingDto);
 
         // perform test
-        mockMvc.perform(put("/borrowings/" + borrowingDto.getId()).contentType(MediaType.APPLICATION_JSON).with(csrf())
+        mockMvc.perform(put("/borrowings/" + borrowingDto.getId()).contentType(MediaType.APPLICATION_JSON)
+                        .with(csrf())
                         .content(objectMapper.writeValueAsString(BorrowingCreateDto.builder()
                                 .from(newBorrowingDto.getFrom())
                                 .to(newBorrowingDto.getTo())
+                                .bookInstanceId(newBorrowingDto.getBookInstance().getId())
                                 .userId(newBorrowingDto.getUser().getId())
                                 .build())))
                 .andExpect(status().isOk())

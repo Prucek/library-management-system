@@ -2,7 +2,6 @@ package cz.muni.fi.pa165.seminar3.reporting;
 
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.reporting.BookReportDto;
@@ -58,12 +57,11 @@ class ReportingControllerTests {
         mockMvc.perform(get("/reports/books/" + id).header("User-Agent", "007").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.generatedAt").value(bookDto.getGeneratedAt().toString()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.user").value(user))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.user.id").value(user.getId()))
                 .andExpect(
                         MockMvcResultMatchers.jsonPath("$.borrowedBooksCount").value(bookDto.getBorrowedBooksCount()))
                 .andExpect(
-                        MockMvcResultMatchers.jsonPath("$.returnedBooksCount").value(bookDto.getReturnedBooksCount()))
-                .andDo(print());
+                        MockMvcResultMatchers.jsonPath("$.returnedBooksCount").value(bookDto.getReturnedBooksCount()));
     }
 
     @Test
@@ -88,10 +86,9 @@ class ReportingControllerTests {
                 .andExpect(status().isOk())
                 .andExpect(
                         MockMvcResultMatchers.jsonPath("$.generatedAt").value(financeDto.getGeneratedAt().toString()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.user").value(user))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.user.id").value(user.getId()))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.finesCount").value(financeDto.getFinesCount()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.finesTotalPaid").value(financeDto.getFinesTotalPaid()))
-                .andDo(print());
+                .andExpect(MockMvcResultMatchers.jsonPath("$.finesTotalPaid").value(financeDto.getFinesTotalPaid()));
     }
 
     @Test
@@ -116,8 +113,7 @@ class ReportingControllerTests {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.generatedAt").value(instant.toString()))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.usersCount").value(usersCount))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.librarianCount").value(librarianCount))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.newUserCount").value(newUsersCount))
-                .andDo(print());
+                .andExpect(MockMvcResultMatchers.jsonPath("$.newUserCount").value(newUsersCount));
     }
 
     @Test
@@ -133,8 +129,7 @@ class ReportingControllerTests {
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "user with id=-1 not found"));
 
         mockMvc.perform(get("/reports/finances/-1").header("User-Agent", "007").accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound())
-                .andDo(print());
+                .andExpect(status().isNotFound());
     }
 
     @Test
@@ -143,7 +138,6 @@ class ReportingControllerTests {
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "user with id=-1 not found"));
 
         mockMvc.perform(get("/reports/books/-1").header("User-Agent", "007").accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound())
-                .andDo(print());
+                .andExpect(status().isNotFound());
     }
 }

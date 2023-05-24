@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -81,7 +82,7 @@ public class AuthorController {
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public AuthorDto create(@RequestBody AuthorCreateDto dto) {
+    public AuthorDto create(@RequestBody @Valid AuthorCreateDto dto) {
         return facade.create(dto);
     }
 
@@ -110,7 +111,7 @@ public class AuthorController {
     @ApiResponse(responseCode = "404", description = "Author not found",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
     @PutMapping("/{id}")
-    public AuthorDto update(@PathVariable String id, @RequestBody AuthorCreateDto dto) {
+    public AuthorDto update(@PathVariable String id, @RequestBody @Valid AuthorCreateDto dto) {
         return facade.update(id, dto);
     }
 }

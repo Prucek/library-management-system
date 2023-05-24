@@ -13,7 +13,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -64,19 +63,23 @@ public class UserControllerTests {
                                 .firstName(user.getFirstName())
                                 .lastName(user.getLastName())
                                 .email(user.getEmail())
-                                .addresses(user.getAddresses())
+                                .street(user.getStreet())
+                                .houseNumber(user.getHouseNumber())
+                                .city(user.getCity())
+                                .zip(user.getZip())
+                                .country(user.getCountry())
                                 .build())))
-                .andDo(print())
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.username").value(user.getUsername()))
                 .andExpect(jsonPath("$.email").value(user.getEmail()))
                 .andExpect(jsonPath("$.firstName").value(user.getFirstName()))
                 .andExpect(jsonPath("$.lastName").value(user.getLastName()))
                 .andExpect(jsonPath("$.email").value(user.getEmail()))
-                .andExpect(jsonPath("$.addresses[0].country").value(user.getAddresses().get(0).getCountry()))
-                .andExpect(jsonPath("$.addresses[0].city").value(user.getAddresses().get(0).getCity()))
-                .andExpect(jsonPath("$.addresses[0].street").value(user.getAddresses().get(0).getStreet()))
-                .andExpect(jsonPath("$.addresses[0].houseNumber").value(user.getAddresses().get(0).getHouseNumber()));
+                .andExpect(jsonPath("$.country").value(user.getCountry()))
+                .andExpect(jsonPath("$.city").value(user.getCity()))
+                .andExpect(jsonPath("$.street").value(user.getStreet()))
+                .andExpect(jsonPath("$.houseNumber").value(user.getHouseNumber()))
+                .andExpect(jsonPath("$.zip").value(user.getZip()));
 
     }
 
@@ -104,7 +107,6 @@ public class UserControllerTests {
         given(userFacade.findAll(eq(0), anyInt())).willReturn(userDtoResult);
 
         mockMvc.perform(get("/users").with(csrf()))
-                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.total").value(userDtoResult.getTotal()))
                 .andExpect(jsonPath("$.items[0].username").value(userDtoResult.getItems().get(0).getUsername()))
@@ -112,27 +114,21 @@ public class UserControllerTests {
                 .andExpect(jsonPath("$.items[0].firstName").value(userDtoResult.getItems().get(0).getFirstName()))
                 .andExpect(jsonPath("$.items[0].lastName").value(userDtoResult.getItems().get(0).getLastName()))
                 .andExpect(jsonPath("$.items[0].email").value(userDtoResult.getItems().get(0).getEmail()))
-                .andExpect(jsonPath("$.items[0].addresses[0].country").value(
-                        userDtoResult.getItems().get(0).getAddresses().get(0).getCountry()))
-                .andExpect(jsonPath("$.items[0].addresses[0].city").value(
-                        userDtoResult.getItems().get(0).getAddresses().get(0).getCity()))
-                .andExpect(jsonPath("$.items[0].addresses[0].street").value(
-                        userDtoResult.getItems().get(0).getAddresses().get(0).getStreet()))
-                .andExpect(jsonPath("$.items[0].addresses[0].houseNumber").value(
-                        userDtoResult.getItems().get(0).getAddresses().get(0).getHouseNumber()))
+                .andExpect(jsonPath("$.items[0].country").value(userDtoResult.getItems().get(0).getCountry()))
+                .andExpect(jsonPath("$.items[0].city").value(userDtoResult.getItems().get(0).getCity()))
+                .andExpect(jsonPath("$.items[0].street").value(userDtoResult.getItems().get(0).getStreet()))
+                .andExpect(jsonPath("$.items[0].houseNumber").value(userDtoResult.getItems().get(0).getHouseNumber()))
+                .andExpect(jsonPath("$.items[0].zip").value(userDtoResult.getItems().get(0).getZip()))
                 .andExpect(jsonPath("$.items[1].username").value(userDtoResult.getItems().get(1).getUsername()))
                 .andExpect(jsonPath("$.items[1].email").value(userDtoResult.getItems().get(1).getEmail()))
                 .andExpect(jsonPath("$.items[1].firstName").value(userDtoResult.getItems().get(1).getFirstName()))
                 .andExpect(jsonPath("$.items[1].lastName").value(userDtoResult.getItems().get(1).getLastName()))
                 .andExpect(jsonPath("$.items[1].email").value(userDtoResult.getItems().get(1).getEmail()))
-                .andExpect(jsonPath("$.items[1].addresses[0].country").value(
-                        userDtoResult.getItems().get(1).getAddresses().get(0).getCountry()))
-                .andExpect(jsonPath("$.items[1].addresses[0].city").value(
-                        userDtoResult.getItems().get(1).getAddresses().get(0).getCity()))
-                .andExpect(jsonPath("$.items[1].addresses[0].street").value(
-                        userDtoResult.getItems().get(1).getAddresses().get(0).getStreet()))
-                .andExpect(jsonPath("$.items[1].addresses[0].houseNumber").value(
-                        userDtoResult.getItems().get(1).getAddresses().get(0).getHouseNumber()));
+                .andExpect(jsonPath("$.items[1].country").value(userDtoResult.getItems().get(1).getCountry()))
+                .andExpect(jsonPath("$.items[1].city").value(userDtoResult.getItems().get(1).getCity()))
+                .andExpect(jsonPath("$.items[1].street").value(userDtoResult.getItems().get(1).getStreet()))
+                .andExpect(jsonPath("$.items[1].houseNumber").value(userDtoResult.getItems().get(1).getHouseNumber()))
+                .andExpect(jsonPath("$.items[1].zip").value(userDtoResult.getItems().get(1).getZip()));
     }
 
     @Test
@@ -143,17 +139,17 @@ public class UserControllerTests {
         given(userFacade.find(user.getId())).willReturn(user);
 
         mockMvc.perform(get("/users/" + user.getId()).with(csrf()))
-                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.username").value(user.getUsername()))
                 .andExpect(jsonPath("$.email").value(user.getEmail()))
                 .andExpect(jsonPath("$.firstName").value(user.getFirstName()))
                 .andExpect(jsonPath("$.lastName").value(user.getLastName()))
                 .andExpect(jsonPath("$.email").value(user.getEmail()))
-                .andExpect(jsonPath("$.addresses[0].country").value(user.getAddresses().get(0).getCountry()))
-                .andExpect(jsonPath("$.addresses[0].city").value(user.getAddresses().get(0).getCity()))
-                .andExpect(jsonPath("$.addresses[0].street").value(user.getAddresses().get(0).getStreet()))
-                .andExpect(jsonPath("$.addresses[0].houseNumber").value(user.getAddresses().get(0).getHouseNumber()));
+                .andExpect(jsonPath("$.country").value(user.getCountry()))
+                .andExpect(jsonPath("$.city").value(user.getCity()))
+                .andExpect(jsonPath("$.street").value(user.getStreet()))
+                .andExpect(jsonPath("$.houseNumber").value(user.getHouseNumber()))
+                .andExpect(jsonPath("$.zip").value(user.getZip()));
     }
 
     @Test
@@ -180,18 +176,17 @@ public class UserControllerTests {
         mockMvc.perform(put("/users/" + user.getId()).contentType(MediaType.APPLICATION_JSON)
                         .with(csrf())
                         .content(objectMapper.writeValueAsString(updatedUser)))
-                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.username").value(updatedUser.getUsername()))
                 .andExpect(jsonPath("$.email").value(updatedUser.getEmail()))
                 .andExpect(jsonPath("$.firstName").value(updatedUser.getFirstName()))
                 .andExpect(jsonPath("$.lastName").value(updatedUser.getLastName()))
                 .andExpect(jsonPath("$.email").value(updatedUser.getEmail()))
-                .andExpect(jsonPath("$.addresses[0].country").value(updatedUser.getAddresses().get(0).getCountry()))
-                .andExpect(jsonPath("$.addresses[0].city").value(updatedUser.getAddresses().get(0).getCity()))
-                .andExpect(jsonPath("$.addresses[0].street").value(updatedUser.getAddresses().get(0).getStreet()))
-                .andExpect(jsonPath("$.addresses[0].houseNumber").value(
-                        updatedUser.getAddresses().get(0).getHouseNumber()));
+                .andExpect(jsonPath("$.country").value(updatedUser.getCountry()))
+                .andExpect(jsonPath("$.city").value(updatedUser.getCity()))
+                .andExpect(jsonPath("$.street").value(updatedUser.getStreet()))
+                .andExpect(jsonPath("$.houseNumber").value(updatedUser.getHouseNumber()))
+                .andExpect(jsonPath("$.zip").value(updatedUser.getZip()));
     }
 
     @Test

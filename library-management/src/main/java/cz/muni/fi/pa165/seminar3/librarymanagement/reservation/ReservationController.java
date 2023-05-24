@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -78,7 +79,7 @@ public class ReservationController {
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ReservationDto create(@RequestBody ReservationCreateDto reservationCreateDto) {
+    public ReservationDto create(@RequestBody @Valid ReservationCreateDto reservationCreateDto) {
         return reservationFacade.create(reservationCreateDto);
     }
 
@@ -97,7 +98,8 @@ public class ReservationController {
     @ApiResponse(responseCode = "404", description = "Reservation not found",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
     @PutMapping("/{id}")
-    public ReservationDto update(@PathVariable String id, @RequestBody ReservationCreateDto reservationCreateDto) {
+    public ReservationDto update(@PathVariable String id,
+                                 @RequestBody @Valid ReservationCreateDto reservationCreateDto) {
         return reservationFacade.updateReservation(id, reservationCreateDto);
     }
 

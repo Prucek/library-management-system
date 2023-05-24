@@ -1,7 +1,8 @@
 package cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.user;
 
-import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.address.AddressDto;
-import java.util.List;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,15 +22,31 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 public class UserCreateDto {
 
+    @NotBlank
     private String username;
 
-    private String password;
-
+    @NotBlank
+    @Email
     private String email;
 
+    @NotBlank
     private String firstName;
 
+    @NotBlank
     private String lastName;
 
-    private List<AddressDto> addresses;
+    @NotBlank
+    private String country;
+
+    @NotBlank
+    private String city;
+
+    @NotNull
+    private String street;
+
+    @NotBlank
+    private String houseNumber;
+
+    @NotBlank
+    private String zip;
 }

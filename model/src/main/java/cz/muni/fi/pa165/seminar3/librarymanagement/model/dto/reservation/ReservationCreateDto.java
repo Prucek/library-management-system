@@ -1,6 +1,7 @@
 package cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.reservation;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -20,13 +21,15 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 public class ReservationCreateDto {
 
+    @NotNull
     private LocalDateTime from;
 
+    @NotNull
     private LocalDateTime to;
 
     @NotBlank
     private String bookId;
 
     @NotBlank
-    private String issuerId;
+    private String userId;
 }

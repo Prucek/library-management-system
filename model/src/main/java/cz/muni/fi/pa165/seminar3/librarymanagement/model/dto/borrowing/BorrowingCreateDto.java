@@ -1,6 +1,7 @@
 package cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.borrowing;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -21,8 +22,10 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 public class BorrowingCreateDto {
 
+    @NotNull
     private LocalDateTime from;
 
+    @NotNull
     private LocalDateTime to;
 
     private LocalDateTime returned;
@@ -33,6 +36,5 @@ public class BorrowingCreateDto {
     @NotBlank
     private String userId;
 
-    @NotBlank
     private String fineId;
 }
