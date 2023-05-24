@@ -18,7 +18,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -35,6 +34,8 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/books")
+@ApiResponse(responseCode = "401", description = "Authentication is required")
+@ApiResponse(responseCode = "403", description = "Access token does not have required scope")
 public class BookController {
 
     private final BookFacade facade;
@@ -85,8 +86,7 @@ public class BookController {
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
     @ApiResponse(responseCode = "404", description = "Author not found",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
-    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have required scope")
+    @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public BookDto create(@RequestBody BookCreateDto dto) {
         return facade.create(dto);
@@ -101,7 +101,6 @@ public class BookController {
     @ApiResponse(responseCode = "204", description = "Book deleted", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "404", description = "Book not found",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
-    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have required scope")
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable String id) {
@@ -114,7 +113,6 @@ public class BookController {
     @Operation(summary = "Update book by its ID")
     @SecurityRequirement(name = SECURITY_SCHEME_BEARER, scopes = {LIBRARIAN_SCOPE})
     @SecurityRequirement(name = SECURITY_SCHEME_OAUTH2, scopes = {LIBRARIAN_SCOPE})
-    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have required scope")
     @PutMapping("/{id}")
     public BookDto update(@PathVariable String id, @RequestBody BookCreateDto dto) {
         return facade.update(id, dto);
@@ -128,7 +126,6 @@ public class BookController {
     @SecurityRequirement(name = SECURITY_SCHEME_OAUTH2, scopes = {LIBRARIAN_SCOPE})
     @ApiResponse(responseCode = "201", description = "Book instance added", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "404", description = "Book not found", useReturnTypeSchema = true)
-    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have required scope")
     @PostMapping("/{bookId}/instances")
     @ResponseStatus(HttpStatus.CREATED)
     public BookInstanceDto addInstance(@PathVariable String bookId) {
@@ -143,7 +140,6 @@ public class BookController {
     @SecurityRequirement(name = SECURITY_SCHEME_OAUTH2, scopes = {LIBRARIAN_SCOPE})
     @ApiResponse(responseCode = "204", description = "Book instance added", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "404", description = "Book or book instance not found", useReturnTypeSchema = true)
-    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have required scope")
     @DeleteMapping("/instances/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void removeInstance(@PathVariable String id) {

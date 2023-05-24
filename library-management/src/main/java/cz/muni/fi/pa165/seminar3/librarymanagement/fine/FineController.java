@@ -34,6 +34,8 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping(path = "/fines")
+@ApiResponse(responseCode = "401", description = "Authentication is required")
+@ApiResponse(responseCode = "403", description = "Access token does not have required scope")
 public class FineController {
 
     private final FineFacade fineFacade;
@@ -62,7 +64,6 @@ public class FineController {
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
     @ApiResponse(responseCode = "404", description = "Issuer or borrowing not found",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
-    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have required scope")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public FineDto create(@RequestBody FineCreateDto fineCreateDto) {
@@ -82,7 +83,6 @@ public class FineController {
     @ApiResponse(responseCode = "200", description = "Pages list of all fines", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "400", description = "Invalid paging",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
-    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have required scope")
     @GetMapping
     public Result<FineDto> findAll(@RequestParam(defaultValue = "0") int page,
                                    @RequestParam(defaultValue = DEFAULT_PAGE_SIZE) int pageSize) {
@@ -101,7 +101,6 @@ public class FineController {
     @ApiResponse(responseCode = "200", description = "Fine found", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "404", description = "Fine not found",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
-    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have required scope")
     @GetMapping(path = "{id}")
     public FineDto find(@PathVariable String id) {
         return fineFacade.find(id);
@@ -122,7 +121,6 @@ public class FineController {
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
     @ApiResponse(responseCode = "404", description = "Fine not found",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
-    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have required scope")
     @PutMapping(path = "{id}")
     public FineDto update(@PathVariable String id, @RequestBody FineCreateDto fineCreateDto) {
         return fineFacade.update(id, fineCreateDto);
@@ -139,7 +137,6 @@ public class FineController {
     @ApiResponse(responseCode = "200", description = "Fine deleted", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "404", description = "Fine not found",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
-    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have required scope")
     @DeleteMapping(path = "{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable String id) {

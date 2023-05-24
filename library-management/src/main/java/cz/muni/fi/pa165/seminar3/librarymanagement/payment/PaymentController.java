@@ -33,6 +33,8 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping(path = "/payments")
+@ApiResponse(responseCode = "401", description = "Authentication is required")
+@ApiResponse(responseCode = "403", description = "Access token does not have required scope")
 public class PaymentController {
 
     private final PaymentFacade paymentFacade;
@@ -62,7 +64,6 @@ public class PaymentController {
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
     @ApiResponse(responseCode = "404", description = "Fine not found",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
-    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have required scope")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public PaymentDto create(@RequestBody PaymentCreateDto paymentCreateDto) {
@@ -82,7 +83,6 @@ public class PaymentController {
     @ApiResponse(responseCode = "200", description = "Payment status updated", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "404", description = "Payment not found",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
-    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have required scope")
     @PostMapping(path = "{id}")
     public PaymentDto paymentGateCallback(@PathVariable String id) {
         return paymentFacade.finalizePayment(id);
@@ -101,7 +101,6 @@ public class PaymentController {
     @ApiResponse(responseCode = "200", description = "Paged list of payments", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "400", description = "Invalid paging",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
-    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have required scope")
     @GetMapping
     public Result<PaymentDto> findAll(@RequestParam(defaultValue = "0") int page,
                                       @RequestParam(defaultValue = DEFAULT_PAGE_SIZE) int pageSize) {
@@ -120,7 +119,6 @@ public class PaymentController {
     @ApiResponse(responseCode = "200", description = "Payment found", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "404", description = "Payment not found",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
-    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have required scope")
     @GetMapping(path = "{id}")
     public PaymentDto find(@PathVariable String id) {
         return paymentFacade.find(id);

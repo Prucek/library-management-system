@@ -25,6 +25,8 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping(path = "/settings")
+@ApiResponse(responseCode = "401", description = "Authentication is required")
+@ApiResponse(responseCode = "403", description = "Access token does not have required scope")
 public class SettingsController {
 
     private final SettingsFacade settingsFacade;
@@ -47,7 +49,6 @@ public class SettingsController {
     @SecurityRequirement(name = SECURITY_SCHEME_BEARER, scopes = {USER_SCOPE})
     @SecurityRequirement(name = SECURITY_SCHEME_OAUTH2, scopes = {USER_SCOPE})
     @ApiResponse(responseCode = "200", description = "Library Settings", useReturnTypeSchema = true)
-    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have required scope")
     @GetMapping
     public SettingsDto getCurrent() {
         return settingsFacade.getCurrent();
@@ -65,7 +66,6 @@ public class SettingsController {
     @ApiResponse(responseCode = "200", description = "Library settings updated", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "400", description = "Invalid payload",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
-    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have required scope")
     @PostMapping
     public SettingsDto update(@RequestBody SettingsDto settingsDto) {
         return settingsFacade.update(settingsDto);

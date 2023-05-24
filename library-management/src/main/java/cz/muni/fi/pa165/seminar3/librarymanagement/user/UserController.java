@@ -35,6 +35,8 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/users")
+@ApiResponse(responseCode = "401", description = "Authentication is required")
+@ApiResponse(responseCode = "403", description = "Access token does not have required scope")
 public class UserController {
 
     private final UserFacade userFacade;
@@ -66,7 +68,6 @@ public class UserController {
     @ApiResponse(responseCode = "200", description = "Pages list of all users", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "400", description = "Invalid paging",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
-    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have required scope")
     @GetMapping
     public Result<UserDto> findAll(@RequestParam(defaultValue = "0") int page,
                                    @RequestParam(defaultValue = DEFAULT_PAGE_SIZE) int pageSize) {
@@ -82,7 +83,6 @@ public class UserController {
     @ApiResponse(responseCode = "200", description = "User found", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "404", description = "User not found",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
-    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have required scope")
     @GetMapping("/{id}")
     public UserDto find(@PathVariable String id) {
         return userFacade.find(id);
@@ -99,7 +99,6 @@ public class UserController {
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
     @ApiResponse(responseCode = "404", description = "User not found",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
-    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have required scope")
     @PutMapping("/{id}")
     public UserDto update(@PathVariable String id, @RequestBody UserCreateDto userCreateDto) {
         return userFacade.update(id, userCreateDto);
@@ -114,8 +113,6 @@ public class UserController {
     @ApiResponse(responseCode = "204", description = "User deleted", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "404", description = "User not found",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
-    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have required scope",
-            content = @Content())
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable String id) {

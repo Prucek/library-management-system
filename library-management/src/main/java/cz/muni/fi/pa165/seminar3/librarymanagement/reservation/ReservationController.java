@@ -34,6 +34,8 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping(path = "/reservations")
+@ApiResponse(responseCode = "401", description = "Authentication is required")
+@ApiResponse(responseCode = "403", description = "Access token does not have required scope")
 public class ReservationController {
 
     private final ReservationFacade reservationFacade;
@@ -55,7 +57,6 @@ public class ReservationController {
     @ApiResponse(responseCode = "200", description = "Reservation found", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "404", description = "reservation not found",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
-    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have required scope")
     @GetMapping("/{id}")
     public ReservationDto find(@PathVariable String id) {
         return reservationFacade.find(id);
@@ -75,7 +76,6 @@ public class ReservationController {
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
     @ApiResponse(responseCode = "404", description = "User or book not found",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
-    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have required scope")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ReservationDto create(@RequestBody ReservationCreateDto reservationCreateDto) {
@@ -96,7 +96,6 @@ public class ReservationController {
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
     @ApiResponse(responseCode = "404", description = "Reservation not found",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
-    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have required scope")
     @PutMapping("/{id}")
     public ReservationDto update(@PathVariable String id, @RequestBody ReservationCreateDto reservationCreateDto) {
         return reservationFacade.updateReservation(id, reservationCreateDto);
@@ -113,7 +112,6 @@ public class ReservationController {
     @ApiResponse(responseCode = "204", description = "Reservation deleted", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "404", description = "Reservation not found",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
-    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have required scope")
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable String id) {
@@ -133,7 +131,6 @@ public class ReservationController {
     @ApiResponse(responseCode = "200", description = "Pages list of all reservations", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "400", description = "Invalid paging",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
-    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have required scope")
     @GetMapping
     public Result<ReservationDto> findAll(@RequestParam(defaultValue = "0") int page,
                                           @RequestParam(defaultValue = DEFAULT_PAGE_SIZE) int pageSize) {

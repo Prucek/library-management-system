@@ -36,6 +36,8 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/borrowings")
+@ApiResponse(responseCode = "401", description = "Authentication is required")
+@ApiResponse(responseCode = "403", description = "Access token does not have required scope")
 public class BorrowingController {
 
     private final BorrowingFacade borrowingFacade;
@@ -57,7 +59,6 @@ public class BorrowingController {
     @ApiResponse(responseCode = "200", description = "Borrowing found", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "404", description = "Borrowing not found",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
-    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have required scope")
     @GetMapping("/{id}")
     public BorrowingDto find(@PathVariable String id) {
         return borrowingFacade.find(id);
@@ -77,7 +78,6 @@ public class BorrowingController {
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
     @ApiResponse(responseCode = "404", description = "User or book not found",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
-    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have required scope")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public BorrowingDto create(@RequestBody BorrowingCreateDto borrowingCreateDto) {
@@ -98,7 +98,6 @@ public class BorrowingController {
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
     @ApiResponse(responseCode = "404", description = "Borrowing not found",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
-    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have required scope")
     @PutMapping("/{id}")
     public BorrowingDto update(@PathVariable String id, @RequestBody BorrowingCreateDto borrowingCreateDto) {
         return borrowingFacade.updateBorrowing(id, borrowingCreateDto);
@@ -115,7 +114,6 @@ public class BorrowingController {
     @ApiResponse(responseCode = "204", description = "Borrowing deleted", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "404", description = "Borrowing not found",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
-    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have required scope")
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable String id) {
@@ -135,7 +133,6 @@ public class BorrowingController {
     @ApiResponse(responseCode = "200", description = "Pages list of all borrowings", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "400", description = "Invalid paging",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
-    @ApiResponse(responseCode = "403", description = "Forbidden - access token does not have required scope")
     @GetMapping
     public Result<BorrowingDto> findAll(@RequestParam(defaultValue = "0") int page,
                                         @RequestParam(defaultValue = DEFAULT_PAGE_SIZE) int pageSize,
