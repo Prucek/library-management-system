@@ -13,7 +13,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
  * Tests for the Settings facade implementation.
  */
 @WebMvcTest(controllers = {SettingsService.class})
-public class SettingsServiceTest {
+public class SettingsServiceTests {
     @MockBean
     private SettingsRepository settingsRepository;
 
