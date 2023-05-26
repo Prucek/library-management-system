@@ -74,6 +74,21 @@ detached).
 | Prometheu          | 9090 |
 | Grafana            | 3000 |
 
+## Oauth2
+
+To access the API, you need to obtain an access token from the oauth2 server.
+One way of getting the token is by using the oauth2-client on port 8080: 
+http://localhost:8080/ where you log in to MUNI and after a successful login 
+you receive the bearer token (on the page and in the console), 
+which needs to be attached to the query 
+(`'Authorization': f'Bearer {authorization_token}'`).
+
+But for convenience use the Swagger UI on port 8090: 
+http://localhost:8090/swagger-ui.html#/ where you can be authorized by the 
+button in the top right corner, and then you can either pass the previously 
+obtained bearer token or you log in via the `client_id` and `client_secret` 
+where the token is obtained automatically.
+
 ## Access monitoring metrics of all services with Grafana dashboard
 
 Monitoring dashboard can be accessed using this address: http://localhost:3000/.
