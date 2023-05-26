@@ -22,6 +22,8 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 public class UserCreateDto {
 
+    private UserType userType;
+
     @NotBlank
     private String username;
 
