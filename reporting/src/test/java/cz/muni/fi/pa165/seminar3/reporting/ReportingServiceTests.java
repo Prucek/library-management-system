@@ -43,8 +43,8 @@ public class ReportingServiceTests {
         UserDto userDto = getUserDto(id);
 
         List<BorrowingDto> borrowings = List.of(BorrowingDto.builder().build(), BorrowingDto.builder().build(),
-                BorrowingDto.builder().to(LocalDateTime.now()).build(),
-                BorrowingDto.builder().to(LocalDateTime.now()).build());
+                BorrowingDto.builder().borrowedTo(LocalDateTime.now()).build(),
+                BorrowingDto.builder().borrowedTo(LocalDateTime.now()).build());
 
         // define what mock service returns when called
         given(libraryManagementApi.getUserDto(id)).willReturn(userDto);

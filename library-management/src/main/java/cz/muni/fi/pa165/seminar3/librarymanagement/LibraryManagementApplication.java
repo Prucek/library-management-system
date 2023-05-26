@@ -88,6 +88,7 @@ public class LibraryManagementApplication {
                 )
                 .oauth2ResourceServer(OAuth2ResourceServerConfigurer::opaqueToken)
         ;
+        http.headers().frameOptions().disable();
         return http.build();
     }
 

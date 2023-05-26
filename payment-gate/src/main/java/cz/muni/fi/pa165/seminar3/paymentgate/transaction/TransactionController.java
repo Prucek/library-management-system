@@ -28,7 +28,7 @@ import org.springframework.web.server.ResponseStatusException;
  * @author Peter Rúček
  */
 @RestController
-@RequestMapping("/transactions")
+@RequestMapping("/transaction")
 public class TransactionController {
 
     private final TransactionService service;

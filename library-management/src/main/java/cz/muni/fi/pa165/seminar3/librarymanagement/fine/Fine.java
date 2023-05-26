@@ -5,9 +5,9 @@ import cz.muni.fi.pa165.seminar3.librarymanagement.common.DomainObject;
 import cz.muni.fi.pa165.seminar3.librarymanagement.payment.Payment;
 import cz.muni.fi.pa165.seminar3.librarymanagement.user.User;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.ManyToOne;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
+import jakarta.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,18 +27,14 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 public class Fine extends DomainObject {
 
-    @NotNull
-    @Positive
     private Double amount;
 
-    @ManyToOne
-    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY)
     private User issuer;
 
-    @ManyToOne
-    @NotNull
+    @OneToOne(fetch = FetchType.LAZY)
     private Borrowing outstandingBorrowing;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Payment resolvingPayment;
 }

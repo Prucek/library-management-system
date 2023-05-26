@@ -58,14 +58,14 @@ public class ReservationFacadeTests {
 
         // perform test
         ReservationDto result = reservationFacade.create(ReservationCreateDto.builder()
-                .from(reservation.getFrom())
-                .to(reservation.getTo())
+                .reservedFrom(reservation.getReservedFrom())
+                .reservedTo(reservation.getReservedTo())
                 .userId(user.getId())
                 .bookId(book.getId())
                 .build());
         assertThat(result.getId()).isEqualTo(reservation.getId());
-        assertThat(result.getFrom()).isEqualTo(reservation.getFrom());
-        assertThat(result.getTo()).isEqualTo(reservation.getTo());
+        assertThat(result.getReservedFrom()).isEqualTo(reservation.getReservedFrom());
+        assertThat(result.getReservedTo()).isEqualTo(reservation.getReservedTo());
     }
 
     @Test
@@ -80,8 +80,8 @@ public class ReservationFacadeTests {
 
         // perform test
         assertThrows(NotFoundException.class, () -> reservationFacade.create(ReservationCreateDto.builder()
-                .from(reservation.getFrom())
-                .to(reservation.getTo())
+                .reservedFrom(reservation.getReservedFrom())
+                .reservedTo(reservation.getReservedTo())
                 .userId(user.getId())
                 .bookId(book.getId())
                 .build()));
@@ -99,8 +99,8 @@ public class ReservationFacadeTests {
 
         // perform test
         assertThrows(NotFoundException.class, () -> reservationFacade.create(ReservationCreateDto.builder()
-                .from(reservation.getFrom())
-                .to(reservation.getTo())
+                .reservedFrom(reservation.getReservedFrom())
+                .reservedTo(reservation.getReservedTo())
                 .userId(user.getId())
                 .bookId(book.getId())
                 .build()));
@@ -120,14 +120,14 @@ public class ReservationFacadeTests {
 
         // perform test
         ReservationDto result = reservationFacade.updateReservation(reservation.getId(), ReservationCreateDto.builder()
-                .from(reservation.getFrom())
-                .to(reservation.getTo())
+                .reservedFrom(reservation.getReservedFrom())
+                .reservedTo(reservation.getReservedTo())
                 .userId(user.getId())
                 .bookId(book.getId())
                 .build());
         assertThat(result.getId()).isEqualTo(reservation.getId());
-        assertThat(result.getFrom()).isEqualTo(reservation.getFrom());
-        assertThat(result.getTo()).isEqualTo(reservation.getTo());
+        assertThat(result.getReservedFrom()).isEqualTo(reservation.getReservedFrom());
+        assertThat(result.getReservedTo()).isEqualTo(reservation.getReservedTo());
         assertThat(result.getUser().getId()).isEqualTo(user.getId());
         assertThat(result.getBook().getId()).isEqualTo(reservation.getBook().getId());
     }
@@ -146,8 +146,8 @@ public class ReservationFacadeTests {
         // perform test
         assertThrows(NotFoundException.class, () -> reservationFacade.updateReservation(reservation.getId(),
                 ReservationCreateDto.builder()
-                        .from(reservation.getFrom())
-                        .to(reservation.getTo())
+                        .reservedFrom(reservation.getReservedFrom())
+                        .reservedTo(reservation.getReservedTo())
                         .userId(user.getId())
                         .bookId(book.getId())
                         .build()));
@@ -167,8 +167,8 @@ public class ReservationFacadeTests {
         // perform test
         assertThrows(NotFoundException.class, () -> reservationFacade.updateReservation(reservation.getId(),
                 ReservationCreateDto.builder()
-                        .from(reservation.getFrom())
-                        .to(reservation.getTo())
+                        .reservedFrom(reservation.getReservedFrom())
+                        .reservedTo(reservation.getReservedTo())
                         .userId(user.getId())
                         .bookId(book.getId())
                         .build()));
@@ -188,8 +188,8 @@ public class ReservationFacadeTests {
         // perform test
         assertThrows(NotFoundException.class, () -> reservationFacade.updateReservation(reservation.getId(),
                 ReservationCreateDto.builder()
-                        .from(reservation.getFrom())
-                        .to(reservation.getTo())
+                        .reservedFrom(reservation.getReservedFrom())
+                        .reservedTo(reservation.getReservedTo())
                         .userId(user.getId())
                         .bookId(book.getId())
                         .build()));

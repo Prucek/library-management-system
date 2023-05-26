@@ -61,8 +61,8 @@ public class SelfServiceKioskFacadeImplTests {
         BorrowingCreateDto borrowingCreateDto = BorrowingCreateDto.builder()
                 .userId(kioskBorrowDto.getUserId())
                 .bookInstanceId(kioskBorrowDto.getBookInstanceId())
-                .from(LocalDateTime.now())
-                .to(LocalDateTime.now().plus(settings.getBorrowingLimit(), ChronoUnit.DAYS))
+                .borrowedFrom(LocalDateTime.now())
+                .borrowedTo(LocalDateTime.now().plus(settings.getBorrowingLimit(), ChronoUnit.DAYS))
                 .build();
 
         UserDto fakeUserDto = fakeUserDto(faker, UserType.CLIENT);
@@ -74,8 +74,8 @@ public class SelfServiceKioskFacadeImplTests {
         BorrowingDto expectedResult = BorrowingDto.builder()
                 .user(fakeUserDto)
                 .bookInstance(fakeBookInstanceDto)
-                .from(borrowingCreateDto.getFrom())
-                .to(borrowingCreateDto.getTo())
+                .borrowedFrom(borrowingCreateDto.getBorrowedFrom())
+                .borrowedTo(borrowingCreateDto.getBorrowedTo())
                 .build();
 
         given(libraryManagementApi.createBorrowing(any(BorrowingCreateDto.class))).willReturn(expectedResult);
@@ -83,8 +83,8 @@ public class SelfServiceKioskFacadeImplTests {
         BorrowingDto result = kioskFacade.borrowBook(kioskBorrowDto);
         assertThat(result.getUser().getId()).isEqualTo(borrowingCreateDto.getUserId());
         assertThat(result.getBookInstance().getId()).isEqualTo(borrowingCreateDto.getBookInstanceId());
-        assertThat(result.getFrom()).isEqualTo(borrowingCreateDto.getFrom());
-        assertThat(result.getTo()).isEqualTo(borrowingCreateDto.getTo());
+        assertThat(result.getBorrowedFrom()).isEqualTo(borrowingCreateDto.getBorrowedFrom());
+        assertThat(result.getBorrowedTo()).isEqualTo(borrowingCreateDto.getBorrowedTo());
     }
 
     @Test
@@ -95,16 +95,15 @@ public class SelfServiceKioskFacadeImplTests {
         BorrowingDto borrowingDto = BorrowingDto.builder()
                 .user(fakeUserDto)
                 .bookInstance(fakeBookInstanceDto)
-                .from(LocalDateTime.now())
-                .to(LocalDateTime.now().plus(10, ChronoUnit.DAYS))
+                .borrowedFrom(LocalDateTime.now())
+                .borrowedTo(LocalDateTime.now().plus(10, ChronoUnit.DAYS))
                 .build();
 
         BorrowingDto updatedBorrowingDto = BorrowingDto.builder()
                 .user(borrowingDto.getUser())
                 .bookInstance(borrowingDto.getBookInstance())
-                .from(borrowingDto.getFrom())
-                .to(borrowingDto.getTo())
-                .fine(borrowingDto.getFine() != null ? borrowingDto.getFine() : null)
+                .borrowedFrom(borrowingDto.getBorrowedFrom())
+                .borrowedTo(borrowingDto.getBorrowedTo())
                 .returned(LocalDateTime.now())
                 .build();
 

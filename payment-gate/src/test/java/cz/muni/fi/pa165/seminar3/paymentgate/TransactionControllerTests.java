@@ -53,7 +53,7 @@ public class TransactionControllerTests {
         given(transactionService.create(any(TransactionCreateDto.class))).willReturn(transactionDto);
 
         // perform test
-        mockMvc.perform(post("/transactions").contentType(MediaType.APPLICATION_JSON)
+        mockMvc.perform(post("/transaction").contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(TransactionCreateDto.builder()
                                 .amount(transactionDto.getAmount())
                                 .callbackUrl(transactionDto.getCallbackUrl())
@@ -73,7 +73,7 @@ public class TransactionControllerTests {
         given(transactionService.findAll(eq(0), anyInt())).willReturn(transactionDtoResult);
 
         // perform test
-        mockMvc.perform(get("/transactions"))
+        mockMvc.perform(get("/transaction"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.total").value(transactionDtoResult.getTotal()))
                 .andExpect(jsonPath("$.page").value(transactionDtoResult.getPage()))
@@ -89,7 +89,7 @@ public class TransactionControllerTests {
         given(transactionService.find(eq(transactionDto.getId()))).willReturn(transactionDto);
 
         // perform test
-        mockMvc.perform(get("/transactions/" + transactionDto.getId()))
+        mockMvc.perform(get("/transaction/" + transactionDto.getId()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(transactionDto.getId()))
                 .andExpect(jsonPath("$.amount").value(transactionDto.getAmount()))
@@ -104,7 +104,7 @@ public class TransactionControllerTests {
         given(transactionService.find(eq(transactionId))).willThrow(NotFoundException.class);
 
         // perform test
-        mockMvc.perform(get("/transactions/" + transactionId)).andExpect(status().isNotFound());
+        mockMvc.perform(get("/transaction/" + transactionId)).andExpect(status().isNotFound());
     }
 
 
@@ -116,7 +116,7 @@ public class TransactionControllerTests {
         given(transactionService.pay(eq(transactionDto.getId()), any(CardDto.class))).willReturn(transactionDto);
 
         // perform test
-        mockMvc.perform(post("/transactions/" + transactionDto.getId()).contentType(MediaType.APPLICATION_JSON)
+        mockMvc.perform(post("/transaction/" + transactionDto.getId()).contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(cardDto)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(transactionDto.getId()))
@@ -133,7 +133,7 @@ public class TransactionControllerTests {
         given(transactionService.pay(eq(transactionId), any(CardDto.class))).willThrow(NotFoundException.class);
 
         // perform test
-        mockMvc.perform(post("/transactions/" + transactionId).contentType(MediaType.APPLICATION_JSON)
+        mockMvc.perform(post("/transaction/" + transactionId).contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(cardDto))).andExpect(status().isNotFound());
     }
 }

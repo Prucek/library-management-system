@@ -106,7 +106,7 @@ public class SeedService {
         List<BookInstance> bookInstances = books.stream()
                 .flatMap(book -> Stream.iterate(0, i -> i + 1)
                         .limit(faker.random().nextInt(INSTANCES_PER_BOOK_MIN, INSTANCES_PER_BOOK_MAX))
-                        .map(i -> (BookInstance) BookInstance.builder().bookAssigned(book).build()))
+                        .map(i -> (BookInstance) BookInstance.builder().book(book).build()))
                 .toList();
         bookInstanceRepository.saveAll(bookInstances);
         return bookInstances;
@@ -194,8 +194,8 @@ public class SeedService {
                             return (Borrowing) Borrowing.builder()
                                     .user(user)
                                     .bookInstance(bookInstance)
-                                    .from(from)
-                                    .to(to)
+                                    .borrowedFrom(from)
+                                    .borrowedTo(to)
                                     .returned(returned)
                                     .build();
                         }))
@@ -209,11 +209,11 @@ public class SeedService {
         List<Fine> fines = borrowings.stream()
                 .filter(borrowing -> borrowing.getReturned() != null && borrowing.getReturned()
                         .toLocalDate()
-                        .isAfter(borrowing.getTo().toLocalDate()))
+                        .isAfter(borrowing.getBorrowedTo().toLocalDate()))
                 .map(borrowing -> (Fine) Fine.builder()
                         .outstandingBorrowing(borrowing)
                         .issuer(librarians.get(faker.random().nextInt(0, librarians.size() - 1)))
-                        .amount(Duration.between(borrowing.getTo().toLocalDate().atStartOfDay(),
+                        .amount(Duration.between(borrowing.getBorrowedTo().toLocalDate().atStartOfDay(),
                                 borrowing.getReturned().toLocalDate().atStartOfDay()).toDays()
                                 * settings.getFinePerDay())
                         .build())

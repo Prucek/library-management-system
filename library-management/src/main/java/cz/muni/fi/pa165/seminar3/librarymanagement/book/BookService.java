@@ -30,7 +30,7 @@ public class BookService extends DomainService<Book> {
      * @return new book instance
      */
     public BookInstance addInstance(String bookId) {
-        return instanceRepository.save(BookInstance.builder().bookAssigned(find(bookId)).build());
+        return instanceRepository.save(BookInstance.builder().book(find(bookId)).build());
     }
 
     public BookInstance getInstance(String instanceId) {

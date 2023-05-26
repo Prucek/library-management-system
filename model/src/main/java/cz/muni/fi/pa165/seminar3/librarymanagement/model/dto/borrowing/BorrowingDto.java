@@ -2,7 +2,6 @@ package cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.borrowing;
 
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.book.BookInstanceDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.common.DomainObjectDto;
-import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.fine.FineDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.user.UserDto;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
@@ -23,15 +22,13 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 public class BorrowingDto extends DomainObjectDto {
 
-    private LocalDateTime from;
+    private LocalDateTime borrowedFrom;
 
-    private LocalDateTime to;
+    private LocalDateTime borrowedTo;
 
     private LocalDateTime returned;
 
     private BookInstanceDto bookInstance;
 
     private UserDto user;
-
-    private FineDto fine;
 }

@@ -59,8 +59,8 @@ public class BorrowingFacadeImpl extends DomainFacadeImpl<Borrowing, BorrowingDt
         User user = userService.find(borrowingCreateDto.getUserId());
         BookInstance bookInstance = bookService.getInstance(borrowingCreateDto.getBookInstanceId());
 
-        borrowing.setTo(borrowingCreateDto.getTo());
-        borrowing.setFrom(borrowingCreateDto.getFrom());
+        borrowing.setBorrowedTo(borrowingCreateDto.getBorrowedTo());
+        borrowing.setBorrowedFrom(borrowingCreateDto.getBorrowedFrom());
         borrowing.setReturned(borrowingCreateDto.getReturned());
         borrowing.setUser(user);
         borrowing.setBookInstance(bookInstance);
@@ -91,8 +91,8 @@ public class BorrowingFacadeImpl extends DomainFacadeImpl<Borrowing, BorrowingDt
         BookInstance bookInstance = bookService.getInstance(borrowingCreateDto.getBookInstanceId());
 
         Borrowing borrowing = Borrowing.builder()
-                .to(borrowingCreateDto.getTo())
-                .from(borrowingCreateDto.getFrom())
+                .borrowedTo(borrowingCreateDto.getBorrowedTo())
+                .borrowedFrom(borrowingCreateDto.getBorrowedFrom())
                 .returned(borrowingCreateDto.getReturned())
                 .user(user)
                 .bookInstance(bookInstance)

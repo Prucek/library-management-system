@@ -76,12 +76,13 @@ public class BorrowingRepositoryTests {
      */
     @AfterEach
     public void afterEach() {
-        em.remove(returned);
+        System.out.println(returned.getBookInstance().getBorrowings());
         em.remove(returned.getBookInstance());
         em.remove(returned.getUser());
+        em.remove(returned);
 
-        em.remove(notReturned);
         em.remove(notReturned.getBookInstance());
         em.remove(notReturned.getUser());
+        em.remove(notReturned);
     }
 }

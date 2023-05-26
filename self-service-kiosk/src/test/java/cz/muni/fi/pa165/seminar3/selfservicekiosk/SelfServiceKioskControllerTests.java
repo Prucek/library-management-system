@@ -77,8 +77,8 @@ class SelfServiceKioskControllerTests {
         BorrowingDto expectedResult = BorrowingDto.builder()
                 .user(fakeUserDto)
                 .bookInstance(fakeBookInstanceDto)
-                .from(LocalDateTime.now())
-                .to(LocalDateTime.now().plus(10, ChronoUnit.DAYS))
+                .borrowedFrom(LocalDateTime.now())
+                .borrowedTo(LocalDateTime.now().plus(10, ChronoUnit.DAYS))
                 .build();
 
         given(kioskFacade.borrowBook(any(KioskBorrowDto.class))).willReturn(expectedResult);
