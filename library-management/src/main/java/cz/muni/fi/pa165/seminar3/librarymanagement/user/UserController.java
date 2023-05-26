@@ -49,8 +49,11 @@ public class UserController {
 
     /**
      * REST method for creating a new user.
+     *
+     * @param userCreateDto user to be created
+     * @return created user
      */
-    @Operation(summary = "Create a new fine")
+    @Operation(summary = "Create a new user")
     @ApiResponse(responseCode = "201", description = "User created", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "400", description = "Invalid payload",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
@@ -62,6 +65,10 @@ public class UserController {
 
     /**
      * REST method returning all users.
+     *
+     * @param page page number
+     * @param pageSize page size
+     * @return list of all users
      */
     @Operation(summary = "List all users")
     @SecurityRequirement(name = SECURITY_SCHEME_BEARER, scopes = {LIBRARIAN_SCOPE})
@@ -77,6 +84,9 @@ public class UserController {
 
     /**
      * REST method returning user with specified id.
+     *
+     * @param id user id
+     * @return user with specified id
      */
     @Operation(summary = "Find user with id")
     @SecurityRequirement(name = SECURITY_SCHEME_BEARER, scopes = {USER_SCOPE})
@@ -91,6 +101,10 @@ public class UserController {
 
     /**
      * REST method for updating a new user.
+     *
+     * @param id user id
+     * @param userCreateDto user to be updated
+     * @return updated user
      */
     @Operation(summary = "Update user")
     @SecurityRequirement(name = SECURITY_SCHEME_BEARER, scopes = {USER_SCOPE})
@@ -107,6 +121,8 @@ public class UserController {
 
     /**
      * REST method for deleting a user.
+     *
+     * @param id user id
      */
     @Operation(summary = "Delete user")
     @SecurityRequirement(name = SECURITY_SCHEME_BEARER, scopes = {USER_SCOPE})
