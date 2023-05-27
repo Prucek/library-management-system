@@ -3,10 +3,10 @@ package cz.muni.fi.pa165.seminar3.selfservicekiosk;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.borrowing.BorrowingCreateDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.borrowing.BorrowingDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.settings.SettingsDto;
-import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.user.UserDto;
 import jakarta.validation.constraints.NotBlank;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
+import org.springframework.security.oauth2.server.resource.web.reactive.function.client.ServletBearerExchangeFilterFunction;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -23,7 +23,10 @@ public class LibraryManagementApi {
     private String libraryManagementUrl;
 
     private WebClient getWebClient() {
-        return WebClient.create(libraryManagementUrl);
+        return WebClient.builder()
+                .baseUrl(libraryManagementUrl)
+                .filter(new ServletBearerExchangeFilterFunction())
+                .build();
     }
 
     /**
@@ -64,7 +67,7 @@ public class LibraryManagementApi {
      */
     public BorrowingDto getPendingBorrowing(String bookInstanceId) {
         return getWebClient().get()
-                .uri(uriBuilder -> uriBuilder.path("/settings").queryParam("bookInstanceId", bookInstanceId).build())
+                .uri(uriBuilder -> uriBuilder.path("/borrowings/").queryParam("bookInstanceId", bookInstanceId).build())
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .bodyToMono(BorrowingDto.class)

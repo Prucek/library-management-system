@@ -77,7 +77,7 @@ public class LibraryManagementApplication {
                         .requestMatchers(HttpMethod.PUT, "/reservations/**").hasAuthority("SCOPE_" + USER_SCOPE)
                         .requestMatchers(HttpMethod.DELETE, "/reservations/**").hasAuthority("SCOPE_" + USER_SCOPE)
 
-                        .requestMatchers(HttpMethod.GET, "/settings/**").hasAuthority("SCOPE_" + USER_SCOPE)
+                        // HttpMethod.GET, "/settings/**" unregistered user can see prices
                         .requestMatchers(HttpMethod.POST, "/settings/**").hasAuthority("SCOPE_" + LIBRARIAN_SCOPE)
 
                         .requestMatchers(HttpMethod.GET, "/users").hasAuthority("SCOPE_" + LIBRARIAN_SCOPE)
