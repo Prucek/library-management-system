@@ -1,5 +1,6 @@
 package cz.muni.fi.pa165.seminar3.selfservicekiosk;
 
+import static cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.AuthConstants.LIBRARIAN_SCOPE;
 import static cz.muni.fi.pa165.seminar3.selfservicekiosk.KioskUtils.fakeBookInstanceDto;
 import static cz.muni.fi.pa165.seminar3.selfservicekiosk.KioskUtils.fakeKioskBorrowingDto;
 import static cz.muni.fi.pa165.seminar3.selfservicekiosk.KioskUtils.fakeUserDto;
@@ -25,6 +26,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -52,6 +54,7 @@ class SelfServiceKioskControllerTests {
     }
 
     @Test
+    @WithMockUser(authorities = {"SCOPE_" + LIBRARIAN_SCOPE})
     void borrowInvalidPayload() throws Exception {
         KioskBorrowDto kioskBorrowDto = fakeKioskBorrowingDto(faker);
         kioskBorrowDto.setUserId("");
@@ -64,6 +67,7 @@ class SelfServiceKioskControllerTests {
     }
 
     @Test
+    @WithMockUser(authorities = {"SCOPE_" + LIBRARIAN_SCOPE})
     void borrowSuccessful() throws Exception {
         KioskBorrowDto kioskBorrowDto = fakeKioskBorrowingDto(faker);
         kioskBorrowDto.setUserId("random");
@@ -77,8 +81,8 @@ class SelfServiceKioskControllerTests {
         BorrowingDto expectedResult = BorrowingDto.builder()
                 .user(fakeUserDto)
                 .bookInstance(fakeBookInstanceDto)
-                .from(LocalDateTime.now())
-                .to(LocalDateTime.now().plus(10, ChronoUnit.DAYS))
+                .borrowedFrom(LocalDateTime.now())
+                .borrowedTo(LocalDateTime.now().plus(10, ChronoUnit.DAYS))
                 .build();
 
         given(kioskFacade.borrowBook(any(KioskBorrowDto.class))).willReturn(expectedResult);
@@ -88,6 +92,7 @@ class SelfServiceKioskControllerTests {
     }
 
     @Test
+    @WithMockUser(authorities = {"SCOPE_" + LIBRARIAN_SCOPE})
     void returnSuccessful() throws Exception {
         String bookInstanceId = UUID.randomUUID().toString();
 

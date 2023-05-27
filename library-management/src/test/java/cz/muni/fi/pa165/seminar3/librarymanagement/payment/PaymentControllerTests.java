@@ -1,7 +1,7 @@
 package cz.muni.fi.pa165.seminar3.librarymanagement.payment;
 
-import static cz.muni.fi.pa165.seminar3.librarymanagement.LibraryManagementApplication.LIBRARIAN_SCOPE;
-import static cz.muni.fi.pa165.seminar3.librarymanagement.LibraryManagementApplication.USER_SCOPE;
+import static cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.AuthConstants.LIBRARIAN_SCOPE;
+import static cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.AuthConstants.USER_SCOPE;
 import static cz.muni.fi.pa165.seminar3.librarymanagement.utils.PaymentUtils.fakePaymentDto;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -83,10 +83,10 @@ public class PaymentControllerTests {
     public void paymentGateCallbackSuccessful() throws Exception {
         PaymentDto paymentDto = fakePaymentDto(faker);
         // mock facade
-        given(paymentFacade.finalizePayment(eq(paymentDto.getId()))).willReturn(paymentDto);
+        given(paymentFacade.finalizePayment(eq(paymentDto.getTransactionId()))).willReturn(paymentDto);
 
         // perform test
-        mockMvc.perform(post("/payments/" + paymentDto.getId()).with(csrf()))
+        mockMvc.perform(post("/payments/" + paymentDto.getTransactionId()).with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(paymentDto.getId()))
                 .andExpect(jsonPath("$.transactionId").value(paymentDto.getTransactionId()))

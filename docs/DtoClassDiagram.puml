@@ -57,23 +57,19 @@ class UserDto {
     email : String
     firstName : String
     lastName : String
-}
-UserDto -l-|> DomainObjectDto
-
-UserDto "1..1" -u- "1..1" AddressDto
-UserDto "0..*" -r- "1..1" UserType
-
-enum UserType {
-    CLIENT
-    LIBRARIAN
-}
-
-class AddressDto {
     country : String
     city : String
     zip : String
     street : String
     houseNumber : String
+}
+UserDto -l-|> DomainObjectDto
+
+UserDto "0..*" -r- "1..1" UserType
+
+enum UserType {
+    CLIENT
+    LIBRARIAN
 }
 
 class FineDto {

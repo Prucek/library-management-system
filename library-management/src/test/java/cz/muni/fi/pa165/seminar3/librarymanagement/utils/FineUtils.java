@@ -29,6 +29,7 @@ public class FineUtils {
                 .amount(faker.number().randomDouble(2, 1, 100))
                 .issuer(fakeUser(faker, UserType.LIBRARIAN))
                 .outstandingBorrowing(fakeBorrowing(faker))
+                .resolvingPayment(null)
                 .build();
     }
 

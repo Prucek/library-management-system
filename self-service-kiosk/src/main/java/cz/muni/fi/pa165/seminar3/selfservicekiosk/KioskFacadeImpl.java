@@ -47,8 +47,8 @@ public class KioskFacadeImpl implements KioskFacade {
         return libraryManagementApi.createBorrowing(BorrowingCreateDto.builder()
                 .userId(kioskBorrowDto.getUserId())
                 .bookInstanceId(kioskBorrowDto.getBookInstanceId())
-                .from(LocalDateTime.now())
-                .to(LocalDateTime.now().plus(settings.getBorrowingLimit(), ChronoUnit.DAYS))
+                .borrowedFrom(LocalDateTime.now())
+                .borrowedTo(LocalDateTime.now().plus(settings.getBorrowingLimit(), ChronoUnit.DAYS))
                 .build());
     }
 
@@ -59,9 +59,8 @@ public class KioskFacadeImpl implements KioskFacade {
         libraryManagementApi.updateBorrowing(borrowingDto.getId(), BorrowingCreateDto.builder()
                 .userId(borrowingDto.getUser().getId())
                 .bookInstanceId(borrowingDto.getBookInstance().getId())
-                .from(borrowingDto.getFrom())
-                .to(borrowingDto.getTo())
-                .fineId(borrowingDto.getFine() != null ? borrowingDto.getFine().getId() : null)
+                .borrowedFrom(borrowingDto.getBorrowedFrom())
+                .borrowedTo(borrowingDto.getBorrowedTo())
                 .returned(LocalDateTime.now())
                 .build());
     }

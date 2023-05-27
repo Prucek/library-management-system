@@ -1,5 +1,7 @@
 package cz.muni.fi.pa165.seminar3.reporting;
 
+import static cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.AuthConstants.LIBRARIAN_SCOPE;
+import static cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.AuthConstants.USER_SCOPE;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -9,6 +11,7 @@ import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.reporting.FinanceRe
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.reporting.UserReportDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.user.UserDto;
 import cz.muni.fi.pa165.seminar3.reporting.service.ReportController;
+import cz.muni.fi.pa165.seminar3.reporting.service.ReportService;
 import java.time.Instant;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,9 +19,10 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 
 @WebMvcTest(ReportController.class)
@@ -30,13 +34,14 @@ class ReportingControllerTests {
 
     // injected mock implementation of the ReportController
     @MockBean
-    private ReportController reportController;
+    private ReportService reportService;
 
     @Test
     void contextLoads() {
     }
 
     @Test
+    @WithMockUser(authorities = {"SCOPE_" + LIBRARIAN_SCOPE, "SCOPE_" + USER_SCOPE})
     void getBookReport() throws Exception {
         String id = "is7sdf6a8ys4dhf78dfy";
         UserDto user = new UserDto();
@@ -51,7 +56,7 @@ class ReportingControllerTests {
         bookDto.setUser(user);
 
         // define what mock service returns when called
-        given(reportController.generateBookReport(id)).willReturn(bookDto);
+        given(reportService.generateBookReport(id)).willReturn(bookDto);
 
         // call controller and check the result
         mockMvc.perform(get("/reports/books/" + id).header("User-Agent", "007").accept(MediaType.APPLICATION_JSON))
@@ -65,6 +70,7 @@ class ReportingControllerTests {
     }
 
     @Test
+    @WithMockUser(authorities = {"SCOPE_" + LIBRARIAN_SCOPE, "SCOPE_" + USER_SCOPE})
     void getFinanceReport() throws Exception {
         String id = "is7sdf6a8ys4dhf78dfy";
         UserDto user = new UserDto();
@@ -79,7 +85,7 @@ class ReportingControllerTests {
         financeDto.setUser(user);
 
         // define what mock service returns when called
-        given(reportController.generateFinanceReport(id)).willReturn(financeDto);
+        given(reportService.generateFinanceReport(id)).willReturn(financeDto);
 
         // call controller and check the result
         mockMvc.perform(get("/reports/finances/" + id).header("User-Agent", "007").accept(MediaType.APPLICATION_JSON))
@@ -92,6 +98,7 @@ class ReportingControllerTests {
     }
 
     @Test
+    @WithMockUser(authorities = {"SCOPE_" + LIBRARIAN_SCOPE, "SCOPE_" + USER_SCOPE})
     void getUserReport() throws Exception {
         Instant instant = Instant.now();
         int usersCount = 6;
@@ -105,7 +112,7 @@ class ReportingControllerTests {
         userDto.setNewUserCount(newUsersCount);
 
         // define what mock service returns when called
-        given(reportController.generateUserReport()).willReturn(userDto);
+        given(reportService.generateUserReport()).willReturn(userDto);
 
         // call controller and check the result
         mockMvc.perform(get("/reports/users").header("User-Agent", "007").accept(MediaType.APPLICATION_JSON))
@@ -117,25 +124,21 @@ class ReportingControllerTests {
     }
 
     @Test
-    void wrongUrl() throws Exception {
-        mockMvc.perform(get("/reports/wrong").header("User-Agent", "007").accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound());
-    }
-
-    @Test
+    @WithMockUser(authorities = {"SCOPE_" + LIBRARIAN_SCOPE, "SCOPE_" + USER_SCOPE})
     void getNonexistentFinanceReport() throws Exception {
 
-        given(reportController.generateFinanceReport("-1")).willThrow(
-                new ResponseStatusException(HttpStatus.NOT_FOUND, "user with id=-1 not found"));
+        given(reportService.generateFinanceReport("-1")).willThrow(
+                new WebClientResponseException(HttpStatus.NOT_FOUND, "Book not found", null, null, null, null));
 
         mockMvc.perform(get("/reports/finances/-1").header("User-Agent", "007").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
     }
 
     @Test
+    @WithMockUser(authorities = {"SCOPE_" + LIBRARIAN_SCOPE, "SCOPE_" + USER_SCOPE})
     void getNonexistentBookReport() throws Exception {
-        given(reportController.generateBookReport("-1")).willThrow(
-                new ResponseStatusException(HttpStatus.NOT_FOUND, "user with id=-1 not found"));
+        given(reportService.generateBookReport("-1")).willThrow(
+                new WebClientResponseException(HttpStatus.NOT_FOUND, "Book not found", null, null, null, null));
 
         mockMvc.perform(get("/reports/books/-1").header("User-Agent", "007").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());

@@ -88,8 +88,7 @@ public class SeedService {
                         .surname(faker.name().lastName())
                         .build())
                 .toList();
-        authorRepository.saveAll(authors);
-        return authors;
+        return authorRepository.saveAll(authors);
     }
 
     private List<Book> seedBooksToAuthors(Faker faker, List<Author> authors) {
@@ -98,18 +97,16 @@ public class SeedService {
                         .limit(faker.random().nextInt(BOOKS_PER_AUTHOR_MIN, BOOKS_PER_AUTHOR_MAX))
                         .map(i -> (Book) Book.builder().title(faker.book().title()).authors(List.of(author)).build()))
                 .toList();
-        bookRepository.saveAll(books);
-        return books;
+        return bookRepository.saveAll(books);
     }
 
     private List<BookInstance> seedInstancesToBooks(Faker faker, List<Book> books) {
         List<BookInstance> bookInstances = books.stream()
                 .flatMap(book -> Stream.iterate(0, i -> i + 1)
                         .limit(faker.random().nextInt(INSTANCES_PER_BOOK_MIN, INSTANCES_PER_BOOK_MAX))
-                        .map(i -> (BookInstance) BookInstance.builder().bookAssigned(book).build()))
+                        .map(i -> (BookInstance) BookInstance.builder().book(book).build()))
                 .toList();
-        bookInstanceRepository.saveAll(bookInstances);
-        return bookInstances;
+        return bookInstanceRepository.saveAll(bookInstances);
     }
 
     private List<Address> getAddresses(Faker faker, long count) {
@@ -133,8 +130,7 @@ public class SeedService {
                         .country(addresses.get(i).country())
                         .build())
                 .toList();
-        userRepository.saveAll(librarians);
-        return librarians;
+        return userRepository.saveAll(librarians);
     }
 
     private List<User> seedClients(Faker faker) {
@@ -154,8 +150,7 @@ public class SeedService {
                         .country(addresses.get(i).country())
                         .build())
                 .toList();
-        userRepository.saveAll(librarians);
-        return librarians;
+        return userRepository.saveAll(librarians);
     }
 
     private List<Borrowing> seedBorrowingsToClients(Faker faker, List<User> clients, List<BookInstance> bookInstances,
@@ -194,14 +189,13 @@ public class SeedService {
                             return (Borrowing) Borrowing.builder()
                                     .user(user)
                                     .bookInstance(bookInstance)
-                                    .from(from)
-                                    .to(to)
+                                    .borrowedFrom(from)
+                                    .borrowedTo(to)
                                     .returned(returned)
                                     .build();
                         }))
                 .toList();
-        borrowingsRepository.saveAll(borrowings);
-        return borrowings;
+        return borrowingsRepository.saveAll(borrowings);
     }
 
     private List<Fine> seedFinesToBorrowings(Faker faker, List<Borrowing> borrowings, List<User> librarians,
@@ -209,17 +203,16 @@ public class SeedService {
         List<Fine> fines = borrowings.stream()
                 .filter(borrowing -> borrowing.getReturned() != null && borrowing.getReturned()
                         .toLocalDate()
-                        .isAfter(borrowing.getTo().toLocalDate()))
+                        .isAfter(borrowing.getBorrowedTo().toLocalDate()))
                 .map(borrowing -> (Fine) Fine.builder()
                         .outstandingBorrowing(borrowing)
                         .issuer(librarians.get(faker.random().nextInt(0, librarians.size() - 1)))
-                        .amount(Duration.between(borrowing.getTo().toLocalDate().atStartOfDay(),
+                        .amount(Duration.between(borrowing.getBorrowedTo().toLocalDate().atStartOfDay(),
                                 borrowing.getReturned().toLocalDate().atStartOfDay()).toDays()
                                 * settings.getFinePerDay())
                         .build())
                 .toList();
-        fineRepository.saveAll(fines);
-        return fines;
+        return fineRepository.saveAll(fines);
     }
 
     /**

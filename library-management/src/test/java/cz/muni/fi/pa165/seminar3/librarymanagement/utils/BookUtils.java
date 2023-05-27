@@ -9,6 +9,7 @@ import cz.muni.fi.pa165.seminar3.librarymanagement.book.BookInstance;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.book.BookDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.book.BookInstanceDto;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -25,7 +26,7 @@ public class BookUtils {
      * @return fake book instance entity
      */
     public static BookInstance fakeBookInstance(Faker faker) {
-        return BookInstance.builder().id(faker.internet().uuid()).build();
+        return BookInstance.builder().id(faker.internet().uuid()).borrowings(Collections.emptyList()).build();
     }
 
     /**
@@ -50,6 +51,7 @@ public class BookUtils {
                 .title(faker.book().title())
                 .authors(new ArrayList<>(List.of(fakeAuthor(faker))))
                 .instances(new ArrayList<>(List.of(fakeBookInstance(faker))))
+                .reservations(Collections.emptyList())
                 .build();
     }
 

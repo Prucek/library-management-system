@@ -23,10 +23,10 @@ import lombok.experimental.SuperBuilder;
 public class BorrowingCreateDto {
 
     @NotNull
-    private LocalDateTime from;
+    private LocalDateTime borrowedFrom;
 
     @NotNull
-    private LocalDateTime to;
+    private LocalDateTime borrowedTo;
 
     private LocalDateTime returned;
 
@@ -35,6 +35,4 @@ public class BorrowingCreateDto {
 
     @NotBlank
     private String userId;
-
-    private String fineId;
 }

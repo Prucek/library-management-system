@@ -1,5 +1,10 @@
 package cz.muni.fi.pa165.seminar3.librarymanagement;
 
+import static cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.AuthConstants.LIBRARIAN_SCOPE;
+import static cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.AuthConstants.SECURITY_SCHEME_BEARER;
+import static cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.AuthConstants.SECURITY_SCHEME_OAUTH2;
+import static cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.AuthConstants.USER_SCOPE;
+
 import io.swagger.v3.oas.models.security.OAuthFlow;
 import io.swagger.v3.oas.models.security.OAuthFlows;
 import io.swagger.v3.oas.models.security.Scopes;
@@ -24,10 +29,6 @@ import org.springframework.security.web.SecurityFilterChain;
 public class LibraryManagementApplication {
 
     private static final Logger log = LoggerFactory.getLogger(LibraryManagementApplication.class);
-    public static final String SECURITY_SCHEME_OAUTH2 = "OAuth2";
-    public static final String SECURITY_SCHEME_BEARER = "Bearer";
-    public static  final String USER_SCOPE = "test_1";
-    public static  final String LIBRARIAN_SCOPE = "test_2";
 
 
     public static void main(String[] args) {
@@ -76,7 +77,7 @@ public class LibraryManagementApplication {
                         .requestMatchers(HttpMethod.PUT, "/reservations/**").hasAuthority("SCOPE_" + USER_SCOPE)
                         .requestMatchers(HttpMethod.DELETE, "/reservations/**").hasAuthority("SCOPE_" + USER_SCOPE)
 
-                        .requestMatchers(HttpMethod.GET, "/settings/**").hasAuthority("SCOPE_" + USER_SCOPE)
+                        // HttpMethod.GET, "/settings/**" unregistered user can see prices
                         .requestMatchers(HttpMethod.POST, "/settings/**").hasAuthority("SCOPE_" + LIBRARIAN_SCOPE)
 
                         .requestMatchers(HttpMethod.GET, "/users").hasAuthority("SCOPE_" + LIBRARIAN_SCOPE)
@@ -88,6 +89,7 @@ public class LibraryManagementApplication {
                 )
                 .oauth2ResourceServer(OAuth2ResourceServerConfigurer::opaqueToken)
         ;
+        http.headers().frameOptions().disable();
         return http.build();
     }
 

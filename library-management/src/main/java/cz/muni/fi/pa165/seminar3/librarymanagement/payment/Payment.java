@@ -6,6 +6,7 @@ import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.payment.PaymentStat
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.OneToMany;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -32,6 +33,6 @@ public class Payment extends DomainObject {
     @Enumerated(EnumType.STRING)
     private PaymentStatus status;
 
-    @OneToMany
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "resolvingPayment")
     private List<Fine> paidFines;
 }

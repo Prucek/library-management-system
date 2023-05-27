@@ -22,10 +22,10 @@ import lombok.experimental.SuperBuilder;
 public class ReservationCreateDto {
 
     @NotNull
-    private LocalDateTime from;
+    private LocalDateTime reservedFrom;
 
     @NotNull
-    private LocalDateTime to;
+    private LocalDateTime reservedTo;
 
     @NotBlank
     private String bookId;

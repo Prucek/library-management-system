@@ -6,7 +6,9 @@ import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.fine.FineDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.user.UserDto;
 import jakarta.validation.constraints.NotBlank;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.security.oauth2.server.resource.web.reactive.function.client.ServletBearerExchangeFilterFunction;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -22,8 +24,12 @@ public class LibraryManagementApi {
     @NotBlank
     private String libraryManagementUrl;
 
+    @Bean
     private WebClient getWebClient() {
-        return WebClient.create(libraryManagementUrl);
+        return WebClient.builder()
+                .baseUrl(libraryManagementUrl)
+                .filter(new ServletBearerExchangeFilterFunction())
+                .build();
     }
 
     /**

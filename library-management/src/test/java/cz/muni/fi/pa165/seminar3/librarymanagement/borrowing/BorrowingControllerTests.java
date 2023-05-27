@@ -1,7 +1,7 @@
 package cz.muni.fi.pa165.seminar3.librarymanagement.borrowing;
 
-import static cz.muni.fi.pa165.seminar3.librarymanagement.LibraryManagementApplication.LIBRARIAN_SCOPE;
-import static cz.muni.fi.pa165.seminar3.librarymanagement.LibraryManagementApplication.USER_SCOPE;
+import static cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.AuthConstants.LIBRARIAN_SCOPE;
+import static cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.AuthConstants.USER_SCOPE;
 import static cz.muni.fi.pa165.seminar3.librarymanagement.utils.BorrowingUtils.fakeBorrowingDto;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -83,8 +83,8 @@ public class BorrowingControllerTests {
         mockMvc.perform(post("/borrowings").contentType(MediaType.APPLICATION_JSON)
                         .with(csrf())
                         .content(objectMapper.writeValueAsString(BorrowingCreateDto.builder()
-                                .from(borrowingDto.getFrom())
-                                .to(borrowingDto.getTo())
+                                .borrowedFrom(borrowingDto.getBorrowedFrom())
+                                .borrowedTo(borrowingDto.getBorrowedTo())
                                 .bookInstanceId(borrowingDto.getBookInstance().getId())
                                 .userId(borrowingDto.getUser().getId())
                                 .build())))
@@ -107,8 +107,8 @@ public class BorrowingControllerTests {
         mockMvc.perform(put("/borrowings/" + borrowingDto.getId()).contentType(MediaType.APPLICATION_JSON)
                         .with(csrf())
                         .content(objectMapper.writeValueAsString(BorrowingCreateDto.builder()
-                                .from(newBorrowingDto.getFrom())
-                                .to(newBorrowingDto.getTo())
+                                .borrowedFrom(newBorrowingDto.getBorrowedFrom())
+                                .borrowedTo(newBorrowingDto.getBorrowedTo())
                                 .bookInstanceId(newBorrowingDto.getBookInstance().getId())
                                 .userId(newBorrowingDto.getUser().getId())
                                 .build())))

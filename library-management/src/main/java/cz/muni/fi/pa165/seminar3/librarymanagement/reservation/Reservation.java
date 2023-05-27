@@ -3,10 +3,9 @@ package cz.muni.fi.pa165.seminar3.librarymanagement.reservation;
 import cz.muni.fi.pa165.seminar3.librarymanagement.book.Book;
 import cz.muni.fi.pa165.seminar3.librarymanagement.common.DomainObject;
 import cz.muni.fi.pa165.seminar3.librarymanagement.user.User;
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -25,18 +24,15 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "domain_reservation")
 public class Reservation extends DomainObject {
 
-    @Column(name = "reservation_from")
-    private LocalDateTime from;
+    private LocalDateTime reservedFrom;
 
-    @Column(name = "reservation_to")
-    private LocalDateTime to;
+    private LocalDateTime reservedTo;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Book book;
 }

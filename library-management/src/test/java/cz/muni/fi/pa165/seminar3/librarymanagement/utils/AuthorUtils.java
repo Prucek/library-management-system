@@ -3,6 +3,7 @@ package cz.muni.fi.pa165.seminar3.librarymanagement.utils;
 import com.github.javafaker.Faker;
 import cz.muni.fi.pa165.seminar3.librarymanagement.author.Author;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.author.AuthorDto;
+import java.util.Collections;
 
 /**
  * Class containing Author test utility methods.
@@ -23,6 +24,7 @@ public class AuthorUtils {
                 .id(faker.internet().uuid())
                 .name(faker.name().firstName())
                 .surname(faker.name().lastName())
+                .publications(Collections.emptyList())
                 .build();
     }
 

@@ -1,6 +1,7 @@
 package cz.muni.fi.pa165.seminar3.librarymanagement.payment;
 
 import static cz.muni.fi.pa165.seminar3.librarymanagement.utils.FineUtils.fakeFine;
+import static cz.muni.fi.pa165.seminar3.librarymanagement.utils.PaymentUtils.fakePayment;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -106,49 +107,46 @@ public class PaymentFacadeTests {
 
     @Test
     public void finalizePaymentCreated() {
-
-
-        Payment payment = Payment.builder().status(PaymentStatus.CREATED).build();
+        Payment payment = fakePayment(faker);
 
         TransactionDto transactionDto = TransactionDto.builder().status(TransactionStatus.WAITING).build();
 
-        given(domainService.find(any())).willReturn(payment);
-        given(paymentGateApi.findTransaction(any())).willReturn(transactionDto);
+        given(domainService.findByTransactionId(payment.getTransactionId())).willReturn(payment);
+        given(paymentGateApi.findTransaction(payment.getTransactionId())).willReturn(transactionDto);
 
-        PaymentDto result = paymentFacade.finalizePayment("randomId");
+        PaymentDto result = paymentFacade.finalizePayment(payment.getTransactionId());
         assertThat(result.getId()).isEqualTo(payment.getId());
         assertThat(result.getTransactionId()).isEqualTo(payment.getTransactionId());
+        assertThat(result.getStatus()).isEqualTo(PaymentStatus.CREATED);
     }
 
     @Test
     public void finalizePaymentPaid() {
-
-
-        Payment payment = Payment.builder().status(PaymentStatus.PAID).build();
+        Payment payment = fakePayment(faker);
 
         TransactionDto transactionDto = TransactionDto.builder().status(TransactionStatus.APPROVED).build();
 
-        given(domainService.find(any())).willReturn(payment);
-        given(paymentGateApi.findTransaction(any())).willReturn(transactionDto);
+        given(domainService.findByTransactionId(payment.getTransactionId())).willReturn(payment);
+        given(paymentGateApi.findTransaction(payment.getTransactionId())).willReturn(transactionDto);
 
-        PaymentDto result = paymentFacade.finalizePayment("randomId");
+        PaymentDto result = paymentFacade.finalizePayment(payment.getTransactionId());
         assertThat(result.getId()).isEqualTo(payment.getId());
         assertThat(result.getTransactionId()).isEqualTo(payment.getTransactionId());
+        assertThat(result.getStatus()).isEqualTo(PaymentStatus.PAID);
     }
 
     @Test
     public void finalizePaymentCanceled() {
-
-
-        Payment payment = Payment.builder().status(PaymentStatus.CANCELED).build();
+        Payment payment = fakePayment(faker);
 
         TransactionDto transactionDto = TransactionDto.builder().status(TransactionStatus.DECLINED).build();
 
-        given(domainService.find(any())).willReturn(payment);
-        given(paymentGateApi.findTransaction(any())).willReturn(transactionDto);
+        given(domainService.findByTransactionId(payment.getTransactionId())).willReturn(payment);
+        given(paymentGateApi.findTransaction(payment.getTransactionId())).willReturn(transactionDto);
 
-        PaymentDto result = paymentFacade.finalizePayment("randomId");
+        PaymentDto result = paymentFacade.finalizePayment(payment.getTransactionId());
         assertThat(result.getId()).isEqualTo(payment.getId());
         assertThat(result.getTransactionId()).isEqualTo(payment.getTransactionId());
+        assertThat(result.getStatus()).isEqualTo(PaymentStatus.CANCELED);
     }
 }

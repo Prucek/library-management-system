@@ -1,6 +1,6 @@
 package cz.muni.fi.pa165.seminar3.librarymanagement.book;
 
-import static cz.muni.fi.pa165.seminar3.librarymanagement.LibraryManagementApplication.LIBRARIAN_SCOPE;
+import static cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.AuthConstants.LIBRARIAN_SCOPE;
 import static cz.muni.fi.pa165.seminar3.librarymanagement.utils.BookUtils.fakeBookDto;
 import static cz.muni.fi.pa165.seminar3.librarymanagement.utils.BookUtils.fakeBookInstanceDto;
 import static org.mockito.ArgumentMatchers.any;

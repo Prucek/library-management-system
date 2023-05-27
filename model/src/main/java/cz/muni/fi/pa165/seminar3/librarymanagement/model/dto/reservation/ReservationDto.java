@@ -23,9 +23,9 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 public class ReservationDto extends DomainObjectDto {
 
-    private LocalDateTime from;
+    private LocalDateTime reservedFrom;
 
-    private LocalDateTime to;
+    private LocalDateTime reservedTo;
 
     private BookDto book;
 

@@ -52,7 +52,7 @@ public class ReportService {
         int borrowedBookCounter = 0;
 
         for (var borrowing : borrowings) {
-            if (borrowing.getTo() != null) {
+            if (borrowing.getBorrowedTo() != null) {
                 returnedBookCounter++;
             }
             borrowedBookCounter++;

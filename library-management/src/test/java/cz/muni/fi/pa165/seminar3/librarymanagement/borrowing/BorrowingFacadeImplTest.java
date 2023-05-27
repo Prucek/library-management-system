@@ -52,8 +52,8 @@ public class BorrowingFacadeImplTest {
         given(borrowingService.create(any(Borrowing.class))).willReturn(fakeBorrowing);
 
         BorrowingCreateDto borrowingCreateDto = BorrowingCreateDto.builder()
-                .to(fakeBorrowing.getTo())
-                .from(fakeBorrowing.getFrom())
+                .borrowedTo(fakeBorrowing.getBorrowedTo())
+                .borrowedFrom(fakeBorrowing.getBorrowedFrom())
                 .returned(fakeBorrowing.getReturned())
                 .userId(fakeBorrowing.getUser().getId())
                 .bookInstanceId(fakeBorrowing.getBookInstance().getId())
@@ -63,8 +63,8 @@ public class BorrowingFacadeImplTest {
         BorrowingDto result = borrowingFacade.create(borrowingCreateDto);
 
         assertThat(result.getId()).isEqualTo(fakeBorrowing.getId());
-        assertThat(result.getFrom()).isEqualTo(fakeBorrowing.getFrom());
-        assertThat(result.getTo()).isEqualTo(fakeBorrowing.getTo());
+        assertThat(result.getBorrowedFrom()).isEqualTo(fakeBorrowing.getBorrowedFrom());
+        assertThat(result.getBorrowedTo()).isEqualTo(fakeBorrowing.getBorrowedTo());
         assertThat(result.getBookInstance().getId()).isEqualTo(fakeBorrowing.getBookInstance().getId());
         assertThat(result.getUser().getId()).isEqualTo(fakeBorrowing.getUser().getId());
         assertThat(result.getReturned()).isEqualTo(fakeBorrowing.getReturned());
@@ -76,8 +76,8 @@ public class BorrowingFacadeImplTest {
         Borrowing newBorrowing = fakeBorrowing(faker);
 
         BorrowingCreateDto borrowingCreateDto = BorrowingCreateDto.builder()
-                .to(newBorrowing.getTo())
-                .from(newBorrowing.getFrom())
+                .borrowedTo(newBorrowing.getBorrowedTo())
+                .borrowedFrom(newBorrowing.getBorrowedFrom())
                 .returned(newBorrowing.getReturned())
                 .userId(newBorrowing.getUser().getId())
                 .bookInstanceId(newBorrowing.getBookInstance().getId())
@@ -94,8 +94,8 @@ public class BorrowingFacadeImplTest {
         BorrowingDto updatedBorrowingDto = borrowingFacade.updateBorrowing(borrowing.getId(), borrowingCreateDto);
 
         assertThat(updatedBorrowingDto.getId()).isEqualTo(newBorrowing.getId());
-        assertThat(updatedBorrowingDto.getFrom()).isEqualTo(newBorrowing.getFrom());
-        assertThat(updatedBorrowingDto.getTo()).isEqualTo(newBorrowing.getTo());
+        assertThat(updatedBorrowingDto.getBorrowedFrom()).isEqualTo(newBorrowing.getBorrowedFrom());
+        assertThat(updatedBorrowingDto.getBorrowedTo()).isEqualTo(newBorrowing.getBorrowedTo());
         assertThat(updatedBorrowingDto.getBookInstance().getId()).isEqualTo(newBorrowing.getBookInstance().getId());
         assertThat(updatedBorrowingDto.getUser().getId()).isEqualTo(newBorrowing.getUser().getId());
         assertThat(updatedBorrowingDto.getReturned()).isEqualTo(newBorrowing.getReturned());

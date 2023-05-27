@@ -1,6 +1,6 @@
 package cz.muni.fi.pa165.seminar3.librarymanagement.reservation;
 
-import static cz.muni.fi.pa165.seminar3.librarymanagement.LibraryManagementApplication.USER_SCOPE;
+import static cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.AuthConstants.USER_SCOPE;
 import static cz.muni.fi.pa165.seminar3.librarymanagement.utils.ReservationUtils.fakeReservationDto;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -82,8 +82,8 @@ public class ReservationControllerTests {
         mockMvc.perform(post("/reservations").contentType(MediaType.APPLICATION_JSON)
                         .with(csrf())
                         .content(objectMapper.writeValueAsString(ReservationCreateDto.builder()
-                                .from(reservationDto.getFrom())
-                                .to(reservationDto.getTo())
+                                .reservedFrom(reservationDto.getReservedFrom())
+                                .reservedTo(reservationDto.getReservedTo())
                                 .bookId(reservationDto.getBook().getId())
                                 .userId(reservationDto.getUser().getId())
                                 .build())))
@@ -106,8 +106,8 @@ public class ReservationControllerTests {
         mockMvc.perform(put("/reservations/" + reservationDto.getId()).contentType(MediaType.APPLICATION_JSON)
                         .with(csrf())
                         .content(objectMapper.writeValueAsString(ReservationCreateDto.builder()
-                                .from(newReservationDto.getFrom())
-                                .to(newReservationDto.getTo())
+                                .reservedFrom(newReservationDto.getReservedFrom())
+                                .reservedTo(newReservationDto.getReservedTo())
                                 .bookId(reservationDto.getBook().getId())
                                 .userId(newReservationDto.getUser().getId())
                                 .build())))

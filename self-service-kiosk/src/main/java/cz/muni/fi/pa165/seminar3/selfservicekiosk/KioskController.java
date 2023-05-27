@@ -1,5 +1,8 @@
 package cz.muni.fi.pa165.seminar3.selfservicekiosk;
 
+import static cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.AuthConstants.LIBRARIAN_SCOPE;
+import static cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.AuthConstants.SECURITY_SCHEME_BEARER;
+
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.ErrorMessage;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.borrowing.BorrowingDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.kiosk.KioskBorrowDto;
@@ -7,6 +10,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -41,6 +45,7 @@ public class KioskController {
     @ApiResponse(responseCode = "201", description = "New borrowing accepted", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "400", description = "Invalid Payload",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
+    @SecurityRequirement(name = SECURITY_SCHEME_BEARER, scopes = {LIBRARIAN_SCOPE})
     @PostMapping("/borrow")
     @ResponseStatus(HttpStatus.CREATED)
     public BorrowingDto borrow(@RequestBody @Valid KioskBorrowDto dto) {
@@ -54,6 +59,7 @@ public class KioskController {
     @ApiResponse(responseCode = "200", description = "Returned (borrowing deleted)", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "404", description = "Borrowing not found",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
+    @SecurityRequirement(name = SECURITY_SCHEME_BEARER, scopes = {LIBRARIAN_SCOPE})
     @PostMapping("/return/{id}")
     public void returnBook(@PathVariable String id) {
         kioskFacade.returnBook(id);
