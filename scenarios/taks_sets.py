@@ -4,7 +4,7 @@ import logging
 import datetime
 import random
 from ids_storage_model import ids_storage
-from scenarios.create_dtos import reservation_create_dto, borrowing_create_dto, fake_author_dto, book_create_dto, book_update_dto, fince_create_dto
+from scenarios.create_dtos import reservation_create_dto, borrowing_create_dto, fake_author_dto, book_create_dto, book_update_dto, fine_create_dto
 
 
 class FindConcreteTaskSet(TaskSet):
@@ -156,8 +156,8 @@ class BorrowingsTaskSet(TaskSet):
             response = self.client.get(
                 f'/borrowings/{task_selected_borrowing_id}')
             borrowing_update_dto = {
-                "from": response.json()['from'],
-                "to": str(datetime.datetime.now() + datetime.timedelta(days=random.randint(1, 20))).replace(' ', 'T'),
+                "borrowedFrom": response.json()['borrowedFrom'],
+                "borrowedTo": str(datetime.datetime.now() + datetime.timedelta(days=random.randint(1, 20))).replace(' ', 'T'),
                 "userId": response.json()['user']['id'],
                 "bookInstanceId": response.json()['bookInstance']['id'],
                 "fine": response.json().get('fine', {}),
@@ -177,10 +177,10 @@ class ReservationsTaskSet(TaskSet):
             response = self.client.get(
                 f'/reservations/{task_selected_reservation_id}')
             reservation_update_dto = {
-                "issuerId": response.json()['user']['id'],
+                "userId": response.json()['user']['id'],
                 "bookId": response.json()['book']['id'],
-                "from": response.json()['from'],
-                "to": str(datetime.datetime.now() + datetime.timedelta(days=random.randint(1, 20))).replace(' ', 'T')
+                "reservedFrom": response.json()['reservedFrom'],
+                "reservedTo": str(datetime.datetime.now() + datetime.timedelta(days=random.randint(1, 20))).replace(' ', 'T')
             }
             self.client.put(
                 f'/reservations/{task_selected_reservation_id}', json=reservation_update_dto)
@@ -275,7 +275,7 @@ class FineTaskSet(TaskSet):
                 ids_storage.borrowings_ids)
             response = self.client.get(
                 f'/borrowings/{task_selected_borrowing_id}')
-            new_borrowing = fince_create_dto(
+            new_borrowing = fine_create_dto(
                 response.json()['id'], response.json()['user']['id'])
             with self.client.post('/fines', json=new_borrowing) as response:
                 ids_storage.fines_ids.append(response.json()['id'])
@@ -287,7 +287,7 @@ class FineTaskSet(TaskSet):
         if ids_storage.fines_ids:
             task_selected_fine_id = random.choice(ids_storage.fines_ids)
             response = self.client.get(f'/fines/{task_selected_fine_id}')
-            updated_fine_dto = fince_create_dto(
+            updated_fine_dto = fine_create_dto(
                 response.json()['outstandingBorrowing']['id'], response.json()['issuer']['id'])
             self.client.put(
                 f'/fines/{task_selected_fine_id}', json=updated_fine_dto)

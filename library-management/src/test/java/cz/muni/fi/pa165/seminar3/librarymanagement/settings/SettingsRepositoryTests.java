@@ -4,8 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import cz.muni.fi.pa165.seminar3.librarymanagement.LibraryManagementApplication;
 import jakarta.persistence.EntityManager;
-import java.util.ArrayList;
-import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -30,27 +28,23 @@ public class SettingsRepositoryTests {
     @Autowired
     private SettingsRepository settingsRepository;
 
-    private List<Settings> settingsList;
+    private Settings settings;
 
     /**
      * Setups entities for tests.
      */
     @BeforeEach
     public void beforeEach() {
-        settingsList = new ArrayList<>(4);
-        settingsList.add(em.merge(Settings.builder().borrowingPrice(1.).borrowingLimit(2).finePerDay(3.).build()));
-        settingsList.add(em.merge(Settings.builder().borrowingPrice(4.).borrowingLimit(5).finePerDay(6.).build()));
-        settingsList.add(em.merge(Settings.builder().borrowingPrice(7.).borrowingLimit(8).finePerDay(9.).build()));
-        settingsList.add(em.merge(Settings.builder().borrowingPrice(10.).borrowingLimit(11).finePerDay(12.).build()));
+        settings = em.merge(Settings.builder().borrowingPrice(10.).borrowingLimit(11).finePerDay(12.).build());
     }
 
     @Test
     public void getCurrentSettings() {
-        Settings settings = settingsRepository.getCurrentSettings();
+        Settings result = settingsRepository.getCurrentSettings();
 
-        assertThat(settings.getBorrowingLimit()).isEqualTo(settingsList.get(3).getBorrowingLimit());
-        assertThat(settings.getBorrowingPrice()).isEqualTo(settingsList.get(3).getBorrowingPrice());
-        assertThat(settings.getFinePerDay()).isEqualTo(settingsList.get(3).getFinePerDay());
+        assertThat(result.getBorrowingLimit()).isEqualTo(settings.getBorrowingLimit());
+        assertThat(result.getBorrowingPrice()).isEqualTo(settings.getBorrowingPrice());
+        assertThat(result.getFinePerDay()).isEqualTo(settings.getFinePerDay());
     }
 
     /**
@@ -58,6 +52,6 @@ public class SettingsRepositoryTests {
      */
     @AfterEach
     public void afterEach() {
-        settingsList.forEach(em::remove);
+        em.remove(settings);
     }
 }

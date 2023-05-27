@@ -27,6 +27,6 @@ public class CardDto {
     private String expiration;
 
     @NotBlank
-    @Pattern(regexp = "^\\d{3}$")
+    @Pattern(regexp = "^\\d{3,4}$")
     private String cvv2;
 }

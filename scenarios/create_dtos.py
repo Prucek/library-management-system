@@ -12,15 +12,11 @@ def user_dto():
         "email": fake.ascii_email(),
         "firstName": fake.first_name(),
         "lastName": fake.last_name(),
-        "addresses": [
-            {
-                "country": fake.country_code(),
-                "city": fake.city(),
-                "street": fake.street_name(),
-                "houseNumber": fake.building_number(),
-                "zip": fake.postcode()
-            }
-        ]
+        "country": fake.country_code(),
+        "city": fake.city(),
+        "street": fake.street_name(),
+        "houseNumber": fake.building_number(),
+        "zip": fake.postcode()
     }
 
 
@@ -35,10 +31,10 @@ def reservation_create_dto(userId, bookId):
     from_date = datetime.datetime.now()
     to_date = from_date + datetime.timedelta(days=random.randint(1, 20))
     return {
-        "issuerId": userId,
+        "userId": userId,
         "bookId": bookId,
-        "from": str(from_date).replace(' ', 'T'),
-        "to": str(to_date).replace(' ', 'T')
+        "reservedFrom": str(from_date).replace(' ', 'T'),
+        "reservedTo": str(to_date).replace(' ', 'T')
     }
 
 
@@ -48,8 +44,8 @@ def borrowing_create_dto(userId, instanceId):
     return {
         "userId": userId,
         "bookInstanceId": instanceId,
-        "from": str(from_date).replace(' ', 'T'),
-        "to": str(to_date).replace(' ', 'T')
+        "borrowedFrom": str(from_date).replace(' ', 'T'),
+        "borrowedTo": str(to_date).replace(' ', 'T')
     }
 
 
@@ -67,7 +63,7 @@ def book_update_dto(bookDtoResponse):
     }
 
 
-def fince_create_dto(borrowing_id, issuer_id):
+def fine_create_dto(borrowing_id, issuer_id):
     return {
         "amount": random.randint(50, 300),
         "outstandingBorrowingId": borrowing_id,

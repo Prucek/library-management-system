@@ -5,7 +5,7 @@ import datetime
 import random
 import logging
 import os
-from scenarios.create_dtos import user_dto, reservation_create_dto, borrowing_create_dto, fake_author_dto, book_create_dto, book_update_dto, fince_create_dto, transaction_create_dto, payment_card_dto
+from scenarios.create_dtos import user_dto, reservation_create_dto, borrowing_create_dto, fake_author_dto, book_create_dto, book_update_dto, fine_create_dto, transaction_create_dto, payment_card_dto
 from ids_storage_model import ids_storage
 from taks_sets import FindConcreteTaskSet, DeleteInvalidTaskSet, GetAllTaskSet, BorrowingsTaskSet, ReservationsTaskSet, AuthorsTaskSet, BookTaskSet, FineTaskSet
 
@@ -110,13 +110,13 @@ class PaymentGateUser(HttpUser):
 
     @task(1)
     def list_payments(self):
-        self.client.get(f'/transactions')
+        self.client.get(f'/transaction')
         logging.info('Listing all payments')
 
     @task(2)
     def create_payment(self):
         new_transaction_dto = transaction_create_dto()
-        with self.client.post('/transactions', json=new_transaction_dto) as response:
+        with self.client.post('/transaction', json=new_transaction_dto) as response:
             ids_storage.transactions_unpaid_ids.append(response.json()['id'])
             logging.info(f'Creating transaction {response.json()["id"]}')
 
@@ -126,7 +126,7 @@ class PaymentGateUser(HttpUser):
             task_selected_transaction_id = random.choice(
                 ids_storage.transactions_unpaid_ids)
             new_card_dto = payment_card_dto()
-            with self.client.post(f'/transactions/{task_selected_transaction_id}', json=new_card_dto) as response:
+            with self.client.post(f'/transaction/{task_selected_transaction_id}', json=new_card_dto) as response:
                 if response.json()['status'] == 'APPROVED':
                     ids_storage.transactions_unpaid_ids.remove(
                         task_selected_transaction_id)
