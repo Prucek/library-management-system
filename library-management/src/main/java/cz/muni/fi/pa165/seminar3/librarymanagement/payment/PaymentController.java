@@ -74,7 +74,7 @@ public class PaymentController {
     /**
      * Updates the payment status by contacting the payment gate.
      *
-     * @param id id of the payment
+     * @param transactionId id of the transaction
      * @return updated payment
      */
     @Operation(summary = "Callback for the payment gate",
@@ -84,9 +84,9 @@ public class PaymentController {
     @ApiResponse(responseCode = "200", description = "Payment status updated", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "404", description = "Payment not found",
             content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
-    @PostMapping(path = "{id}")
-    public PaymentDto paymentGateCallback(@PathVariable String id) {
-        return paymentFacade.finalizePayment(id);
+    @PostMapping(path = "{transactionId}")
+    public PaymentDto paymentGateCallback(@PathVariable String transactionId) {
+        return paymentFacade.finalizePayment(transactionId);
     }
 
     /**

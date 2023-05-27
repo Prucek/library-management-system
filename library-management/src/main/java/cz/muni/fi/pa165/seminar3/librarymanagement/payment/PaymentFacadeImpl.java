@@ -58,16 +58,19 @@ public class PaymentFacadeImpl extends DomainFacadeImpl<Payment, PaymentDto, Pay
         List<Fine> fines = paymentCreateDto.getFines().stream().map(fineService::find).toList();
         TransactionDto transaction = paymentGateApi.createTransaction(fines.stream().mapToDouble(Fine::getAmount).sum(),
                 paymentGateCallback);
-        return domainMapper.toDto(domainService.create(Payment.builder()
+        Payment payment = domainService.create(Payment.builder()
                 .status(PaymentStatus.CREATED)
                 .transactionId(transaction.getId())
                 .paidFines(fines)
-                .build()));
+                .build());
+        fines.forEach(fine -> fine.setResolvingPayment(payment));
+        fines.forEach(fineService::update);
+        return domainMapper.toDto(payment);
     }
 
     @Override
-    public PaymentDto finalizePayment(String id) {
-        Payment payment = domainService.find(id);
+    public PaymentDto finalizePayment(String transactionId) {
+        Payment payment = domainService.findByTransactionId(transactionId);
         TransactionDto transaction = paymentGateApi.findTransaction(payment.getTransactionId());
         switch (transaction.getStatus()) {
             case APPROVED -> payment.setStatus(PaymentStatus.PAID);

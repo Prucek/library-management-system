@@ -83,10 +83,10 @@ public class PaymentControllerTests {
     public void paymentGateCallbackSuccessful() throws Exception {
         PaymentDto paymentDto = fakePaymentDto(faker);
         // mock facade
-        given(paymentFacade.finalizePayment(eq(paymentDto.getId()))).willReturn(paymentDto);
+        given(paymentFacade.finalizePayment(eq(paymentDto.getTransactionId()))).willReturn(paymentDto);
 
         // perform test
-        mockMvc.perform(post("/payments/" + paymentDto.getId()).with(csrf()))
+        mockMvc.perform(post("/payments/" + paymentDto.getTransactionId()).with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(paymentDto.getId()))
                 .andExpect(jsonPath("$.transactionId").value(paymentDto.getTransactionId()))

@@ -14,6 +14,8 @@ import cz.muni.fi.pa165.seminar3.librarymanagement.borrowing.BorrowingService;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.exceptions.NotFoundException;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.fine.FineCreateDto;
 import cz.muni.fi.pa165.seminar3.librarymanagement.model.dto.fine.FineDto;
+import cz.muni.fi.pa165.seminar3.librarymanagement.settings.Settings;
+import cz.muni.fi.pa165.seminar3.librarymanagement.settings.SettingsService;
 import cz.muni.fi.pa165.seminar3.librarymanagement.user.UserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +39,9 @@ public class FineFacadeImplTests {
     @MockBean
     private BorrowingService borrowingService;
 
+    @MockBean
+    private SettingsService settingsService;
+
     @Autowired
     private FineFacadeImpl fineFacade;
 
@@ -49,6 +54,7 @@ public class FineFacadeImplTests {
         // mock
         given(userService.find(fine.getIssuer().getId())).willReturn(fine.getIssuer());
         given(borrowingService.find(fine.getOutstandingBorrowing().getId())).willReturn(fine.getOutstandingBorrowing());
+        given(settingsService.getCurrent()).willReturn(Settings.getDefault());
         given(fineService.create(any(Fine.class))).willReturn(fine);
 
         // perform
@@ -75,6 +81,7 @@ public class FineFacadeImplTests {
         given(userService.find(newFine.getIssuer().getId())).willReturn(newFine.getIssuer());
         given(borrowingService.find(newFine.getOutstandingBorrowing().getId())).willReturn(
                 newFine.getOutstandingBorrowing());
+        given(settingsService.getCurrent()).willReturn(Settings.getDefault());
         given(fineService.find(eq(fine.getId()))).willReturn(fine);
         given(fineService.update(any(Fine.class))).willReturn(newFine);
 

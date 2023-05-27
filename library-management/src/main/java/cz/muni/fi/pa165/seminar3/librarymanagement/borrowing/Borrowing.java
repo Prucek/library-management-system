@@ -4,6 +4,7 @@ import cz.muni.fi.pa165.seminar3.librarymanagement.book.BookInstance;
 import cz.muni.fi.pa165.seminar3.librarymanagement.common.DomainObject;
 import cz.muni.fi.pa165.seminar3.librarymanagement.fine.Fine;
 import cz.muni.fi.pa165.seminar3.librarymanagement.user.User;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.ManyToOne;
@@ -41,6 +42,6 @@ public class Borrowing extends DomainObject implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     private BookInstance bookInstance;
 
-    @OneToOne(fetch = FetchType.LAZY, mappedBy = "outstandingBorrowing")
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "outstandingBorrowing", cascade = {CascadeType.REMOVE})
     private Fine fine;
 }

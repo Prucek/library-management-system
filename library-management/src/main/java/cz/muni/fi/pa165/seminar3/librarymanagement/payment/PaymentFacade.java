@@ -14,8 +14,8 @@ public interface PaymentFacade extends DomainFacade<PaymentDto, PaymentCreateDto
     /**
      * Finalizes a payment by contacting the payment gate to check the status.
      *
-     * @param id id of the payment
+     * @param transactionId id of the transaction
      * @return finalized payment
      */
-    PaymentDto finalizePayment(String id);
+    PaymentDto finalizePayment(String transactionId);
 }
