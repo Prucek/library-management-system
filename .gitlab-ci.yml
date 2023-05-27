@@ -19,27 +19,17 @@ style:
     - shared-fi
   stage: style
   script:
-    - |
-      ./mvnw clean checkstyle:check \
-              --batch-mode \
-              --color always \
-              --show-version \
-              --fail-never \
-              -Dcheckstyle.violationSeverity=warning \
-              -Dcheckstyle.config.location=$CI_PROJECT_DIR/checkstyle-config.xml | while read -r line; do
-          if echo "$line" | grep -q "BUILD SUCCESS"; then
-              build_success=1
-              echo "Found success mark"
-          fi
-          echo "$line";
-      done
-      if [ "$build_success" != "1" ]; then
-          exit 1
-      fi
+    - ./checkstyle.sh
   allow_failure: true
   only:
     - merge_requests
   needs: []
+  artifacts:
+    when: always
+    expire_in: 10 minutes
+    reports:
+      junit:
+        - '**/target/checkstyle-result.xml'
 
 test:
   tags:
